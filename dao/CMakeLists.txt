@@ -5,7 +5,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(files
     AbstractDao.cpp
     DaoFactory.cpp
-    MySQLDao.cpp
+        SQLDao.cpp
 )
 
 add_library(dao ${files})

@@ -35,7 +35,7 @@ todo::DaoFactory::~DaoFactory() {
 }
 
 void todo::DaoFactory::initDaoMap() {
-    AbstractDao *dao = new MySQLDao();
+    AbstractDao *dao = new SQLDao();
     dao->init();
     this->daoPtrMap.insert("SQLDao", dao);
 }

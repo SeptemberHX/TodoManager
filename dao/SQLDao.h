@@ -11,9 +11,9 @@
 
 namespace todo {
 
-class MySQLDao : public AbstractDao {
+class SQLDao : public AbstractDao {
 public:
-    MySQLDao();
+    SQLDao();
 
     // ItemDetail
     QList<ItemDetail> selectItemDetailByDate(const QDate &targetDate) override;
@@ -57,7 +57,7 @@ public:
 
     void init() override;
 
-    ~MySQLDao() override;
+    ~SQLDao() override;
 
 private:
     void createTables();

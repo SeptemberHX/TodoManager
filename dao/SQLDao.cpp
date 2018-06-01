@@ -7,11 +7,11 @@
 #include <QSqlQuery>
 #include <QException>
 #include <iostream>
-#include "MySQLDao.h"
+#include "SQLDao.h"
 #include "../core/SqlErrorException.h"
 
 
-QList<todo::ItemDetail> todo::MySQLDao::selectItemDetailByDate(const QDate &targetDate) {
+QList<todo::ItemDetail> todo::SQLDao::selectItemDetailByDate(const QDate &targetDate) {
     QList<ItemDetail> resultList;
     QSqlQuery query(this->db);
     query.prepare("SELECT id, title, priority, description, parentID, startTime, endTime, done, targetDate, `type`, freq, freqType,"
@@ -43,7 +43,7 @@ QList<todo::ItemDetail> todo::MySQLDao::selectItemDetailByDate(const QDate &targ
     return resultList;
 }
 
-void todo::MySQLDao::updateItemDetailByID(const QString &itemID, const todo::ItemDetail &itemDetail) {
+void todo::SQLDao::updateItemDetailByID(const QString &itemID, const todo::ItemDetail &itemDetail) {
     QSqlQuery query(this->db);
     query.prepare("UPDATE todo_manager.todo_items"
                   " SET title=:title, priority=:priority, description=:description, parentID=:parentID,"
@@ -71,7 +71,7 @@ void todo::MySQLDao::updateItemDetailByID(const QString &itemID, const todo::Ite
     }
 }
 
-void todo::MySQLDao::deleteItemDetailByID(const QString &itemID) {
+void todo::SQLDao::deleteItemDetailByID(const QString &itemID) {
     QSqlQuery query(this->db);
     query.prepare("DELETE FROM todo_manager.todo_items"
                   " WHERE id=:id;");
@@ -82,7 +82,7 @@ void todo::MySQLDao::deleteItemDetailByID(const QString &itemID) {
     }
 }
 
-void todo::MySQLDao::insertItemDetail(const todo::ItemDetail &itemDetail) {
+void todo::SQLDao::insertItemDetail(const todo::ItemDetail &itemDetail) {
     QSqlQuery query(this->db);
     query.prepare("INSERT INTO todo_manager.todo_items"
                   " (id, title, priority, description, parentID, startTime, endTime, done, targetDate, `type`, freq, freqType, createdTime, lastUpdatedTime)"
@@ -107,12 +107,12 @@ void todo::MySQLDao::insertItemDetail(const todo::ItemDetail &itemDetail) {
     }
 }
 
-todo::MySQLDao::~MySQLDao() {
+todo::SQLDao::~SQLDao() {
 
 }
 
-void todo::MySQLDao::init() {
-    qDebug() << "Init MySQLDao";
+void todo::SQLDao::init() {
+    qDebug() << "Init SQLDao";
     this->db = QSqlDatabase::addDatabase("QMYSQL");
     this->db.setUserName("root");
     this->db.setPassword("");
@@ -131,11 +131,11 @@ void todo::MySQLDao::init() {
     }
 }
 
-todo::MySQLDao::MySQLDao() {
+todo::SQLDao::SQLDao() {
 
 }
 
-void todo::MySQLDao::createTables() {
+void todo::SQLDao::createTables() {
     QStringList sqlScripts;
     sqlScripts.append("CREATE TABLE if not exists todo_manager.tags ("
                       "     name VARCHAR(255) NOT NULL,"
@@ -176,7 +176,7 @@ void todo::MySQLDao::createTables() {
     }
 }
 
-void todo::MySQLDao::updateDoneByID(const QString &itemID, bool flag) {
+void todo::SQLDao::updateDoneByID(const QString &itemID, bool flag) {
     QSqlQuery query(this->db);
     query.prepare("UPDATE todo_manager.todo_items"
                   " SET done=:done"
@@ -188,7 +188,7 @@ void todo::MySQLDao::updateDoneByID(const QString &itemID, bool flag) {
     }
 }
 
-QList<todo::ItemTag> todo::MySQLDao::selectItemTagById(const QString &tagId) {
+QList<todo::ItemTag> todo::SQLDao::selectItemTagById(const QString &tagId) {
     QList<todo::ItemTag> resultLists;
     QSqlQuery query(this->db);
     query.prepare("SELECT name, description, color"
@@ -208,7 +208,7 @@ QList<todo::ItemTag> todo::MySQLDao::selectItemTagById(const QString &tagId) {
     return resultLists;
 }
 
-void todo::MySQLDao::updateItemTagById(const QString &tagId, const ItemTag &itemTag) {
+void todo::SQLDao::updateItemTagById(const QString &tagId, const ItemTag &itemTag) {
     QSqlQuery query(this->db);
     query.prepare("UPDATE todo_manager.tags"
                   " SET description=:description, color=:color"
@@ -222,7 +222,7 @@ void todo::MySQLDao::updateItemTagById(const QString &tagId, const ItemTag &item
     }
 }
 
-void todo::MySQLDao::deleteItemTagById(const QString &tagId) {
+void todo::SQLDao::deleteItemTagById(const QString &tagId) {
     QSqlQuery query(this->db);
     query.prepare("DELETE FROM todo_manager.tags"
                   " WHERE name=:name;");
@@ -233,7 +233,7 @@ void todo::MySQLDao::deleteItemTagById(const QString &tagId) {
     }
 }
 
-void todo::MySQLDao::insertItemTag(const todo::ItemTag &tag) {
+void todo::SQLDao::insertItemTag(const todo::ItemTag &tag) {
     QSqlQuery query(this->db);
     query.prepare("INSERT INTO todo_manager.tags"
                   " (name, description, color)"
@@ -247,7 +247,7 @@ void todo::MySQLDao::insertItemTag(const todo::ItemTag &tag) {
     }
 }
 
-QList<todo::ItemTag> todo::MySQLDao::selectAllItemTag() {
+QList<todo::ItemTag> todo::SQLDao::selectAllItemTag() {
     QList<todo::ItemTag> resultLists;
     QSqlQuery query(this->db);
     query.prepare("SELECT name, description, color"
@@ -265,7 +265,7 @@ QList<todo::ItemTag> todo::MySQLDao::selectAllItemTag() {
     return resultLists;
 }
 
-QList<todo::ItemDetailAndTag> todo::MySQLDao::selectItemAndTagMatchByItemID(const QString &itemID) {
+QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByItemID(const QString &itemID) {
     QList<ItemDetailAndTag> results;
     QSqlQuery query(this->db);
     query.prepare("SELECT itemID, tagID"
@@ -283,7 +283,7 @@ QList<todo::ItemDetailAndTag> todo::MySQLDao::selectItemAndTagMatchByItemID(cons
     return results;
 }
 
-QList<todo::ItemDetailAndTag> todo::MySQLDao::selectItemAndTagMatchByItemIDs(const QList<QString> &itemIDs) {
+QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByItemIDs(const QList<QString> &itemIDs) {
     QList<ItemDetailAndTag> results;
     if (itemIDs.isEmpty()) {
         return results;
@@ -319,7 +319,7 @@ QList<todo::ItemDetailAndTag> todo::MySQLDao::selectItemAndTagMatchByItemIDs(con
     return results;
 }
 
-QList<todo::ItemDetailAndTag> todo::MySQLDao::selectItemAndTagMatchByTagID(const QString &tagID) {
+QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByTagID(const QString &tagID) {
     QList<ItemDetailAndTag> results;
     QSqlQuery query(this->db);
     query.prepare("SELECT itemID, tagID"
@@ -337,7 +337,7 @@ QList<todo::ItemDetailAndTag> todo::MySQLDao::selectItemAndTagMatchByTagID(const
     return results;
 }
 
-QList<todo::ItemDetailAndTag> todo::MySQLDao::selectItemAndTagMatchByTagIDs(const QList<QString> &tagIDs) {
+QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByTagIDs(const QList<QString> &tagIDs) {
     QList<ItemDetailAndTag> results;
     QSqlQuery query(this->db);
 
@@ -362,7 +362,7 @@ QList<todo::ItemDetailAndTag> todo::MySQLDao::selectItemAndTagMatchByTagIDs(cons
     return results;
 }
 
-void todo::MySQLDao::insertItemAndTagMatch(const todo::ItemDetailAndTag &newMatch) {
+void todo::SQLDao::insertItemAndTagMatch(const todo::ItemDetailAndTag &newMatch) {
     QSqlQuery query(this->db);
     query.prepare("INSERT INTO todo_manager.item_tags(itemID, tagID)"
                   " VALUES(:itemID, :tagID);");
@@ -373,7 +373,7 @@ void todo::MySQLDao::insertItemAndTagMatch(const todo::ItemDetailAndTag &newMatc
     }
 }
 
-void todo::MySQLDao::deleteItemAndTagMatch(const todo::ItemDetailAndTag &match) {
+void todo::SQLDao::deleteItemAndTagMatch(const todo::ItemDetailAndTag &match) {
     QSqlQuery query(this->db);
     query.prepare("DELETE FROM todo_manager.item_tags"
                   " WHERE itemID=:itemID AND tagID=:tagID;");
@@ -384,7 +384,7 @@ void todo::MySQLDao::deleteItemAndTagMatch(const todo::ItemDetailAndTag &match) 
     }
 }
 
-void todo::MySQLDao::deleteItemAndTagMatchByItemID(const QString &itemID) {
+void todo::SQLDao::deleteItemAndTagMatchByItemID(const QString &itemID) {
     QSqlQuery query(this->db);
     query.prepare("DELETE FROM todo_manager.item_tags"
                   " WHERE itemID=:itemID;");
