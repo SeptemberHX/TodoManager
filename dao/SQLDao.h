@@ -15,6 +15,8 @@ class SQLDao : public AbstractDao {
 public:
     SQLDao();
 
+    SQLDao(int type);
+
     // ItemDetail
     QList<ItemDetail> selectItemDetailByDate(const QDate &targetDate) override;
 
@@ -62,6 +64,7 @@ public:
 private:
     void createTables();
     QSqlDatabase db;
+    int sqlType; // 0: MySQL, 1: SQLite
 };
 
 }

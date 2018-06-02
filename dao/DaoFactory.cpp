@@ -5,7 +5,7 @@
 #include "DaoFactory.h"
 
 todo::DaoFactory *todo::DaoFactory::instance = nullptr;
-QString todo::DaoFactory::daoMethod = "SQLDao";
+QString todo::DaoFactory::daoMethod = "SQLiteDao";
 
 todo::AbstractDao *todo::DaoFactory::getSQLDao() {
     return this->daoPtrMap[DaoFactory::daoMethod];
@@ -35,7 +35,20 @@ todo::DaoFactory::~DaoFactory() {
 }
 
 void todo::DaoFactory::initDaoMap() {
-    AbstractDao *dao = new SQLDao();
+    AbstractDao *dao = new SQLDao(0);
     dao->init();
-    this->daoPtrMap.insert("SQLDao", dao);
+    this->daoPtrMap.insert("MYSQLDao", dao);
+
+    AbstractDao *sqliteDao = new SQLDao(1);
+    sqliteDao->init();
+    this->daoPtrMap.insert("SQLiteDao", dao);
+}
+
+todo::AbstractDao *todo::DaoFactory::getSQLDao(todo::DaoType type) {
+    switch (type) {
+        case DaoType::MySQLDao:
+            return this->daoPtrMap["MYSQLDao"];
+        case DaoType ::SQLiteDao:
+            return this->daoPtrMap["SQLiteDao"];
+    }
 }

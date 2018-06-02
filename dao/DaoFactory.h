@@ -11,10 +11,16 @@
 
 namespace todo {
 
+enum DaoType {
+    MySQLDao,
+    SQLiteDao
+};
+
 class DaoFactory {
 public:
     static DaoFactory* getInstance();
     AbstractDao* getSQLDao();
+    AbstractDao* getSQLDao(DaoType type);
     ~DaoFactory();
 
 private:
