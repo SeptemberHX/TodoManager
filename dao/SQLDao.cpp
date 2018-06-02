@@ -172,6 +172,7 @@ void todo::SQLDao::createTables() {
     sqlScripts.append("CREATE TABLE if not exists item_tags ("
                       "     itemID VARCHAR(255),"
                       "     tagID VARCHAR(255),"
+                      "     orderNum INTEGER NOT NULL,"
                       "     foreign key(itemID) references todo_items(id),"
                       "     foreign key(tagID) references tags(name)"
                       ");");
@@ -277,7 +278,7 @@ QList<todo::ItemTag> todo::SQLDao::selectAllItemTag() {
 QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByItemID(const QString &itemID) {
     QList<ItemDetailAndTag> results;
     QSqlQuery query(this->db);
-    query.prepare("SELECT itemID, tagID"
+    query.prepare("SELECT itemID, tagID, orderNum"
                   " FROM item_tags"
                   " WHERE itemID = :itemID;");
     query.bindValue(":itemID", itemID);
@@ -285,7 +286,10 @@ QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByItemID(const 
         throw SqlErrorException();
     } else {
         while (query.next()) {
-            results.append(ItemDetailAndTag(query.value("itemID").toString(), query.value("tagID").toString()));
+            results.append(ItemDetailAndTag(query.value("itemID").toString(),
+                                            query.value("tagID").toString(),
+                                            query.value("orderNum").toInt()
+            ));
         }
     }
 
@@ -309,7 +313,7 @@ QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByItemIDs(const
 //        ids.append(itemID);
 //    }
 //    query.addBindValue(ids);
-    QString sqlStr("SELECT itemID, tagID"
+    QString sqlStr("SELECT itemID, tagID, orderNum"
                    " FROM item_tags"
                    " WHERE itemID IN (%1);");
     QStringList ids;
@@ -321,7 +325,10 @@ QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByItemIDs(const
         throw SqlErrorException();
     } else {
         while (query.next()) {
-            results.append(ItemDetailAndTag(query.value("itemID").toString(), query.value("tagID").toString()));
+            results.append(ItemDetailAndTag(query.value("itemID").toString(),
+                                            query.value("tagID").toString(),
+                                            query.value("orderNum").toInt()
+            ));
         }
     }
 
@@ -331,7 +338,7 @@ QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByItemIDs(const
 QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByTagID(const QString &tagID) {
     QList<ItemDetailAndTag> results;
     QSqlQuery query(this->db);
-    query.prepare("SELECT itemID, tagID"
+    query.prepare("SELECT itemID, tagID, orderNum"
                   " FROM item_tags"
                   " WHERE tagID = :tagID;");
     query.bindValue(":tagID", tagID);
@@ -339,7 +346,10 @@ QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByTagID(const Q
         throw SqlErrorException();
     } else {
         while (query.next()) {
-            results.append(ItemDetailAndTag(query.value("itemID").toString(), query.value("tagID").toString()));
+            results.append(ItemDetailAndTag(query.value("itemID").toString(),
+                                            query.value("tagID").toString(),
+                                            query.value("orderNum").toInt()
+            ));
         }
     }
 
@@ -356,7 +366,7 @@ QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByTagIDs(const 
     }
     QString tagIDListStr = tagIDList.join(",");
 
-    query.prepare("SELECT itemID, tagID"
+    query.prepare("SELECT itemID, tagID, orderNum"
                   " FROM item_tags"
                   " WHERE tagID IN (:tagIDs);");
     query.bindValue(":tagIDs", tagIDListStr);
@@ -364,7 +374,10 @@ QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByTagIDs(const 
         throw SqlErrorException();
     } else {
         while (query.next()) {
-            results.append(ItemDetailAndTag(query.value("itemID").toString(), query.value("tagID").toString()));
+            results.append(ItemDetailAndTag(query.value("itemID").toString(),
+                                            query.value("tagID").toString(),
+                                            query.value("orderNum").toInt()
+            ));
         }
     }
 

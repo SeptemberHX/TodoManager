@@ -52,7 +52,11 @@ void TagWidget::addTag(const todo::ItemTag &tagItem) {
 }
 
 QList<todo::ItemTag> TagWidget::getTags() {
-    return this->tagMap.values();
+    QList<todo::ItemTag> tagList;
+    for (auto tagButton : this->tagLabelList) {
+        tagList.append(this->tagMap[tagButton->text()]);
+    }
+    return tagList;
 }
 
 TagLabelWidget *TagWidget::findTagButton(const QString &tagStr) {

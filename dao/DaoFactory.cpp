@@ -8,7 +8,7 @@ todo::DaoFactory *todo::DaoFactory::instance = nullptr;
 QString todo::DaoFactory::daoMethod = "SQLiteDao";
 
 todo::AbstractDao *todo::DaoFactory::getSQLDao() {
-    return this->daoPtrMap[DaoFactory::daoMethod];
+    return this->getSQLDao(DaoType::SQLiteDao);
 }
 
 todo::DaoFactory::DaoFactory() {
@@ -35,20 +35,24 @@ todo::DaoFactory::~DaoFactory() {
 }
 
 void todo::DaoFactory::initDaoMap() {
-    AbstractDao *dao = new SQLDao(0);
-    dao->init();
-    this->daoPtrMap.insert("MYSQLDao", dao);
 
-    AbstractDao *sqliteDao = new SQLDao(1);
-    sqliteDao->init();
-    this->daoPtrMap.insert("SQLiteDao", dao);
 }
 
 todo::AbstractDao *todo::DaoFactory::getSQLDao(todo::DaoType type) {
     switch (type) {
         case DaoType::MySQLDao:
+            if (this->daoPtrMap.find("MYSQLDao") == this->daoPtrMap.end()) {
+                AbstractDao *mySQLDao = new SQLDao(0);
+                mySQLDao->init();
+                this->daoPtrMap.insert("MYSQLDao", mySQLDao);
+            }
             return this->daoPtrMap["MYSQLDao"];
         case DaoType ::SQLiteDao:
+            if (this->daoPtrMap.find("SQLiteDao") == this->daoPtrMap.end()) {
+                AbstractDao *sqliteDao = new SQLDao(1);
+                sqliteDao->init();
+                this->daoPtrMap.insert("SQLiteDao", sqliteDao);
+            }
             return this->daoPtrMap["SQLiteDao"];
     }
 }

@@ -10,15 +10,18 @@
 namespace todo {
 class ItemDetailAndTag {
 public:
-    ItemDetailAndTag(const QString &itemID, const QString &tagID);
+    ItemDetailAndTag(const QString &itemID, const QString &tagID, const int &orderNum);
 
     const QString &getItemID() const;
 
     const QString &getTagID() const;
 
+    const int &getOrder() const;
+
 private:
     QString itemID;
     QString tagID;
+    int order;
 };
 }
 

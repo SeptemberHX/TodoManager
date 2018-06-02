@@ -12,4 +12,9 @@ const QString &todo::ItemDetailAndTag::getTagID() const {
     return tagID;
 }
 
-todo::ItemDetailAndTag::ItemDetailAndTag(const QString &itemID, const QString &tagID) : itemID(itemID), tagID(tagID) {}
+const int &todo::ItemDetailAndTag::getOrder() const {
+    return this->order;
+}
+
+todo::ItemDetailAndTag::ItemDetailAndTag(const QString &itemID, const QString &tagID, const int &orderNum)
+        : itemID(itemID), tagID(tagID), order(orderNum) {}

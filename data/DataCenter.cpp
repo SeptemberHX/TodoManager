@@ -5,6 +5,22 @@
 #include <QDebug>
 #include "DataCenter.h"
 
+int compareFunc(const todo::ItemDetailAndTag &t1, const todo::ItemDetailAndTag &t2) {
+    if (t1.getItemID() < t2.getItemID()) {
+        return -1;
+    } else if (t1.getItemID() > t2.getItemID()) {
+        return 1;
+    } else {
+        if (t1.getOrder() < t2.getOrder()) {
+            return -1;
+        } else if (t1.getOrder() == t2.getOrder()) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+}
+
 QList<todo::ItemDetail> todo::DataCenter::selectItemDetailByDate(const QDate &targetDate) {
     QList<ItemDetail> results = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByDate(targetDate);
     this->fillTagInfo(results);
@@ -16,20 +32,24 @@ void todo::DataCenter::updateItemDetailByID(const QString &itemID, const todo::I
 
     // For Now
     DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemID(itemDetail.getId());
+    int i = 1;
     for (auto const &tag : itemDetail.getTags()) {
-        DaoFactory::getInstance()->getSQLDao()->insertItemAndTagMatch(ItemDetailAndTag(itemDetail.getId(), tag.getId()));
+        DaoFactory::getInstance()->getSQLDao()->insertItemAndTagMatch(ItemDetailAndTag(itemDetail.getId(), tag.getId(), i));
+        ++i;
     }
 }
 
 void todo::DataCenter::deleteItemDetailByID(const QString &itemID) {
     DaoFactory::getInstance()->getSQLDao()->deleteItemDetailByID(itemID);
+    DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemID(itemID);
 }
 
 void todo::DataCenter::insertItemDetail(const todo::ItemDetail &itemDetail) {
     DaoFactory::getInstance()->getSQLDao()->insertItemDetail(itemDetail);
-
+    int i = 1;
     for (auto const &tag : itemDetail.getTags()) {
-        DaoFactory::getInstance()->getSQLDao()->insertItemAndTagMatch(ItemDetailAndTag(itemDetail.getId(), tag.getId()));
+        DaoFactory::getInstance()->getSQLDao()->insertItemAndTagMatch(ItemDetailAndTag(itemDetail.getId(), tag.getId(), i));
+        ++i;
     }
 }
 
@@ -70,6 +90,7 @@ void todo::DataCenter::fillTagInfo(QList<todo::ItemDetail> &itemDetails) {
     }
 
     QList<ItemDetailAndTag> matches = DaoFactory::getInstance()->getSQLDao()->selectItemAndTagMatchByItemIDs(itemIDs);
+    std::sort(matches.begin(), matches.end(), compareFunc);
     for (auto const &match : matches) {
         for (auto &item : itemDetails) {
             if (item.getId() == match.getItemID()) {
