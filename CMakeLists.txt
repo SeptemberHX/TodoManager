@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(TodoManager)
 
 add_subdirectory(core)
+add_subdirectory(config)
 add_subdirectory(widgets)
 add_subdirectory(utils)
 add_subdirectory(dao)
