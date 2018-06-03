@@ -1,12 +1,18 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "widgets/logger.h"
+#include "./config/TodoConfig.h"
+
+#include <QStandardPaths>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    this->initConfig();
 
     this->splitter = new QSplitter(Qt::Vertical, this);
     this->todoListWidget = new TodoListWidget(this);
@@ -32,4 +38,9 @@ void MainWindow::logAppend(const QString &str)
 
 void MainWindow::change_statusBar_text(const QString &str) {
     statusBar()->showMessage(str);
+}
+
+void MainWindow::initConfig() {
+    todo::TodoConfig::getInstance()->setAppConfig(todo::AppConfig());
+    qDebug() << QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation);
 }

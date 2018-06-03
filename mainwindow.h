@@ -22,6 +22,8 @@ public:
     void logAppend(const QString &str);
 
 private:
+    void initConfig();
+
     Ui::MainWindow *ui;
     QHBoxLayout *mainLayout;
     QSplitter *splitter;

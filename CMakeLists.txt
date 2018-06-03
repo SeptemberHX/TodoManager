@@ -31,4 +31,4 @@ set(main_files
 add_executable(TodoManager ${main_files})
 
 # Use the Widgets module from Qt 5.
-target_link_libraries(TodoManager Qt5::Core Qt5::Gui Qt5::Widgets core widgets utils dao data)
+target_link_libraries(TodoManager Qt5::Core Qt5::Gui Qt5::Widgets core widgets utils dao data config)
