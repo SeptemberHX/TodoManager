@@ -20,7 +20,8 @@ set (widgets_files
 	taglabelwidget.cpp
 	flowlayout.cpp
 	itemlistitemwidget.cpp
-        ItemListItemDelegate.cpp ItemListItemDelegate.h)
+        ItemListItemDelegate.cpp ItemListItemDelegate.h
+	FetchConfigFilePathWidget.cpp)
 
 add_library(widgets ${widgets_files})
 target_link_libraries(widgets Qt5::Widgets Qt5::Core Qt5::Gui core utils data)

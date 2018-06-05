@@ -5,6 +5,7 @@
 #include "core/ItemDetail.h"
 #include "widgets/itemaddtagwidget.h"
 #include "widgets/taglabelwidget.h"
+#include "widgets/FetchConfigFilePathWidget.h"
 #include "utils/styleutils.h"
 #include "widgets/itemlistitemwidget.h"
 #include "utils/itemdetailutils.h"
@@ -19,8 +20,8 @@ int main(int argc, char *argv[])
     StyleUtils::setStyle(":/styles/defaultStyle.qss");
     qRegisterMetaTypeStreamOperators<todo::ItemDetail>();
 
-    MainWindow w;
-    w.show();
+//    MainWindow w;
+//    w.show();
 
 //    TodoListWidget tlw;
 //    tlw.show();
@@ -50,6 +51,9 @@ int main(int argc, char *argv[])
 //    todo::ItemTag tag("test");
 //    tag.setColor("#202387");
 //    daoFactory->getSQLDao()->insertItemTag(tag);
+
+    FetchConfigFilePathWidget fcfpd;
+    fcfpd.show();
 
     return a.exec();
 }

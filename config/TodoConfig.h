@@ -22,6 +22,8 @@ public:
 
     void setAppConfig(const AppConfig &appConfig);
 
+    void loadAllConfig();
+
 private:
     static TodoConfig *instance;
     SQLiteConfig sqLiteConfig;

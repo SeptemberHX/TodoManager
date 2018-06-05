@@ -4,6 +4,9 @@
 #include "./config/TodoConfig.h"
 
 #include <QStandardPaths>
+#include <QFileInfo>
+#include <QDir>
+#include <QSettings>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -42,5 +45,17 @@ void MainWindow::change_statusBar_text(const QString &str) {
 
 void MainWindow::initConfig() {
     todo::TodoConfig::getInstance()->setAppConfig(todo::AppConfig());
-    qDebug() << QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation);
+    QDir configDir(QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation)[0]);
+    if (!configDir.exists()) {
+        configDir.mkdir(configDir.path());
+    }
+
+    QString sqlConfigFileName("sql_config.ini");
+    QString fullSqlConfigFilePath = QDir::cleanPath(configDir.path() + QDir::separator() + sqlConfigFileName);
+    QSettings sqlConfigSettings(fullSqlConfigFilePath, QSettings::IniFormat);
+    if (!sqlConfigSettings.contains("SQLite/db_path")) {
+        sqlConfigSettings.beginGroup("SQLite");
+        sqlConfigSettings.setValue("db_path", "This is a test");
+        sqlConfigSettings.endGroup();
+    }
 }
