@@ -20,8 +20,8 @@ int main(int argc, char *argv[])
     StyleUtils::setStyle(":/styles/defaultStyle.qss");
     qRegisterMetaTypeStreamOperators<todo::ItemDetail>();
 
-//    MainWindow w;
-//    w.show();
+    MainWindow w;
+    w.show();
 
 //    TodoListWidget tlw;
 //    tlw.show();
@@ -52,8 +52,8 @@ int main(int argc, char *argv[])
 //    tag.setColor("#202387");
 //    daoFactory->getSQLDao()->insertItemTag(tag);
 
-    FetchConfigFilePathWidget fcfpd;
-    fcfpd.show();
+//    FetchConfigFilePathWidget fcfpd;
+//    fcfpd.show();
 
     return a.exec();
 }

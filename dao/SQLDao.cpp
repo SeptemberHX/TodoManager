@@ -9,6 +9,7 @@
 #include <iostream>
 #include "SQLDao.h"
 #include "../core/SqlErrorException.h"
+#include "../config/TodoConfig.h"
 
 
 QList<todo::ItemDetail> todo::SQLDao::selectItemDetailByDate(const QDate &targetDate) {
@@ -122,7 +123,7 @@ void todo::SQLDao::init() {
         this->db = QSqlDatabase::addDatabase("QSQLITE");
         this->db.setUserName("root");
         this->db.setPassword("");
-        this->db.setDatabaseName("todo_manager.db");
+        this->db.setDatabaseName(TodoConfig::getInstance()->getSqLiteConfig().getDbPath());
     }
 
     bool openResult = this->db.open();

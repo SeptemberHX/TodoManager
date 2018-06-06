@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "widgets/logger.h"
+#include "widgets/FetchConfigFilePathWidget.h"
 #include "./config/TodoConfig.h"
 
 #include <QStandardPaths>
@@ -55,7 +56,14 @@ void MainWindow::initConfig() {
     QSettings sqlConfigSettings(fullSqlConfigFilePath, QSettings::IniFormat);
     if (!sqlConfigSettings.contains("SQLite/db_path")) {
         sqlConfigSettings.beginGroup("SQLite");
-        sqlConfigSettings.setValue("db_path", "This is a test");
+        FetchConfigFilePathWidget fcfpw(this);
+        fcfpw.setWindowTitle(tr("Set sqlite db path"));
+        fcfpw.exec();
+        sqlConfigSettings.setValue("db_path", fcfpw.getFilePath());
         sqlConfigSettings.endGroup();
     }
+
+    todo::SQLiteConfig sqLiteConfig;
+    sqLiteConfig.setDbPath(sqlConfigSettings.value("SQLite/db_path").toString());
+    todo::TodoConfig::getInstance()->setSqLiteConfig(sqLiteConfig);
 }

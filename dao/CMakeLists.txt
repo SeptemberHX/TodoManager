@@ -9,4 +9,4 @@ set(files
 )
 
 add_library(dao ${files})
-target_link_libraries(dao Qt5::Core core Qt5::Sql)
+target_link_libraries(dao Qt5::Core core Qt5::Sql config)
