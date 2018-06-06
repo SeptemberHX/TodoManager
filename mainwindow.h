@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QSplitter>
 #include <QHBoxLayout>
+#include <QSystemTrayIcon>
 #include <QList>
 #include <QTimer>
 #include <QMutex>
@@ -41,6 +42,13 @@ private:
     QList<todo::ItemDetail> targetItemDetails;
     QMutex notificationListMutex;
     todo::DataCenter dataCenter;
+
+    // tray icon
+    QSystemTrayIcon *trayIcon;
+
+private slots:
+    void click_exit();
+    void trayIcon_clicked();
 
 public slots:
     void change_statusBar_text(const QString &str);

@@ -11,6 +11,7 @@
 #include <QSettings>
 #include <QDebug>
 #include <QMutexLocker>
+#include <QMenu>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -38,6 +39,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &MainWindow::update_notification_timer);
     this->update_notification_timer();
     // end
+
+    // tray icon
+    this->trayIcon = new QSystemTrayIcon(QIcon(":/icons/tray.png"), this);
+    QMenu *trayMenu = new QMenu(this);
+    QAction *quitAction = new QAction("Quit", this);
+    trayMenu->addAction(quitAction);
+    trayIcon->setContextMenu(trayMenu);
+    trayIcon->show();
+    connect(quitAction, &QAction::triggered, this, &MainWindow::click_exit);
+    connect(this->trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::trayIcon_clicked);
+
+    QApplication::setWindowIcon(QIcon(":/icons/tray.png"));
 }
 
 MainWindow::~MainWindow()
@@ -104,4 +117,19 @@ void MainWindow::update_notification_timer() {
     }
     this->timer->start(int(nextInterval));
     qDebug() << "Wait for " << int(nextInterval) / 1000 << " secs to notify next item";
+}
+
+void MainWindow::click_exit() {
+    this->trayIcon->hide();  // Must hide it, or the app will not quit.
+    this->close();
+}
+
+void MainWindow::trayIcon_clicked() {
+    if (!this->isVisible()) {
+        this->show();
+    } else if (this->isMinimized()) {
+        this->showNormal();
+    } else {
+        this->hide();
+    }
 }

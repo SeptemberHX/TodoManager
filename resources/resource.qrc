@@ -2,4 +2,7 @@
     <qresource prefix="/styles">
         <file>defaultStyle.qss</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file>tray.png</file>
+    </qresource>
 </RCC>
