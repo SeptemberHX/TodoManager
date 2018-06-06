@@ -37,11 +37,15 @@ void todo::DataCenter::updateItemDetailByID(const QString &itemID, const todo::I
         DaoFactory::getInstance()->getSQLDao()->insertItemAndTagMatch(ItemDetailAndTag(itemDetail.getId(), tag.getId(), i));
         ++i;
     }
+
+    emit(this->itemDetailModified());
 }
 
 void todo::DataCenter::deleteItemDetailByID(const QString &itemID) {
     DaoFactory::getInstance()->getSQLDao()->deleteItemDetailByID(itemID);
     DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemID(itemID);
+
+    emit(this->itemDetailModified());
 }
 
 void todo::DataCenter::insertItemDetail(const todo::ItemDetail &itemDetail) {
@@ -51,10 +55,14 @@ void todo::DataCenter::insertItemDetail(const todo::ItemDetail &itemDetail) {
         DaoFactory::getInstance()->getSQLDao()->insertItemAndTagMatch(ItemDetailAndTag(itemDetail.getId(), tag.getId(), i));
         ++i;
     }
+
+    emit(this->itemDetailModified());
 }
 
 void todo::DataCenter::updateDoneByID(const QString &itemID, bool flag) {
     DaoFactory::getInstance()->getSQLDao()->updateDoneByID(itemID, flag);
+
+    emit(this->itemDetailModified());
 }
 
 QList<todo::ItemTag> todo::DataCenter::selectItemTagById(const QString &tagId) {
@@ -98,4 +106,12 @@ void todo::DataCenter::fillTagInfo(QList<todo::ItemDetail> &itemDetails) {
             }
         }
     }
+}
+
+QList<todo::ItemDetail> todo::DataCenter::selectNextNotifiedItemDetail() {
+    return DaoFactory::getInstance()->getSQLDao()->selectNextNotifiedItemDetail();
+}
+
+todo::DataCenter::DataCenter(QObject *parent) : QObject(parent) {
+
 }

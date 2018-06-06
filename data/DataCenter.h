@@ -8,6 +8,7 @@
 
 #include <QString>
 #include <QList>
+#include <QObject>
 #include "../core/ItemDetail.h"
 #include "../dao/DaoFactory.h"
 #include "../core/ItemDetailAndTag.h"
@@ -19,8 +20,10 @@ namespace todo {
  * Other modules can only get data from DataCenter regardless of it's implementation.
  * DataCenter will use dao/DaoFactory to do next job.
  */
-class DataCenter {
+class DataCenter : public QObject {
+    Q_OBJECT
 public:
+    DataCenter(QObject *parent = nullptr);
 
     // ---------------- todo_item.item_detail Starts ----------------
     QList<ItemDetail> selectItemDetailByDate(const QDate &targetDate);
@@ -37,6 +40,13 @@ public:
     void deleteItemTagById(const QString &tagId);
     void insertItemTag(const ItemTag &tag);
     // ---------------- todo_item.tags Ends -----------------
+
+    // ---------------- for notification ----------------
+    QList<ItemDetail> selectNextNotifiedItemDetail();
+    // ---------------- ends ------------------
+
+signals:
+    void itemDetailModified();
 
 private:
     void fillTagInfo(QList<ItemDetail> &itemDetails);

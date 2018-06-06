@@ -425,3 +425,52 @@ todo::SQLDao::SQLDao(int type)
         this->sqlType = 1;
     }
 }
+
+QList<todo::ItemDetail> todo::SQLDao::selectNextNotifiedItemDetail() {
+    QList<ItemDetail> result;
+    QSqlQuery query(this->db);
+    query.prepare("SELECT startTime, targetDate"
+                  " FROM todo_items"
+                  " WHERE targetDate >= :targetDate AND startTime >= :startTime"
+                  " ORDER BY targetDate, startTime"
+                  " LIMIT 1;");
+    query.bindValue(":targetDate", QDate::currentDate());
+    query.bindValue(":startTime", QTime::currentTime());
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
+
+    if (query.next()) {
+        QTime startTime = query.value("startTime").toTime();
+        QDate targetDate = query.value("targetDate").toDate();
+        query.clear();
+        query.prepare("SELECT id, title, priority, description, parentID, startTime, endTime, done, targetDate, `type`, freq, freqType,"
+                      " createdTime, lastUpdatedTime"
+                      " FROM todo_items"
+                      " WHERE startTime = :startTime AND targetDate = :targetDate;");
+        query.bindValue(":startTime", startTime);
+        query.bindValue(":targetDate", targetDate);
+        if (!query.exec()) {
+            throw SqlErrorException();
+        }
+
+        while (query.next()) {
+            ItemDetail detail;
+            detail.setId(query.value("id").toString());
+            detail.setTitle(query.value("title").toString());
+            detail.setPriority(query.value("priority").toInt());
+            detail.setDescription(query.value("description").toString());
+            detail.setFromTime(query.value("startTime").toTime());
+            detail.setToTime(query.value("endTime").toTime());
+            detail.setDone(query.value("done").toBool());
+            detail.setTargetDate(query.value("targetDate").toDate());
+            detail.setMode(todo::ItemMode(query.value("type").toInt()));
+            detail.setCreatedTime(query.value("createdTime").toDateTime());
+            detail.setLastUpdatedTime(query.value("lastUpdatedTime").toDateTime());
+            // todo: parentID, freq, freqType in SELECT
+            result.append(detail);
+        }
+    }
+
+    return result;
+}

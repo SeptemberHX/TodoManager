@@ -9,6 +9,7 @@
 #include "utils/styleutils.h"
 #include "widgets/itemlistitemwidget.h"
 #include "utils/itemdetailutils.h"
+#include "utils/NofityUtils.h"
 #include "dao/DaoFactory.h"
 #include <QLabel>
 

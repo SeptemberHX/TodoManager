@@ -57,6 +57,10 @@ public:
     void deleteItemAndTagMatchByItemID(const QString &itemID) override;
     // End
 
+    // For notification
+    QList<ItemDetail> selectNextNotifiedItemDetail() override;
+    // End
+
     void init() override;
 
     ~SQLDao() override;

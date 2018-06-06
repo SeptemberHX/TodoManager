@@ -42,6 +42,10 @@ public:
     virtual void deleteItemAndTagMatchByItemID(const QString &itemID) = 0;
     // End
 
+    // For notification
+    virtual QList<ItemDetail> selectNextNotifiedItemDetail() = 0;
+    // End
+
     virtual void init() = 0;
     virtual ~AbstractDao() = default;
 };

@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "widgets/logger.h"
 #include "widgets/FetchConfigFilePathWidget.h"
+#include "utils/NofityUtils.h"
 #include "./config/TodoConfig.h"
 
 #include <QStandardPaths>
@@ -9,6 +10,7 @@
 #include <QDir>
 #include <QSettings>
 #include <QDebug>
+#include <QMutexLocker>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -28,6 +30,14 @@ MainWindow::MainWindow(QWidget *parent) :
     Logger::getInstance()->init(this->logWidget);
 
     this->setCentralWidget(this->splitter);
+
+    // notification timer
+    this->timer = new QTimer();
+    this->interval = 60000;
+    connect(this->timer, &QTimer::timeout, this, &MainWindow::update_notification_timer);
+    connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &MainWindow::update_notification_timer);
+    this->update_notification_timer();
+    // end
 }
 
 MainWindow::~MainWindow()
@@ -66,4 +76,32 @@ void MainWindow::initConfig() {
     todo::SQLiteConfig sqLiteConfig;
     sqLiteConfig.setDbPath(sqlConfigSettings.value("SQLite/db_path").toString());
     todo::TodoConfig::getInstance()->setSqLiteConfig(sqLiteConfig);
+}
+
+void MainWindow::update_notification_timer() {
+    QMutexLocker locker(&this->notificationListMutex);
+    for (auto const &item : this->targetItemDetails) {
+        if (QTime::currentTime().msec() - item.getFromTime().msec() >= 0
+                && QTime::currentTime().msec() - item.getFromTime().msec() <= 30000) {
+            todo::NofityUtils::push(tr("Task begins!"), item.getTitle());
+        }
+    }
+    this->targetItemDetails.clear();
+
+    // select most recently items, and set it to targetItemDetails
+    this->targetItemDetails = this->dataCenter.selectNextNotifiedItemDetail();
+    for (auto const &item : this->targetItemDetails) {
+        qDebug() << "Next item to notify: " << item.getTitle();
+    }
+
+    // calculate next timeout round
+    qint64 nextInterval = this->interval;
+    if (!this->targetItemDetails.empty()) {
+        QDateTime nextItemTime;
+        nextItemTime.setDate(this->targetItemDetails[0].getTargetDate());
+        nextItemTime.setTime(this->targetItemDetails[0].getFromTime());
+        nextInterval = QDateTime::currentDateTime().msecsTo(nextItemTime);
+    }
+    this->timer->start(int(nextInterval));
+    qDebug() << "Wait for " << int(nextInterval) / 1000 << " secs to notify next item";
 }

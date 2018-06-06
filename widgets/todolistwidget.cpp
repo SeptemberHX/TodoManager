@@ -57,6 +57,8 @@ TodoListWidget::TodoListWidget(QWidget *parent) :
     connect(this->detailWidget, &ItemDetailWidget::deleteButtonClicked, this, &TodoListWidget::deleteBtn_clicked);
     // end
 
+    connect(&this->dataCenter, &todo::DataCenter::itemDetailModified, this, &TodoListWidget::database_modified);
+
     ui->filterDateEdit->setDate(QDate::currentDate());
 }
 
@@ -241,4 +243,8 @@ void TodoListWidget::updateItemDetail(const todo::ItemDetail &itemDetail) {
         // we need to reload detail widget when list widget send selectedItemChanged signal.
     }
     this->isCurrentItemEdited = false;  // reset the flag
+}
+
+void TodoListWidget::database_modified() {
+    emit(this->databaseModified());
 }

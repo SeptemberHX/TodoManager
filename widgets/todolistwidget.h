@@ -60,8 +60,11 @@ private:
     void updateItemDetail(const todo::ItemDetail &itemDetail);
     void updateStatusBarInfo();
 
+    void database_modified();
+
 signals:
     void changeStatusBarText(const QString &newStr);
+    void databaseModified();  // for notification
 
 private slots:
     void todayBtn_clicked();
