@@ -96,7 +96,8 @@ void MainWindow::update_notification_timer() {
     for (auto const &item : this->targetItemDetails) {
         if (QTime::currentTime().msec() - item.getFromTime().msec() >= 0
                 && QTime::currentTime().msec() - item.getFromTime().msec() <= 30000) {
-            todo::NofityUtils::push(tr("Task begins!"), item.getTitle());
+//            NofityUtils::push(tr("Task begins!"), item.getTitle());
+            this->trayIcon->showMessage(tr("Task begins!"), item.getTitle(), QIcon(":/icons/tray.png"));
         }
     }
     this->targetItemDetails.clear();
