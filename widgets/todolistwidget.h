@@ -14,6 +14,35 @@ namespace Ui {
 class TodoListWidget;
 }
 
+enum TodoListWidgetMode {
+    INBOX,
+    DAILY
+};
+
+class InboxViewFilterCondition {
+public:
+    InboxViewFilterCondition();
+
+    const QDate &getTargetFromDate() const;
+
+    void setTargetFromDate(const QDate &targetFromDate);
+
+    const QDate &getTargetToDate() const;
+
+    void setTargetToDate(const QDate &targetToDate);
+
+    bool isShowDoneItems() const;
+
+    void setShowDoneItems(bool showDoneItems);
+
+    bool check(const todo::ItemDetail &item);
+
+private:
+    QDate targetFromDate;
+    QDate targetToDate;
+    bool showDoneItems;
+};
+
 /**
  * This class is the parent widget of detail widget and list widget
  * It handles all data operations
@@ -28,8 +57,11 @@ class TodoListWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit TodoListWidget(QWidget *parent = 0);
+    explicit TodoListWidget(QWidget *parent = 0, TodoListWidgetMode viewMode = TodoListWidgetMode::DAILY);
     ~TodoListWidget();
+
+    void changeToInboxMode();
+    void changeToDailyMode();
 
 private:
     Ui::TodoListWidget *ui;
@@ -41,12 +73,15 @@ private:
 
     bool isCurrentItemEdited;
     todo::ItemDetail currentItem;
-
     QMap<QString, todo::ItemDetail> currItemDetailMap;
-
     todo::DataCenter dataCenter;
 
+    TodoListWidgetMode viewMode;
+    InboxViewFilterCondition currentInboxCondition;
+
     void loadItemDetailToListView(const QList<todo::ItemDetail> &itemDetails);
+    void loadItemsByInboxCondition(const InboxViewFilterCondition &cond);
+    void loadItems(const QList<todo::ItemDetail> &itemDetails);
 
     void dealWithNewItemDetail(const todo::ItemDetail &newItemDetail);
     void saveNewItemDetail(const todo::ItemDetail &newItemDetail);
@@ -87,6 +122,8 @@ private slots:
     void saveBtn_clicked(const todo::ItemDetail &currentItemDetail);
     void markDone_clicked(bool flag);
     void deleteBtn_clicked();
+
+    void inboxFilter_changed(const InboxViewFilterCondition &newCondition);
 };
 
 #endif // TODOLISTWIDGET_H

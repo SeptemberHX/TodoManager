@@ -27,6 +27,8 @@ public:
     void insertItemDetail(const ItemDetail &itemDetail) override;
 
     void updateDoneByID(const QString &itemID, bool flag) override;
+
+    QList<ItemDetail> selectItemDetailByDate(const QDate &fromDate, const QDate &toDate) override;
     // End
 
     // ItemTag

@@ -474,3 +474,36 @@ QList<todo::ItemDetail> todo::SQLDao::selectNextNotifiedItemDetail() {
 
     return result;
 }
+
+QList<todo::ItemDetail> todo::SQLDao::selectItemDetailByDate(const QDate &fromDate, const QDate &toDate) {
+    QList<ItemDetail> resultList;
+    QSqlQuery query(this->db);
+    query.prepare("SELECT id, title, priority, description, parentID, startTime, endTime, done, targetDate, `type`, freq, freqType,"
+                  " createdTime, lastUpdatedTime"
+                  " FROM todo_items"
+                  " WHERE targetDate >= :fromDate AND targetDate <= :toDate;");
+    query.bindValue(":fromDate", fromDate);
+    query.bindValue(":toDate", toDate);
+    if (!query.exec()) {
+        throw SqlErrorException();
+    } else {
+        while (query.next()) {
+            ItemDetail detail;
+            detail.setId(query.value("id").toString());
+            detail.setTitle(query.value("title").toString());
+            detail.setPriority(query.value("priority").toInt());
+            detail.setDescription(query.value("description").toString());
+            detail.setFromTime(query.value("startTime").toTime());
+            detail.setToTime(query.value("endTime").toTime());
+            detail.setDone(query.value("done").toBool());
+            detail.setTargetDate(query.value("targetDate").toDate());
+            detail.setMode(todo::ItemMode(query.value("type").toInt()));
+            detail.setCreatedTime(query.value("createdTime").toDateTime());
+            detail.setLastUpdatedTime(query.value("lastUpdatedTime").toDateTime());
+            // todo: parentID, freq, freqType in SELECT
+            resultList.append(detail);
+        }
+    }
+
+    return resultList;
+}

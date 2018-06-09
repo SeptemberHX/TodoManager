@@ -12,8 +12,7 @@ namespace todo {
 class DateFilter : public AbstractFilter {
 public:
     DateFilter(const QDate &date);
-    QList<ItemDetail> filter(const QList<ItemDetail> &itemDetails) override;
-
+    bool check(const ItemDetail &itemDetails) override;
 private:
     QDate targetDate;
 };

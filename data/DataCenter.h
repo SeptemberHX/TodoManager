@@ -31,6 +31,7 @@ public:
     void deleteItemDetailByID(const QString &itemID);
     void insertItemDetail(const ItemDetail &itemDetail);
     void updateDoneByID(const QString &itemID, bool flag);
+    QList<ItemDetail> selectItemDetailByDate(const QDate &fromDate, const QDate &toDate);
     // ---------------- todo_item.item_detail Ends ----------------
 
     // ---------------- todo_item.tags Starts -----------------

@@ -2,14 +2,16 @@
 #include "ui_todolistwidget.h"
 #include "../utils/itemdetailutils.h"
 #include "../core/SqlErrorException.h"
+#include "../data/filters/DateFilter.h"
 #include <QDebug>
 #include <QInputDialog>
 #include <QMessageBox>
 
-TodoListWidget::TodoListWidget(QWidget *parent) :
+TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
     QWidget(parent),
     ui(new Ui::TodoListWidget),
-    isCurrentItemEdited(false)
+    isCurrentItemEdited(false),
+    viewMode(viewMode)
 {
     ui->setupUi(this);
 
@@ -59,7 +61,18 @@ TodoListWidget::TodoListWidget(QWidget *parent) :
 
     connect(&this->dataCenter, &todo::DataCenter::itemDetailModified, this, &TodoListWidget::database_modified);
 
-    ui->filterDateEdit->setDate(QDate::currentDate());
+    switch (this->viewMode) {
+        case TodoListWidgetMode::DAILY:
+            this->changeToDailyMode();
+            ui->filterDateEdit->setDate(QDate::currentDate());
+            break;
+        case TodoListWidgetMode::INBOX:
+            this->changeToInboxMode();
+            this->loadItemsByInboxCondition(this->currentInboxCondition);
+            break;
+        default:
+            break;
+    }
 }
 
 TodoListWidget::~TodoListWidget()
@@ -94,12 +107,15 @@ void TodoListWidget::dealWithNewItemDetail(const todo::ItemDetail &newItemDetail
     }
 
     // step 2: save it to currItemDetails if possible
-    if (newItemDetail.getTargetDate() == ui->filterDateEdit->date()) {
-        this->currItemDetailMap.insert(newItemDetail.getId(), newItemDetail);
-    }
+    this->currItemDetailMap.insert(newItemDetail.getId(), newItemDetail);
 
     // step 3: load new item to list view if possible
-    this->addNewItemDetailToListView(newItemDetail);
+    if (this->viewMode == TodoListWidgetMode::DAILY && newItemDetail.getTargetDate() == ui->filterDateEdit->date()) {
+        this->addNewItemDetailToListView(newItemDetail);
+    } else if (this->viewMode == TodoListWidgetMode::INBOX && this->currentInboxCondition.check(newItemDetail)) {
+        this->addNewItemDetailToListView(newItemDetail);
+    }
+
 
     // step 4: change status bar info
     this->updateStatusBarInfo();
@@ -165,18 +181,11 @@ void TodoListWidget::date_filter_changed() {
     QDate targetDate = ui->filterDateEdit->date();
     auto items = this->dataCenter.selectItemDetailByDate(targetDate);
 
-    // First, save it to this->currentItemDetailMap
-    this->currItemDetailMap.clear();
-    for (auto &item : items) {
-        this->currItemDetailMap.insert(item.getId(), item);
-    }
-    this->isCurrentItemEdited = false;  // don't forget set isCurrentItemEdited to false !
+    this->listWidget->clearFilters();
+    todo::DateFilter dateFilter(targetDate);
+    this->listWidget->addFilter<todo::DateFilter>(dateFilter);
 
-    // Second, load them to list view.
-    this->listWidget->loadItemDetails(items);
-
-    // Third, change status bar info
-    this->updateStatusBarInfo();
+    this->loadItems(items);
 }
 
 void TodoListWidget::preDayBtn_clicked() {
@@ -200,8 +209,8 @@ void TodoListWidget::markDone_clicked(bool flag) {
     this->dataCenter.updateDoneByID(this->currentItem.getId(), flag);
     this->currItemDetailMap[this->currentItem.getId()].setDone(flag);
     this->currentItem.setDone(flag);
-    this->listWidget->refresh_item_info(this->currentItem);
     this->isCurrentItemEdited = false;
+    this->listWidget->refresh_or_remove_item_info(this->currentItem);
     this->updateStatusBarInfo();
 }
 
@@ -232,19 +241,91 @@ void TodoListWidget::updateItemDetail(const todo::ItemDetail &itemDetail) {
     todo::ItemDetail curr(itemDetail);
     curr.setLastUpdatedTime(QDateTime::currentDateTime());
     this->dataCenter.updateItemDetailByID(curr.getId(), curr);  // save to database
-    if (curr.getTargetDate() == ui->filterDateEdit->date()) {
-        this->currItemDetailMap[curr.getId()] = curr;  // save it to detail map
-        this->listWidget->refresh_item_info(curr);  // change list widget detail view
-        this->detailWidget->loadItemDetail(curr);  // change detail widget content. It will not change by iteself.
-    } else {  // if target date changed, remove it.
-        this->currItemDetailMap.remove(curr.getId());
-        this->listWidget->removeItemDetailByID(curr.getId());
-        // we can't change detail widget here because this->curr not refreshed yet.
-        // we need to reload detail widget when list widget send selectedItemChanged signal.
-    }
+    this->currItemDetailMap[curr.getId()] = curr;  // save it to detail map
+    this->detailWidget->loadItemDetail(curr);  // change detail widget content. It will not change by itself.
+    this->listWidget->refresh_or_remove_item_info(curr);  // refresh item if meets condition, or remove it.
     this->isCurrentItemEdited = false;  // reset the flag
 }
 
 void TodoListWidget::database_modified() {
     emit(this->databaseModified());
+}
+
+void TodoListWidget::changeToInboxMode() {
+    ui->inboxModeWidget->show();
+    ui->dailyModeWidget->hide();
+    this->viewMode = TodoListWidgetMode::INBOX;
+}
+
+void TodoListWidget::changeToDailyMode() {
+    ui->inboxModeWidget->hide();
+    ui->dailyModeWidget->show();
+    this->viewMode = TodoListWidgetMode::DAILY;
+}
+
+void TodoListWidget::inboxFilter_changed(const InboxViewFilterCondition &newCondition) {
+    this->currentInboxCondition = newCondition;
+    this->loadItemsByInboxCondition(newCondition);
+}
+
+void TodoListWidget::loadItemsByInboxCondition(const InboxViewFilterCondition &cond) {
+    auto items = this->dataCenter.selectItemDetailByDate(cond.getTargetFromDate(), cond.getTargetToDate());
+    this->loadItems(items);
+}
+
+void TodoListWidget::loadItems(const QList<todo::ItemDetail> &items) {
+    // First, save it to this->currentItemDetailMap
+    this->currItemDetailMap.clear();
+    for (auto &item : items) {
+        this->currItemDetailMap.insert(item.getId(), item);
+    }
+    this->isCurrentItemEdited = false;  // don't forget set isCurrentItemEdited to false !
+
+    // Second, load them to list view.
+    this->listWidget->loadItemDetails(items);
+
+    // Third, change status bar info
+    this->updateStatusBarInfo();
+}
+
+// --------- InboxViewFilterCondition --------
+
+const QDate &InboxViewFilterCondition::getTargetFromDate() const {
+    return targetFromDate;
+}
+
+void InboxViewFilterCondition::setTargetFromDate(const QDate &targetFromDate) {
+    InboxViewFilterCondition::targetFromDate = targetFromDate;
+}
+
+const QDate &InboxViewFilterCondition::getTargetToDate() const {
+    return targetToDate;
+}
+
+void InboxViewFilterCondition::setTargetToDate(const QDate &targetToDate) {
+    InboxViewFilterCondition::targetToDate = targetToDate;
+}
+
+bool InboxViewFilterCondition::isShowDoneItems() const {
+    return showDoneItems;
+}
+
+void InboxViewFilterCondition::setShowDoneItems(bool showDoneItems) {
+    InboxViewFilterCondition::showDoneItems = showDoneItems;
+}
+
+bool InboxViewFilterCondition::check(const todo::ItemDetail &item) {
+    bool flag = true;
+    if (item.getTargetDate() < this->targetFromDate || item.getTargetDate() > this->targetToDate) {
+        flag = false;
+    } else if (item.isDone() != this->showDoneItems) {
+        flag = false;
+    }
+    return flag;
+}
+
+InboxViewFilterCondition::InboxViewFilterCondition() {
+    this->setTargetFromDate(QDate::currentDate().addDays(-7));
+    this->setTargetToDate(QDate::currentDate());
+    this->setShowDoneItems(false);
 }

@@ -19,7 +19,8 @@ namespace todo {
  */
 class AbstractFilter {
 public:
-    virtual QList<ItemDetail> filter(const QList<ItemDetail> &itemDetails) = 0;
+    QList<ItemDetail> filter(const QList<ItemDetail> &itemDetails);
+    virtual bool check(const ItemDetail &itemDetails) = 0;
 };
 
 }

@@ -5,18 +5,16 @@
 #include <QDebug>
 #include "DataCenter.h"
 
-int compareFunc(const todo::ItemDetailAndTag &t1, const todo::ItemDetailAndTag &t2) {
+bool compareFunc(const todo::ItemDetailAndTag &t1, const todo::ItemDetailAndTag &t2) {
     if (t1.getItemID() < t2.getItemID()) {
-        return -1;
+        return true;
     } else if (t1.getItemID() > t2.getItemID()) {
-        return 1;
+        return false;
     } else {
         if (t1.getOrder() < t2.getOrder()) {
-            return -1;
-        } else if (t1.getOrder() == t2.getOrder()) {
-            return 0;
+            return true;
         } else {
-            return 1;
+            return false;
         }
     }
 }
@@ -98,6 +96,7 @@ void todo::DataCenter::fillTagInfo(QList<todo::ItemDetail> &itemDetails) {
     }
 
     QList<ItemDetailAndTag> matches = DaoFactory::getInstance()->getSQLDao()->selectItemAndTagMatchByItemIDs(itemIDs);
+
     std::sort(matches.begin(), matches.end(), compareFunc);
     for (auto const &match : matches) {
         for (auto &item : itemDetails) {
@@ -114,4 +113,10 @@ QList<todo::ItemDetail> todo::DataCenter::selectNextNotifiedItemDetail() {
 
 todo::DataCenter::DataCenter(QObject *parent) : QObject(parent) {
 
+}
+
+QList<todo::ItemDetail> todo::DataCenter::selectItemDetailByDate(const QDate &fromDate, const QDate &toDate) {
+    auto results = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByDate(fromDate, toDate);
+    this->fillTagInfo(results);
+    return results;
 }

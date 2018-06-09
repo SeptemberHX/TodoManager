@@ -21,16 +21,25 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->initConfig();
 
-    this->splitter = new QSplitter(Qt::Vertical, this);
     this->todoListWidget = new TodoListWidget(this);
-    this->logWidget = new LogWidget(this);
 
-    splitter->addWidget(this->todoListWidget);
-    splitter->addWidget(this->logWidget);
+    this->inboxViewWidget = new TodoListWidget(this, TodoListWidgetMode::INBOX);
 
+    this->logWidget = new LogWidget();
     Logger::getInstance()->init(this->logWidget);
+//    this->splitter = new QSplitter(Qt::Vertical, this);
+//    splitter->addWidget(this->todoListWidget);
+//    splitter->addWidget(this->logWidget);
+//    this->setCentralWidget(this->splitter);
 
-    this->setCentralWidget(this->splitter);
+    // multi view mode support
+    this->viewButtonGroup = new QButtonGroup(this);
+    this->viewButtonGroup->addButton(ui->inboxModePushButton);
+    this->viewButtonGroup->addButton(ui->dailyModePushButton);
+    dailyMode = ui->stackedWidget->addWidget(this->todoListWidget);
+    inboxMode = ui->stackedWidget->addWidget(this->inboxViewWidget);
+    connect(this->viewButtonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, &MainWindow::modeBtn_clicked);
+    ui->inboxModePushButton->click();
 
     // notification timer
     this->timer = new QTimer();
@@ -132,5 +141,14 @@ void MainWindow::trayIcon_clicked() {
         this->showNormal();
     } else {
         this->hide();
+    }
+}
+
+void MainWindow::modeBtn_clicked(QAbstractButton *button) {
+    QPushButton *btn = dynamic_cast<QPushButton*>(button);
+    if (btn == ui->inboxModePushButton) {
+        ui->stackedWidget->setCurrentIndex(this->inboxMode);
+    } else if (btn == ui->dailyModePushButton) {
+        ui->stackedWidget->setCurrentIndex(this->dailyMode);
     }
 }

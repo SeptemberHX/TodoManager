@@ -30,9 +30,9 @@ ItemListWidget::~ItemListWidget()
 
 void ItemListWidget::addItemDetail(const todo::ItemDetail &item)
 {
-    auto newListItem = new QStandardItem();
-    newListItem->setData(QVariant::fromValue(item), Qt::UserRole + 1);
-    this->itemModel->insertRow(0, newListItem);
+    if (this->checkItem(item)) {
+        this->addItemDetail_(item);
+    }
 }
 
 void ItemListWidget::refresh_item_info(const todo::ItemDetail &item)
@@ -85,8 +85,38 @@ void ItemListWidget::clearFilters() {
     for (auto ptr : this->filters) {
         delete ptr;
     }
+    this->filters.clear();
 }
 
-void ItemListWidget::addDateFilter(const QDate &date) {
-    this->filters.append(new todo::DateFilter(date));
+QList<todo::ItemDetail> ItemListWidget::filtItemList(const QList<todo::ItemDetail> &details) {
+    QList<todo::ItemDetail> resultLists = details;
+    for (auto filterPtr : this->filters) {
+        resultLists = filterPtr->filter(resultLists);
+    }
+    return resultLists;
+}
+
+bool ItemListWidget::checkItem(const todo::ItemDetail &detail) {
+    bool passCheckFlag = true;
+    for (auto filterPtr : this->filters) {
+        passCheckFlag &= filterPtr->check(detail);
+        if (!passCheckFlag) {
+            break;
+        }
+    }
+    return passCheckFlag;
+}
+
+void ItemListWidget::addItemDetail_(const todo::ItemDetail &item) {
+    auto newListItem = new QStandardItem();
+    newListItem->setData(QVariant::fromValue(item), Qt::UserRole + 1);
+    this->itemModel->insertRow(0, newListItem);
+}
+
+void ItemListWidget::refresh_or_remove_item_info(const todo::ItemDetail &item) {
+    if (this->checkItem(item)) {
+        this->refresh_item_info(item);
+    } else {
+        this->removeItemDetailByID(item.getId());
+    }
 }
