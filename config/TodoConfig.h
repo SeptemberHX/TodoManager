@@ -7,6 +7,7 @@
 
 #include "SQLiteConfig.h"
 #include "AppConfig.h"
+#include "UIConfig.h"
 
 namespace todo {
 
@@ -22,12 +23,17 @@ public:
 
     void setAppConfig(const AppConfig &appConfig);
 
+    const UIConfig &getUiConfig() const;
+
+    void setUiConfig(const UIConfig &uiConfig);
+
     void loadAllConfig();
 
 private:
     static TodoConfig *instance;
     SQLiteConfig sqLiteConfig;
     AppConfig appConfig;
+    UIConfig uiConfig;
 };
 
 }

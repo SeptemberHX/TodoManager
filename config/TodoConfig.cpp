@@ -28,3 +28,11 @@ const todo::AppConfig &todo::TodoConfig::getAppConfig() const {
 void todo::TodoConfig::setAppConfig(const todo::AppConfig &appConfig) {
     TodoConfig::appConfig = appConfig;
 }
+
+const todo::UIConfig &todo::TodoConfig::getUiConfig() const {
+    return uiConfig;
+}
+
+void todo::TodoConfig::setUiConfig(const todo::UIConfig &uiConfig) {
+    TodoConfig::uiConfig = uiConfig;
+}

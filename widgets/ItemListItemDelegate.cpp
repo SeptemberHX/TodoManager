@@ -7,6 +7,7 @@
 #include <QDebug>
 #include "ItemListItemDelegate.h"
 #include "../core/ItemDetail.h"
+#include "../config/TodoConfig.h"
 
 ItemListItemDelegate::ItemListItemDelegate(QObject *parent)
     : QStyledItemDelegate(parent) {
@@ -56,12 +57,32 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     painter->setPen(Qt::black);
     QBrush oldBrush = painter->brush();
     QMargins titleMargins(10, 5, 10, 2);
-    int titleWidth = option.rect.width() - 2 * arcLength - titleMargins.left() - titleMargins.right();
+    int priorityNumWidth = 20;
+    int titleSpace = 5;
+    int titleWidth = option.rect.width() - 2 * arcLength - titleMargins.left() - titleMargins.right() - priorityNumWidth - titleSpace;
     int titleHeight = 30;
     auto titleRect = QRect(option.rect.topLeft() + QPoint(titleMargins.left() + arcLength, titleMargins.top()),
             QSize(titleWidth, titleHeight));
     painter->drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter,
                       this->elideText(itemDetail.getTitle(), painter->fontMetrics(), titleWidth));
+
+    // draw target date
+    painter->setFont(QFont("Arias", 11));
+    QRect priorityNumRect(titleRect.right() + titleSpace, titleRect.top() + 5, priorityNumWidth, priorityNumWidth);
+    oldBrush = painter->brush();
+
+    QColor priorityBackgroundColor = QColor(Qt::red);
+    auto pbcMap = todo::TodoConfig::getInstance()->getUiConfig().getListViewPrioriyBackgroundColorMap();
+    if (pbcMap.find(itemDetail.getPriority()) != pbcMap.end()) {
+        priorityBackgroundColor = pbcMap[itemDetail.getPriority()];
+    }
+    painter->setBrush(priorityBackgroundColor);
+    painter->setPen(Qt::NoPen);
+    painter->drawEllipse(priorityNumRect);
+
+    painter->setPen(Qt::white);
+    painter->drawText(priorityNumRect, Qt::AlignHCenter | Qt::AlignVCenter, QString::number(itemDetail.getPriority()));
+    painter->setBrush(oldBrush);
 
     // draw tags
     QMargins tagMargins(3, 1, 3, 1);
@@ -98,7 +119,7 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
         }
     }
 
-    // draw priority and time info
+    // draw date and time info
     painter->setFont(QFont("Arias", 8));
     painter->setPen(Qt::gray);
     QMargins infoMargins(5, 5, 5, 5);
@@ -106,34 +127,19 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
             + tagGroupMargins.top() + tagGroupRect.height() + tagGroupMargins.bottom() + infoMargins.top();
     int infoWidth = 100;
     int infoHeight = option.rect.height() - infoRectTop - infoMargins.bottom();
-    QRect priorityRect(
+    QRect dateRect(
             option.rect.right() - arcLength - infoMargins.right() - infoWidth,
             option.rect.bottom() - infoMargins.bottom() - infoHeight,
             infoWidth,
             infoHeight / 2
     );
-    QString priorityPrompt("Priority: ");
-    painter->drawText(priorityRect, Qt::AlignLeft | Qt::AlignBottom, priorityPrompt);
-
-    // add circle for priority num to highlight it
-    QRect priorityPromptRect = painter->fontMetrics().boundingRect(priorityRect.left(), priorityRect.top(),
-            priorityRect.width(), priorityRect.height(), Qt::AlignLeft | Qt::AlignBottom, priorityPrompt);
-    QRect priorityNumRect(priorityPromptRect.topRight() + QPoint(10, 0),
-                          priorityPromptRect.bottomRight() + QPoint(priorityPromptRect.height() + 10, 0));
-    oldBrush = painter->brush();
-    painter->setBrush(Qt::red);
-    painter->setPen(Qt::NoPen);
-    painter->drawEllipse(priorityNumRect);
-
-    painter->setPen(Qt::white);
-    painter->drawText(priorityNumRect, Qt::AlignHCenter | Qt::AlignVCenter, QString::number(itemDetail.getPriority()));
-    painter->setBrush(oldBrush);
+    painter->drawText(dateRect, Qt::AlignLeft | Qt::AlignBottom, itemDetail.getTargetDate().toString("yyyy/MM/dd"));
 
     // draw schedule time scope
-    QRect timeRect(priorityRect);
+    QRect timeRect(dateRect);
     if (itemDetail.getMode() != todo::ItemMode::SIMPLE) {
         painter->setPen(Qt::gray);
-        timeRect.moveBottom(priorityRect.bottom() + infoHeight / 2);
+        timeRect.moveBottom(dateRect.bottom() + infoHeight / 2);
         painter->drawText(timeRect, Qt::AlignLeft | Qt::AlignBottom,
                           itemDetail.getFromTime().toString("hh:mm") + "-" + itemDetail.getToTime().toString("hh:mm"));
     }
