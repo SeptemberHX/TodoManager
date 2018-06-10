@@ -22,7 +22,7 @@ public:
     ~ItemListWidget();
 
     /**
-     * if new item meets the conditions, add it
+     * if new item meets the conditions, add it to correct position
      * @param item
      */
     void addItemDetail(const todo::ItemDetail &item);
@@ -58,6 +58,13 @@ public slots:
     void refresh_item_info(const todo::ItemDetail &item);
 
     /**
+     * Refresh item info.
+     * AND MOVE IT TO CORRECT POSITION DUE TO SORTERS
+     * @param item
+     */
+    void refresh_item_info_and_sort(const todo::ItemDetail &item);
+
+    /**
      * Same like refresh_item_info. But it will remove item if item can't meet the condition.
      */
     void refresh_or_remove_item_info(const todo::ItemDetail &item);
@@ -77,6 +84,13 @@ private:
     QList<todo::ItemDetail> filtItemList(const QList<todo::ItemDetail> &details);
 
     QList<todo::ItemDetail> sortItemlist(const QList<todo::ItemDetail> &details);
+
+    /**
+     * find which row item is at.
+     * @param item
+     * @return -1 if not exists
+     */
+    int findRow(const todo::ItemDetail &item);
 
     /**
      * add item to list view without considering whether it meets the conditions or not

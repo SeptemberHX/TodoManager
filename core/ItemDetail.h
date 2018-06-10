@@ -29,6 +29,7 @@ namespace todo {
     public:
         ItemDetail();
         explicit ItemDetail(QString title);
+        ~ItemDetail() = default;
 
         void addTag(const ItemTag &tag);
         void removeTag(const ItemTag &tag);

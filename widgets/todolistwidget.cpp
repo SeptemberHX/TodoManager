@@ -90,7 +90,7 @@ void TodoListWidget::todayBtn_clicked()
 }
 
 void TodoListWidget::loadItemDetailToListView(const QList<todo::ItemDetail> &itemDetails) {
-    for (auto &itemDetail : itemDetails) {
+    foreach (auto const &itemDetail, itemDetails) {
         this->listWidget->addItemDetail(itemDetail);
     }
 }
@@ -228,7 +228,7 @@ void TodoListWidget::deleteBtn_clicked() {
 void TodoListWidget::updateStatusBarInfo() {
     int itemCount = this->currItemDetailMap.size();
     int doneItemCount = 0;
-    for (auto &item : this->currItemDetailMap.values()) {
+    foreach (auto const &item, this->currItemDetailMap.values()) {
         if (item.isDone()) {
             ++doneItemCount;
         }
@@ -276,11 +276,8 @@ void TodoListWidget::loadItemsByInboxCondition(const InboxViewFilterCondition &c
 void TodoListWidget::loadItems(const QList<todo::ItemDetail> &items) {
     // First, save it to this->currentItemDetailMap
     this->currItemDetailMap.clear();
-    for (auto &item : items) {
-        // QMap::insert behaves strange with Qt 5.11.0
-        // During testing, items.size() = 1, but in updateStatusBarInfo() map.size() = 256.
-        // Really strange.
-        this->currItemDetailMap[item.getId()] = item;
+    foreach (auto const &item, items) {
+        this->currItemDetailMap.insert(item.getId(), item);
     }
     this->isCurrentItemEdited = false;  // don't forget set isCurrentItemEdited to false !
 
@@ -289,6 +286,14 @@ void TodoListWidget::loadItems(const QList<todo::ItemDetail> &items) {
 
     // Third, change status bar info
     this->updateStatusBarInfo();
+}
+
+void TodoListWidget::refresh_current_items() {
+    if (this->viewMode == TodoListWidgetMode::DAILY) {
+        this->date_filter_changed();
+    } else if (this->viewMode == TodoListWidgetMode::INBOX) {
+        this->loadItemsByInboxCondition(this->currentInboxCondition);
+    }
 }
 
 // --------- InboxViewFilterCondition --------

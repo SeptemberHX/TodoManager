@@ -63,6 +63,12 @@ public:
     void changeToInboxMode();
     void changeToDailyMode();
 
+public slots:
+    /**
+     * read data from DataCenter again.
+     */
+    void refresh_current_items();
+
 private:
     Ui::TodoListWidget *ui;
     QSplitter *mainSplitter;

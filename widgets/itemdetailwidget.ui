@@ -379,7 +379,14 @@
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QSpinBox" name="prioritySpinBox"/>
+                   <widget class="QSpinBox" name="prioritySpinBox">
+                    <property name="minimum">
+                     <number>1</number>
+                    </property>
+                    <property name="maximum">
+                     <number>5</number>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </widget>

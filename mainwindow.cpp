@@ -38,8 +38,12 @@ MainWindow::MainWindow(QWidget *parent) :
     this->viewButtonGroup->addButton(ui->dailyModePushButton);
     dailyMode = ui->stackedWidget->addWidget(this->todoListWidget);
     inboxMode = ui->stackedWidget->addWidget(this->inboxViewWidget);
+//    connect(this->inboxViewWidget, &TodoListWidget::databaseModified, this->todoListWidget, &TodoListWidget::refresh_current_items);
+//    connect(this->todoListWidget, &TodoListWidget::databaseModified, this->inboxViewWidget, &TodoListWidget::refresh_current_items);
+
     connect(this->viewButtonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, &MainWindow::modeBtn_clicked);
     ui->inboxModePushButton->click();
+//    ui->stackedWidget->setCurrentIndex(dailyMode);
 
     // notification timer
     this->timer = new QTimer();
