@@ -3,3 +3,7 @@
 //
 
 #include "AbstractSorter.h"
+
+todo::AbstractSorter::AbstractSorter(bool desc) : desc(desc) {
+
+}

@@ -6,6 +6,9 @@
 #define TODOMANAGER_ABSTRACTSORTER_H
 
 
+#include <QList>
+#include "../../core/ItemDetail.h"
+
 namespace todo {
 
 /**
@@ -15,7 +18,18 @@ namespace todo {
  * Complex rules should be made of some simple sorters.
  */
 class AbstractSorter {
+public:
+    AbstractSorter(bool desc = false);
+    /**
+     * Child classes just need to implement compare function
+     * @param item1
+     * @param item2
+     * @return -1 if item1 < item2; 0 if item1 = item2; 1 if item1 > item2
+     */
+    virtual int compare(const ItemDetail &item1, const ItemDetail &item2) = 0;
 
+protected:
+    bool desc;
 };
 
 }
