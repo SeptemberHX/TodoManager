@@ -52,6 +52,7 @@ private:
     QButtonGroup *viewButtonGroup;
     int dailyMode;
     int inboxMode;
+    int currentMode;
 
 private slots:
     void click_exit();

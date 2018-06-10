@@ -10,7 +10,7 @@
 TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
     QWidget(parent),
     ui(new Ui::TodoListWidget),
-    isCurrentItemEdited(false),
+    currentItemEdited(false),
     viewMode(viewMode)
 {
     ui->setupUi(this);
@@ -136,7 +136,7 @@ void TodoListWidget::addNewItemDetailToListView(const todo::ItemDetail &newItemD
 
 void TodoListWidget::listWidget_selectedItem_changed(const QString &currItemDetailID) {
     // First, handle the item selected before. If it was modified, we should ask users weather save it or not.
-    if (this->isCurrentItemEdited) {
+    if (this->currentItemEdited) {
         int result = QMessageBox::information(this, tr("Pay attention !"),
                 tr("Current Item has been edited, save it or not ?"), QMessageBox::Save | QMessageBox::No);
         if (result == QMessageBox::Save) {
@@ -148,7 +148,7 @@ void TodoListWidget::listWidget_selectedItem_changed(const QString &currItemDeta
 
     // Second, reset currentItemEdited flag, set 'currentItem' to the new one and load it to detail widget.
     qDebug() << this->currItemDetailMap[currItemDetailID].getTitle();
-    this->isCurrentItemEdited = false;
+    this->currentItemEdited = false;
     this->detailWidget->loadItemDetail(this->currItemDetailMap[currItemDetailID]);
     this->currentItem = this->currItemDetailMap[currItemDetailID];
 }
@@ -173,7 +173,7 @@ void TodoListWidget::addBtn_clicked() {
 
 void TodoListWidget::current_item_edited(const todo::ItemDetail &currentItemDetail) {
     this->listWidget->refresh_item_info(currentItemDetail);
-    this->isCurrentItemEdited = true;
+    this->currentItemEdited = true;
     this->currentItem = currentItemDetail;
 }
 
@@ -209,7 +209,7 @@ void TodoListWidget::markDone_clicked(bool flag) {
     this->dataCenter.updateDoneByID(this->currentItem.getId(), flag);
     this->currItemDetailMap[this->currentItem.getId()].setDone(flag);
     this->currentItem.setDone(flag);
-    this->isCurrentItemEdited = false;
+    this->currentItemEdited = false;
     this->listWidget->refresh_or_remove_item_info(this->currentItem);
     this->updateStatusBarInfo();
 }
@@ -220,7 +220,7 @@ void TodoListWidget::deleteBtn_clicked() {
         this->dataCenter.deleteItemDetailByID(this->currentItem.getId());
         this->currItemDetailMap.remove(this->currentItem.getId());
         this->listWidget->removeItemDetailByID(this->currentItem.getId());
-        this->isCurrentItemEdited = false;
+        this->currentItemEdited = false;
         this->updateStatusBarInfo();
     }
 }
@@ -244,7 +244,7 @@ void TodoListWidget::updateItemDetail(const todo::ItemDetail &itemDetail) {
     this->currItemDetailMap[curr.getId()] = curr;  // save it to detail map
     this->detailWidget->loadItemDetail(curr);  // change detail widget content. It will not change by itself.
     this->listWidget->refresh_or_remove_item_info(curr);  // refresh item if meets condition, or remove it.
-    this->isCurrentItemEdited = false;  // reset the flag
+    this->currentItemEdited = false;  // reset the flag
 }
 
 void TodoListWidget::database_modified() {
@@ -279,7 +279,7 @@ void TodoListWidget::loadItems(const QList<todo::ItemDetail> &items) {
     foreach (auto const &item, items) {
         this->currItemDetailMap.insert(item.getId(), item);
     }
-    this->isCurrentItemEdited = false;  // don't forget set isCurrentItemEdited to false !
+    this->currentItemEdited = false;  // don't forget set currentItemEdited to false !
 
     // Second, load them to list view.
     this->listWidget->loadItemDetails(items);
@@ -294,6 +294,10 @@ void TodoListWidget::refresh_current_items() {
     } else if (this->viewMode == TodoListWidgetMode::INBOX) {
         this->loadItemsByInboxCondition(this->currentInboxCondition);
     }
+}
+
+bool TodoListWidget::isCurrentItemEdited() const {
+    return currentItemEdited;
 }
 
 // --------- InboxViewFilterCondition --------

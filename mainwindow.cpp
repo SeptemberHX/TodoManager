@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QMutexLocker>
 #include <QMenu>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -38,10 +39,11 @@ MainWindow::MainWindow(QWidget *parent) :
     this->viewButtonGroup->addButton(ui->dailyModePushButton);
     dailyMode = ui->stackedWidget->addWidget(this->todoListWidget);
     inboxMode = ui->stackedWidget->addWidget(this->inboxViewWidget);
-//    connect(this->inboxViewWidget, &TodoListWidget::databaseModified, this->todoListWidget, &TodoListWidget::refresh_current_items);
-//    connect(this->todoListWidget, &TodoListWidget::databaseModified, this->inboxViewWidget, &TodoListWidget::refresh_current_items);
+    connect(this->inboxViewWidget, &TodoListWidget::databaseModified, this->todoListWidget, &TodoListWidget::refresh_current_items);
+    connect(this->todoListWidget, &TodoListWidget::databaseModified, this->inboxViewWidget, &TodoListWidget::refresh_current_items);
 
     connect(this->viewButtonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, &MainWindow::modeBtn_clicked);
+    this->currentMode = -1;  // initialization
     ui->inboxModePushButton->click();
 //    ui->stackedWidget->setCurrentIndex(dailyMode);
 
@@ -150,9 +152,21 @@ void MainWindow::trayIcon_clicked() {
 
 void MainWindow::modeBtn_clicked(QAbstractButton *button) {
     QPushButton *btn = dynamic_cast<QPushButton*>(button);
-    if (btn == ui->inboxModePushButton) {
+    if (btn == ui->inboxModePushButton && this->currentMode != this->inboxMode) {
+        if (this->todoListWidget->isCurrentItemEdited()) {
+            QMessageBox::information(this, tr("Can't switch view mode !"), tr("Current item is under editing !"));
+            return;
+        }
+
         ui->stackedWidget->setCurrentIndex(this->inboxMode);
-    } else if (btn == ui->dailyModePushButton) {
+        this->currentMode = this->inboxMode;
+    } else if (btn == ui->dailyModePushButton && this->currentMode != this->dailyMode) {
+        if (this->inboxViewWidget->isCurrentItemEdited()) {
+            QMessageBox::information(this, tr("Can't switch view mode !"), tr("Current item is under editing !"));
+            return;
+        }
+
         ui->stackedWidget->setCurrentIndex(this->dailyMode);
+        this->currentMode = this->dailyMode;
     }
 }

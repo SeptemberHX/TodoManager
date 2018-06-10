@@ -63,6 +63,13 @@ public:
     void changeToInboxMode();
     void changeToDailyMode();
 
+    /**
+     * check whether current item is edited or not
+     * used when trying to switch to other view mode
+     * @return
+     */
+    bool isCurrentItemEdited() const;
+
 public slots:
     /**
      * read data from DataCenter again.
@@ -77,7 +84,7 @@ private:
     ItemListWidget *listWidget;
     QLabel *infoLabel;
 
-    bool isCurrentItemEdited;
+    bool currentItemEdited;
     todo::ItemDetail currentItem;
     QMap<QString, todo::ItemDetail> currItemDetailMap;
     todo::DataCenter dataCenter;
