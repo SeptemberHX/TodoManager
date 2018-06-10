@@ -1,7 +1,10 @@
 #include "itemlistwidget.h"
 #include "ui_itemlistwidget.h"
 #include "../utils/itemdetailutils.h"
+#include "../data/sorters/SorterOrganize.h"
+#include "../data/sorters/DoneSorter.h"
 #include "ItemListItemDelegate.h"
+#include "../data/sorters/DateSorter.h"
 #include <QScrollBar>
 #include <QDebug>
 #include <QListView>
@@ -20,12 +23,18 @@ ItemListWidget::ItemListWidget(QWidget *parent) :
 //    ui->listView->setDragDropMode(QAbstractItemView::DragDrop);
 
     connect(ui->listView, &QListView::clicked, this, &ItemListWidget::listWidget_selectedItem_changed);
+
+    // ------ default sorter ------
+    this->addSorter(todo::DoneSorter(true));
+    this->addSorter(todo::DateSorter());
+    // ------ end ------
 }
 
 ItemListWidget::~ItemListWidget()
 {
     delete ui;
     this->clearFilters();
+    this->clearSorters();
 }
 
 void ItemListWidget::addItemDetail(const todo::ItemDetail &item)
@@ -59,6 +68,7 @@ void ItemListWidget::loadItemDetails(const QList<todo::ItemDetail> &items) {
         itemsAfterFilter = filterPtr->filter(itemsAfterFilter);
     }
 
+    itemsAfterFilter = this->sortItemlist(itemsAfterFilter);
     for (auto item: itemsAfterFilter) {
         this->addItemDetail(item);  // Use addItemDetail method to sort new item according to sorters.
     }
@@ -107,7 +117,7 @@ bool ItemListWidget::checkItem(const todo::ItemDetail &detail) {
     return passCheckFlag;
 }
 
-void ItemListWidget::addItemDetail_(const todo::ItemDetail &item) {
+QList<todo::ItemDetail> ItemListWidget::addItemDetail_(const todo::ItemDetail &item) {
     auto newListItem = new QStandardItem();
     newListItem->setData(QVariant::fromValue(item), Qt::UserRole + 1);
     this->itemModel->insertRow(0, newListItem);
@@ -119,4 +129,17 @@ void ItemListWidget::refresh_or_remove_item_info(const todo::ItemDetail &item) {
     } else {
         this->removeItemDetailByID(item.getId());
     }
+}
+
+void ItemListWidget::clearSorters() {
+    for (auto ptr : this->sorters) {
+        delete ptr;
+    }
+    this->sorters.clear();
+}
+
+QList<todo::ItemDetail> ItemListWidget::sortItemlist(const QList<todo::ItemDetail> &details) {
+    QList<todo::ItemDetail> results(details);
+    std::sort(results.begin(), results.end(), todo::SorterOrganize(this->sorters));
+    return results;
 }

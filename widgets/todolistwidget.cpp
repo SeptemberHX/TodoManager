@@ -107,7 +107,7 @@ void TodoListWidget::dealWithNewItemDetail(const todo::ItemDetail &newItemDetail
     }
 
     // step 2: save it to currItemDetails if possible
-    this->currItemDetailMap.insert(newItemDetail.getId(), newItemDetail);
+    this->currItemDetailMap[newItemDetail.getId()] = newItemDetail;
 
     // step 3: load new item to list view if possible
     if (this->viewMode == TodoListWidgetMode::DAILY && newItemDetail.getTargetDate() == ui->filterDateEdit->date()) {
@@ -277,7 +277,10 @@ void TodoListWidget::loadItems(const QList<todo::ItemDetail> &items) {
     // First, save it to this->currentItemDetailMap
     this->currItemDetailMap.clear();
     for (auto &item : items) {
-        this->currItemDetailMap.insert(item.getId(), item);
+        // QMap::insert behaves strange with Qt 5.11.0
+        // During testing, items.size() = 1, but in updateStatusBarInfo() map.size() = 256.
+        // Really strange.
+        this->currItemDetailMap[item.getId()] = item;
     }
     this->isCurrentItemEdited = false;  // don't forget set isCurrentItemEdited to false !
 

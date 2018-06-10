@@ -6,6 +6,7 @@
 #include <QList>
 #include "../core/ItemDetail.h"
 #include "../data/filters/DateFilter.h"
+#include "../data/sorters/AbstractSorter.h"
 #include "itemlistitemwidget.h"
 
 namespace Ui {
@@ -35,6 +36,12 @@ public:
     template<class T> void addFilter(const T &filter) {
         auto newFilterPtr = dynamic_cast<todo::AbstractFilter*>(new T(filter));
         this->filters.append(newFilterPtr);
+    }
+
+    void clearSorters();
+    template<class T> void addSorter(const T &sorter) {
+        auto newSorterPtr = dynamic_cast<todo::AbstractSorter*>(new T(sorter));
+        this->sorters.append(newSorterPtr);
     }
 
     /**
@@ -69,15 +76,18 @@ private:
      */
     QList<todo::ItemDetail> filtItemList(const QList<todo::ItemDetail> &details);
 
+    QList<todo::ItemDetail> sortItemlist(const QList<todo::ItemDetail> &details);
+
     /**
      * add item to list view without considering whether it meets the conditions or not
      * @param item
      */
-    void addItemDetail_(const todo::ItemDetail &item);
+    QList<todo::ItemDetail> addItemDetail_(const todo::ItemDetail &item);
 
     Ui::ItemListWidget *ui;
     QStandardItemModel *itemModel;
     QList<todo::AbstractFilter*> filters;
+    QList<todo::AbstractSorter*> sorters;
 };
 
 #endif // ITEMLISTWIDGET_H

@@ -6,7 +6,7 @@ set(SOURCES
 
 set(HEADERS
     AbstractSorter.h
-        DateSorter.cpp DateSorter.h DoneSorter.cpp DoneSorter.h)
+        DateSorter.cpp DateSorter.h DoneSorter.cpp DoneSorter.h SorterOrganize.cpp SorterOrganize.h)
 
 add_library(sorters ${SOURCES} ${HEADERS})
 
