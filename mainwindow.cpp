@@ -52,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->interval = 60000;
     connect(this->timer, &QTimer::timeout, this, &MainWindow::update_notification_timer);
     connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &MainWindow::update_notification_timer);
+    connect(this->inboxViewWidget, &TodoListWidget::databaseModified, this, &MainWindow::update_notification_timer);
     this->update_notification_timer();
     // end
 
@@ -109,8 +110,7 @@ void MainWindow::initConfig() {
 void MainWindow::update_notification_timer() {
     QMutexLocker locker(&this->notificationListMutex);
     for (auto const &item : this->targetItemDetails) {
-        if (QTime::currentTime().msec() - item.getFromTime().msec() >= 0
-                && QTime::currentTime().msec() - item.getFromTime().msec() <= 30000) {
+        if (QTime::currentTime().msecsTo(item.getFromTime()) <= 0) {
 //            NofityUtils::push(tr("Task begins!"), item.getTitle());
             this->trayIcon->showMessage(tr("Task begins!"), item.getTitle(), QIcon(":/icons/tray.png"));
         }
