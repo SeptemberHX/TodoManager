@@ -110,12 +110,7 @@ void TodoListWidget::dealWithNewItemDetail(const todo::ItemDetail &newItemDetail
     this->currItemDetailMap[newItemDetail.getId()] = newItemDetail;
 
     // step 3: load new item to list view if possible
-    if (this->viewMode == TodoListWidgetMode::DAILY && newItemDetail.getTargetDate() == ui->filterDateEdit->date()) {
-        this->addNewItemDetailToListView(newItemDetail);
-    } else if (this->viewMode == TodoListWidgetMode::INBOX && this->currentInboxCondition.check(newItemDetail)) {
-        this->addNewItemDetailToListView(newItemDetail);
-    }
-
+    this->listWidget->addItemDetail(newItemDetail);
 
     // step 4: change status bar info
     this->updateStatusBarInfo();
