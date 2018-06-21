@@ -238,8 +238,12 @@ void TodoListWidget::updateItemDetail(const todo::ItemDetail &itemDetail) {
     this->dataCenter.updateItemDetailByID(curr.getId(), curr);  // save to database
     this->currItemDetailMap[curr.getId()] = curr;  // save it to detail map
     this->detailWidget->loadItemDetail(curr);  // change detail widget content. It will not change by itself.
+
+    // reset the flag. Should reset it before refresh list widget,
+    // or will be disturbed by list widget removing and adding item and emitting selected_item_changed signal.
+    // TODO: redesign the code to avoid this !!
+    this->currentItemEdited = false;
     this->listWidget->refresh_or_remove_item_info(curr);  // refresh item if meets condition, or remove it.
-    this->currentItemEdited = false;  // reset the flag
 }
 
 void TodoListWidget::database_modified() {

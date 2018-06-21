@@ -41,7 +41,7 @@ void ItemListWidget::addItemDetail(const todo::ItemDetail &item)
 {
     if (this->checkItem(item)) {
         todo::SorterOrganize comparer(this->sorters);
-        int newRowToInsert = -1;
+        int newRowToInsert = 0;  // insert to top by default
         for (int i = 0; i < this->itemModel->rowCount(); ++i) {
             todo::ItemDetail rowItem = this->itemModel->item(i)->data(Qt::UserRole + 1).value<todo::ItemDetail>();
             if (!comparer(item, rowItem)) {
@@ -50,12 +50,11 @@ void ItemListWidget::addItemDetail(const todo::ItemDetail &item)
             }
         }
 
-        if (newRowToInsert >= 0) {
-            auto newListItem = new QStandardItem();
-            newListItem->setData(QVariant::fromValue(item), Qt::UserRole + 1);
-            this->itemModel->insertRow(newRowToInsert, newListItem);
-            ui->listView->setCurrentIndex(this->itemModel->indexFromItem(newListItem));
-        }
+        // insert it
+        auto newListItem = new QStandardItem();
+        newListItem->setData(QVariant::fromValue(item), Qt::UserRole + 1);
+        this->itemModel->insertRow(newRowToInsert, newListItem);
+        ui->listView->setCurrentIndex(this->itemModel->indexFromItem(newListItem));
     }
 }
 
