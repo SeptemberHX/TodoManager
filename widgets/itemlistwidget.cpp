@@ -81,7 +81,7 @@ void ItemListWidget::loadItemDetails(const QList<todo::ItemDetail> &items) {
     itemsAfterFilter = this->sortItemlist(itemsAfterFilter);  // sort it
 
     // strange here. If we use range-based for loop, then we will get SIGSEGV
-    // Due to Qt 5.11 official document, range-based for loop might force a Qt container to detch.
+    // Due to Qt 5.11 official document, range-based for loop might force a Qt container to detach.
     foreach (auto const &item, itemsAfterFilter) {
         this->addItemDetail_(item);  // Use addItemDetail method to sort new item according to sorters.
     }
