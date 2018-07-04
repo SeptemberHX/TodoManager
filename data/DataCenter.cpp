@@ -120,3 +120,14 @@ QList<todo::ItemDetail> todo::DataCenter::selectItemDetailByDate(const QDate &fr
     this->fillTagInfo(results);
     return results;
 }
+
+QList<todo::ItemDetail> todo::DataCenter::selectItemDetailsByTag(const todo::ItemTag &itemTag) {
+    auto itemAndTagMatchList = DaoFactory::getInstance()->getSQLDao()->selectItemAndTagMatchByTagID(itemTag.getId());
+    QList<QString> itemDetailIds;
+    for (auto const &itemAndTagMatch : itemAndTagMatchList) {
+        itemDetailIds.append(itemAndTagMatch.getItemID());
+    }
+    QList<ItemDetail> itemDetails = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByIDs(itemDetailIds);
+    this->fillTagInfo(itemDetails);
+    return itemDetails;
+}

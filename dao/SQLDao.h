@@ -29,6 +29,8 @@ public:
     void updateDoneByID(const QString &itemID, bool flag) override;
 
     QList<ItemDetail> selectItemDetailByDate(const QDate &fromDate, const QDate &toDate) override;
+
+    QList<ItemDetail> selectItemDetailByIDs(const QList<QString> &itemIDs) override;
     // End
 
     // ItemTag

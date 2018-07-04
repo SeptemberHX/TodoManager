@@ -23,6 +23,7 @@ public:
     virtual void insertItemDetail(const ItemDetail &itemDetail) = 0;
     virtual void updateDoneByID(const QString &itemID, bool flag) = 0;
     virtual QList<ItemDetail> selectItemDetailByDate(const QDate &fromDate, const QDate &toDate) = 0;
+    virtual QList<ItemDetail> selectItemDetailByIDs(const QList<QString> &itemIDs) = 0;
     // End
 
     // ItemTag

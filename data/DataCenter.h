@@ -46,6 +46,10 @@ public:
     QList<ItemDetail> selectNextNotifiedItemDetail();
     // ---------------- ends ------------------
 
+    // ---------------- for TagMode ----------------
+    QList<ItemDetail> selectItemDetailsByTag(const ItemTag &itemTag);
+    // ---------------- ends ------------------
+
 signals:
     void itemDetailModified();
 
