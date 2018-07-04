@@ -47,3 +47,15 @@ todo::ItemTag::ItemTag() {
     this->name = "#323232";
     this->color = "default";
 }
+
+std::ostream &todo::operator<<(std::ostream &os, const todo::ItemTag &itemTag) {
+    return os;
+}
+
+QDataStream &todo::operator<<(QDataStream &os, const todo::ItemTag &itemTag) {
+    return os;
+}
+
+QDataStream &todo::operator>>(QDataStream &os, todo::ItemTag &itemTag) {
+    return os;
+}

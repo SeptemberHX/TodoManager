@@ -11,7 +11,7 @@
 #include <QMutex>
 #include "widgets/logwidget.h"
 #include "widgets/todolistwidget.h"
-#include "widgets/TagModeWidget.h"
+#include "widgets/TagMode/TagModeWidget.h"
 #include "core/ItemDetail.h"
 #include "data/DataCenter.h"
 

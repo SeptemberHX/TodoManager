@@ -3,7 +3,9 @@
 
 #include <QWidget>
 #include <QSplitter>
-#include "todolistwidget.h"
+#include "TagModeListItemDelegate.h"
+#include <QStandardItemModel>
+#include "../todolistwidget.h"
 
 namespace Ui {
 class TagModeWidget;
@@ -20,6 +22,7 @@ public:
 private:
     Ui::TagModeWidget *ui;
 
+    QStandardItemModel *itemModel;
     TodoListWidget *todoListWidget;
     QSplitter *mainSplitter;
 };

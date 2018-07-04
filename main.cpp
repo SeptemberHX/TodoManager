@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
 
     StyleUtils::setStyle(":/styles/defaultStyle.qss");
     qRegisterMetaTypeStreamOperators<todo::ItemDetail>();
+    qRegisterMetaTypeStreamOperators<todo::ItemTag>();
 
     MainWindow w;
     w.show();

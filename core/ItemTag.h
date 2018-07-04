@@ -8,6 +8,7 @@
 #include <QString>
 #include <QHash>
 #include <QColor>
+#include <QMetaType>
 
 namespace todo {
 
@@ -26,6 +27,12 @@ public:
 
     QString getName() const;
     QString getId() const;
+
+    friend std::ostream &operator<<(std::ostream &os, const ItemTag &itemTag);
+
+    friend QDataStream&operator<<(QDataStream &os, const ItemTag &itemTag);
+
+    friend QDataStream&operator>>(QDataStream &os, ItemTag &itemTag);
 private:
     QString name;
     QColor color;
@@ -35,5 +42,7 @@ inline uint qHash(const ItemTag &tag) {
     return qHash(tag.getName());
 }
 }
+
+Q_DECLARE_METATYPE(todo::ItemTag);
 
 #endif //TODOMANAGER_ITEMTAG_H

@@ -66,7 +66,7 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     painter->drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter,
                       this->elideText(itemDetail.getTitle(), painter->fontMetrics(), titleWidth));
 
-    // draw target date
+    // draw priority circle
     painter->setFont(QFont("Arias", 11));
     QRect priorityNumRect(titleRect.right() + titleSpace, titleRect.top() + 5, priorityNumWidth, priorityNumWidth);
     oldBrush = painter->brush();
