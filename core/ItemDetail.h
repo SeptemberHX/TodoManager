@@ -19,7 +19,8 @@ namespace todo {
     enum ItemMode {
         SIMPLE = 1,
         SCHEDULE = 2,
-        RECURSION = 3
+        RECURSION = 3,
+        PLAIN = 4
     };
 
     /**

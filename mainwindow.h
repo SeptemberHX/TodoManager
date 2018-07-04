@@ -11,6 +11,7 @@
 #include <QMutex>
 #include "widgets/logwidget.h"
 #include "widgets/todolistwidget.h"
+#include "widgets/TagModeWidget.h"
 #include "core/ItemDetail.h"
 #include "data/DataCenter.h"
 
@@ -37,6 +38,7 @@ private:
     LogWidget *logWidget;
     TodoListWidget *todoListWidget;
     TodoListWidget *inboxViewWidget;
+    TagModeWidget *tagModeWidget;
 
     // for notification
     QTimer *timer;
@@ -52,6 +54,7 @@ private:
     QButtonGroup *viewButtonGroup;
     int dailyMode;
     int inboxMode;
+    int tagMode;
     int currentMode;
 
 private slots:

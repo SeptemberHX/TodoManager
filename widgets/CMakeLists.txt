@@ -22,6 +22,7 @@ set (widgets_files
 	itemlistitemwidget.cpp
 	ItemListItemDelegate.cpp
 	FetchConfigFilePathWidget.cpp
+	TagModeWidget.cpp
 )
 
 add_library(widgets ${widgets_files})
