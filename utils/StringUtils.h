@@ -13,6 +13,7 @@ namespace todo {
 class StringUtils {
 public:
     static bool compareString(const QString &str1, const QString &str2);
+    static bool ifStringStartWithChinese(const QString &str);
 };
 
 }
