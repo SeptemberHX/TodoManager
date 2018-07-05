@@ -1,35 +1,12 @@
 #include <QCollator>
 #include <QLocale>
 #include <QDebug>
+#include "../../utils/StringUtils.h"
 #include "TagModeWidget.h"
 #include "ui_TagModeWidget.h"
 
 bool compareItemTagWithName(const todo::ItemTag &itemTag1, const todo::ItemTag &itemTag2) {
-    static QLocale loc(QLocale::Chinese, QLocale::China);
-    static QCollator qco(loc);
-    return qco.compare(itemTag1.getName(), itemTag2.getName()) < 0;
-}
-
-QList<todo::ItemTag> sortItemTagByName(const QList<todo::ItemTag> &itemTagList) {
-    QList<todo::ItemTag> itemTagsBeginWithEnglish;
-    QList<todo::ItemTag> itemTagsBeginWithChinese;
-    for (auto const &itemTag : itemTagList) {
-        QChar cha = itemTag.getName().at(1);
-        ushort uni = cha.unicode();
-        if(uni >= 0x4E00 && uni <= 0x9FA5)  // 这个字符是中文
-        {
-            itemTagsBeginWithChinese.append(itemTag);
-        } else {
-            itemTagsBeginWithEnglish.append(itemTag);
-        }
-    }
-
-    std::sort(itemTagsBeginWithEnglish.begin(), itemTagsBeginWithEnglish.end(), compareItemTagWithName);
-    std::sort(itemTagsBeginWithChinese.begin(), itemTagsBeginWithChinese.end(), compareItemTagWithName);
-    QList<todo::ItemTag> resultList;
-    resultList.append(itemTagsBeginWithEnglish);
-    resultList.append(itemTagsBeginWithChinese);
-    return resultList;
+    return todo::StringUtils::compareString(itemTag1.getName(), itemTag2.getName());
 }
 
 TagModeWidget::TagModeWidget(QWidget *parent) :
@@ -51,7 +28,8 @@ TagModeWidget::TagModeWidget(QWidget *parent) :
     ui->listView->setModel(this->itemModel);
     ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    auto itemTagList = sortItemTagByName(this->dataCenter.selectAllItemTag());
+    auto itemTagList = this->dataCenter.selectAllItemTag();
+    std::sort(itemTagList.begin(), itemTagList.end(), compareItemTagWithName);
     this->setItemTags(itemTagList);
 
     connect(ui->listView, &QListView::clicked, this, &TagModeWidget::list_selected_item_changed);
