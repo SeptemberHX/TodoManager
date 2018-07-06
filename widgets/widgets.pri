@@ -23,7 +23,8 @@ HEADERS += \
     $$PWD/itemlistitemwidget.h \
     $$PWD/ItemListItemDelegate.h \
     $$PWD/FetchConfigFilePathWidget.h \
-    $$PWD/TagMode/TagModeWidget.h
+    $$PWD/TagMode/TagModeWidget.h \
+    $$PWD/TagMode/TagModeListItemDelegate.h
 
 SOURCES += \
     $$PWD/tagwidget.cpp \
@@ -38,4 +39,5 @@ SOURCES += \
     $$PWD/itemlistitemwidget.cpp \
     $$PWD/ItemListItemDelegate.cpp \
     $$PWD/FetchConfigFilePathWidget.cpp \
-    $$PWD/TagMode/TagModeWidget.cpp
+    $$PWD/TagMode/TagModeWidget.cpp \
+    $$PWD/TagMode/TagModeListItemDelegate.cpp

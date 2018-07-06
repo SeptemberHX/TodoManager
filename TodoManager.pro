@@ -36,6 +36,9 @@ FORMS += \
 include(widgets/widgets.pri)
 include(core/core.pri)
 include(utils/utils.pri)
+include(dao/dao.pri)
+include(data/data.pri)
+include(config/config.pri)
 
 DISTFILES += \
     CMakeLists.txt
