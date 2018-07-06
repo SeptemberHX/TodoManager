@@ -193,7 +193,6 @@ void MainWindow::database_modified() {
     }
 
     if (this->currentMode != this->tagMode) {
-        // todo
-        ;
+        this->tagModeWidget->refresh_current_items();
     }
 }

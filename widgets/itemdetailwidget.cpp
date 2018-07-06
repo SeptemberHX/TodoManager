@@ -56,6 +56,9 @@ ItemDetailWidget::ItemDetailWidget(QWidget *parent) :
     connect(ui->deleteToolButton, &QToolButton::clicked, this, &ItemDetailWidget::deleteButton_clicked);
 
     this->changeToViewMode();
+
+    // default is disabled. Will change to enabled when loading item.
+    this->setEnabled(false);
 }
 
 ItemDetailWidget::~ItemDetailWidget()
@@ -149,6 +152,7 @@ void ItemDetailWidget::loadItemDetail(const todo::ItemDetail &itemDetail) {
     this->currItemPtr = new todo::ItemDetail(itemDetail);
     this->changeToViewMode();
     this->reloadCurrItemDetail();
+    this->setEnabled(true);
 }
 
 void ItemDetailWidget::addTagButton(const todo::ItemTag &tag) {

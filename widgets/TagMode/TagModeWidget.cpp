@@ -28,9 +28,7 @@ TagModeWidget::TagModeWidget(QWidget *parent) :
     ui->listView->setModel(this->itemModel);
     ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    auto itemTagList = this->dataCenter.selectAllItemTag();
-    std::sort(itemTagList.begin(), itemTagList.end(), compareItemTagWithName);
-    this->setItemTags(itemTagList);
+    this->loadTagList();
 
     connect(ui->listView, &QListView::clicked, this, &TagModeWidget::list_selected_item_changed);
     connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &TagModeWidget::database_modified);
@@ -63,4 +61,24 @@ void TagModeWidget::list_selected_item_changed() {
 
 void TagModeWidget::database_modified() {
     emit databaseModified();
+}
+
+void TagModeWidget::refresh_current_items() {
+    auto currentRow = ui->listView->currentIndex().row();
+    this->loadTagList();
+    if (this->itemModel->rowCount() > currentRow) {
+        ui->listView->setCurrentIndex(this->itemModel->index(currentRow, 0));
+    }
+    this->list_selected_item_changed();
+}
+
+void TagModeWidget::clear() {
+    this->itemModel->clear();
+    // todo: TodoListWidget::clear
+}
+
+void TagModeWidget::loadTagList() {
+    auto itemTagList = this->dataCenter.selectAllItemTag();
+    std::sort(itemTagList.begin(), itemTagList.end(), compareItemTagWithName);
+    this->setItemTags(itemTagList);
 }

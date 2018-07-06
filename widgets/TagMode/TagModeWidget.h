@@ -22,6 +22,7 @@ public:
     ~TagModeWidget();
 
     void setItemTags(const QList<todo::ItemTag> &itemTags);
+    void refresh_current_items();
 
 signals:
     void databaseModified();
@@ -37,6 +38,9 @@ private:
     QStandardItemModel *itemModel;
     TodoListWidget *todoListWidget;
     QSplitter *mainSplitter;
+
+    void clear();
+    void loadTagList();
 };
 
 #endif // TAGMODEWIDGET_H
