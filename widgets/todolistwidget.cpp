@@ -70,6 +70,9 @@ TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
             this->changeToInboxMode();
             this->loadItemsByInboxCondition(this->currentInboxCondition);
             break;
+        case TodoListWidgetMode::TAG:
+            this->changeToTagMode();
+            break;
         default:
             break;
     }
@@ -253,13 +256,22 @@ void TodoListWidget::database_modified() {
 void TodoListWidget::changeToInboxMode() {
     ui->inboxModeWidget->show();
     ui->dailyModeWidget->hide();
+    ui->tagModeWidget->hide();
     this->viewMode = TodoListWidgetMode::INBOX;
 }
 
 void TodoListWidget::changeToDailyMode() {
     ui->inboxModeWidget->hide();
+    ui->tagModeWidget->hide();
     ui->dailyModeWidget->show();
     this->viewMode = TodoListWidgetMode::DAILY;
+}
+
+void TodoListWidget::changeToTagMode() {
+    ui->tagModeWidget->show();
+    ui->inboxModeWidget->hide();
+    ui->dailyModeWidget->hide();
+    this->viewMode = TodoListWidgetMode::TAG;
 }
 
 void TodoListWidget::inboxFilter_changed(const InboxViewFilterCondition &newCondition) {

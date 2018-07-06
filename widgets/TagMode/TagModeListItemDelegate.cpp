@@ -52,7 +52,7 @@ TagModeListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 }
 
 QSize TagModeListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    return QSize(100, 30);
+    return {100, 30};
 }
 
 QString TagModeListItemDelegate::elideText(const QString &str, const QFontMetrics &fontMetrics, int maxWidth) const {

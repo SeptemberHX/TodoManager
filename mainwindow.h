@@ -61,6 +61,7 @@ private slots:
     void click_exit();
     void trayIcon_clicked();
     void modeBtn_clicked(QAbstractButton *button);
+    void database_modified();
 
 public slots:
     void change_statusBar_text(const QString &str);

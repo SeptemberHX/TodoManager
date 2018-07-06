@@ -15,7 +15,7 @@ TagModeWidget::TagModeWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->todoListWidget = new TodoListWidget(this, TodoListWidgetMode::INBOX);
+    this->todoListWidget = new TodoListWidget(this, TodoListWidgetMode::TAG);
     this->mainSplitter = new QSplitter(this);
     this->mainSplitter->addWidget(ui->groupBox);
     this->mainSplitter->addWidget(this->todoListWidget);
@@ -33,6 +33,7 @@ TagModeWidget::TagModeWidget(QWidget *parent) :
     this->setItemTags(itemTagList);
 
     connect(ui->listView, &QListView::clicked, this, &TagModeWidget::list_selected_item_changed);
+    connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &TagModeWidget::database_modified);
 }
 
 TagModeWidget::~TagModeWidget()
@@ -56,5 +57,10 @@ void TagModeWidget::list_selected_item_changed() {
     auto itemDetailList = this->dataCenter.selectItemDetailsByTag(currSelectedTag);
     qDebug() << "Current selected item is " << currSelectedTag.getName()
              << ", and has " << itemDetailList.count() << " items";
+    this->todoListWidget->loadItems(itemDetailList);
     ui->listView->setEnabled(true);
+}
+
+void TagModeWidget::database_modified() {
+    emit databaseModified();
 }

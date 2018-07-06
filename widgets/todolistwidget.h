@@ -16,7 +16,8 @@ class TodoListWidget;
 
 enum TodoListWidgetMode {
     INBOX,
-    DAILY
+    DAILY,
+    TAG
 };
 
 class InboxViewFilterCondition {
@@ -62,6 +63,7 @@ public:
 
     void changeToInboxMode();
     void changeToDailyMode();
+    void changeToTagMode();
 
     /**
      * check whether current item is edited or not
@@ -69,6 +71,13 @@ public:
      * @return
      */
     bool isCurrentItemEdited() const;
+
+    /**
+     * set TodoListWidget's data.
+     * It will change the cache data !!
+     * @param itemDetails
+     */
+    void loadItems(const QList<todo::ItemDetail> &itemDetails);
 
 public slots:
     /**
@@ -94,7 +103,6 @@ private:
 
     void loadItemDetailToListView(const QList<todo::ItemDetail> &itemDetails);
     void loadItemsByInboxCondition(const InboxViewFilterCondition &cond);
-    void loadItems(const QList<todo::ItemDetail> &itemDetails);
 
     void dealWithNewItemDetail(const todo::ItemDetail &newItemDetail);
     void saveNewItemDetail(const todo::ItemDetail &newItemDetail);

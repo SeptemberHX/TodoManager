@@ -23,8 +23,12 @@ public:
 
     void setItemTags(const QList<todo::ItemTag> &itemTags);
 
+signals:
+    void databaseModified();
+
 private slots:
     void list_selected_item_changed();
+    void database_modified();
 
 private:
     Ui::TagModeWidget *ui;

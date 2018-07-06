@@ -41,8 +41,10 @@ MainWindow::MainWindow(QWidget *parent) :
     dailyMode = ui->stackedWidget->addWidget(this->todoListWidget);
     inboxMode = ui->stackedWidget->addWidget(this->inboxViewWidget);
     tagMode = ui->stackedWidget->addWidget(this->tagModeWidget);
-    connect(this->inboxViewWidget, &TodoListWidget::databaseModified, this->todoListWidget, &TodoListWidget::refresh_current_items);
-    connect(this->todoListWidget, &TodoListWidget::databaseModified, this->inboxViewWidget, &TodoListWidget::refresh_current_items);
+
+    connect(this->inboxViewWidget, &TodoListWidget::databaseModified, this, &MainWindow::database_modified);
+    connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &MainWindow::database_modified);
+    connect(this->tagModeWidget, &TagModeWidget::databaseModified, this, &MainWindow::database_modified);
 
     connect(this->viewButtonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, &MainWindow::modeBtn_clicked);
     this->currentMode = -1;  // initialization
@@ -178,5 +180,20 @@ void MainWindow::modeBtn_clicked(QAbstractButton *button) {
 
         ui->stackedWidget->setCurrentIndex(this->tagMode);
         this->currentMode = this->tagMode;
+    }
+}
+
+void MainWindow::database_modified() {
+    if (this->currentMode != this->dailyMode) {
+        this->todoListWidget->refresh_current_items();
+    }
+
+    if (this->currentMode != this->inboxMode) {
+        this->inboxViewWidget->refresh_current_items();
+    }
+
+    if (this->currentMode != this->tagMode) {
+        // todo
+        ;
     }
 }
