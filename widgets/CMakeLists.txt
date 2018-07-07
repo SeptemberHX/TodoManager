@@ -25,7 +25,8 @@ set (widgets_files
 		TagMode/TagModeWidget.cpp
 		TagMode/TagModeListItemDelegate.cpp
 		TagMode/TagModeListItemDelegate.h
-		CalendarMode/CalendarModeWidget.cpp)
+		CalendarMode/CalendarModeWidget.cpp
+		CalendarMode/CalendarCellWidget.cpp)
 
 add_library(widgets ${widgets_files})
 target_link_libraries(widgets Qt5::Widgets Qt5::Core Qt5::Gui core utils data)
