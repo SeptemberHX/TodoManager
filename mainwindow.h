@@ -55,6 +55,8 @@ private:
     int dailyMode;
     int inboxMode;
     int tagMode;
+    int calendarMode;
+    int projectMode;
     int currentMode;
 
 private slots:
