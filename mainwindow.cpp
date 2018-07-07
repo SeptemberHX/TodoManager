@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->todoListWidget = new TodoListWidget(this);
     this->inboxViewWidget = new TodoListWidget(this, TodoListWidgetMode::INBOX);
     this->tagModeWidget = new TagModeWidget(this);
+    this->calendarModeWidget = new CalendarModeWidget(this);
 
     this->logWidget = new LogWidget();
     Logger::getInstance()->init(this->logWidget);
@@ -38,9 +39,11 @@ MainWindow::MainWindow(QWidget *parent) :
     this->viewButtonGroup->addButton(ui->inboxModePushButton);
     this->viewButtonGroup->addButton(ui->dailyModePushButton);
     this->viewButtonGroup->addButton(ui->tagModePushButton);
+    this->viewButtonGroup->addButton(ui->calendarPushButton);
     dailyMode = ui->stackedWidget->addWidget(this->todoListWidget);
     inboxMode = ui->stackedWidget->addWidget(this->inboxViewWidget);
     tagMode = ui->stackedWidget->addWidget(this->tagModeWidget);
+    calendarMode = ui->stackedWidget->addWidget(this->calendarModeWidget);
 
     connect(this->inboxViewWidget, &TodoListWidget::databaseModified, this, &MainWindow::database_modified);
     connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &MainWindow::database_modified);
@@ -180,6 +183,14 @@ void MainWindow::modeBtn_clicked(QAbstractButton *button) {
 
         ui->stackedWidget->setCurrentIndex(this->tagMode);
         this->currentMode = this->tagMode;
+    } else if (btn == ui->calendarPushButton && this->currentMode != this->calendarMode) {
+        if (this->inboxViewWidget->isCurrentItemEdited()) {
+            QMessageBox::information(this, tr("Can't switch view mode !"), tr("Current item is under editing !"));
+            return;
+        }
+
+        ui->stackedWidget->setCurrentIndex(this->calendarMode);
+        this->currentMode = this->calendarMode;
     }
 }
 

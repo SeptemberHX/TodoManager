@@ -102,12 +102,18 @@
          <property name="text">
           <string>Calendar</string>
          </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="projectPushButton">
          <property name="text">
           <string>Project</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

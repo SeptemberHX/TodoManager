@@ -12,6 +12,7 @@
 #include "widgets/logwidget.h"
 #include "widgets/todolistwidget.h"
 #include "widgets/TagMode/TagModeWidget.h"
+#include "widgets/CalendarMode/CalendarModeWidget.h"
 #include "core/ItemDetail.h"
 #include "data/DataCenter.h"
 
@@ -39,6 +40,7 @@ private:
     TodoListWidget *todoListWidget;
     TodoListWidget *inboxViewWidget;
     TagModeWidget *tagModeWidget;
+    CalendarModeWidget *calendarModeWidget;
 
     // for notification
     QTimer *timer;
