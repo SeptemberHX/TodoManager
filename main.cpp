@@ -11,6 +11,7 @@
 #include "utils/itemdetailutils.h"
 #include "utils/NofityUtils.h"
 #include "dao/DaoFactory.h"
+#include "widgets/CalendarMode/CalendarCellWidget.h"
 #include <QLabel>
 
 
@@ -22,8 +23,12 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<todo::ItemDetail>();
     qRegisterMetaTypeStreamOperators<todo::ItemTag>();
 
-    MainWindow w;
-    w.show();
+//    MainWindow w;
+//    w.show();
+
+    CalendarCellWidget cellWidget;
+    cellWidget.setDate(QDate::currentDate());
+    cellWidget.show();
 
 //    TodoListWidget tlw;
 //    tlw.show();
