@@ -74,7 +74,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="yearSpinBox"/>
+       <widget class="QSpinBox" name="yearSpinBox">
+        <property name="maximum">
+         <number>9999</number>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="monthSpinBox">

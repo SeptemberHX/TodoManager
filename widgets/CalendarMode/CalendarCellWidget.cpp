@@ -13,6 +13,7 @@ CalendarCellWidget::CalendarCellWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setMinimumSize({150, 150});
+    this->setDateNumColor(QColor("#71a8e7"));
 }
 
 CalendarCellWidget::~CalendarCellWidget()
@@ -37,9 +38,17 @@ void CalendarCellWidget::paintEvent(QPaintEvent *event) {
                      dayNumRectSize.width(),
                      dayNumRectSize.height());
     QFont dayNumFont("Aria", 22);
-    painter.setPen(QColor("#71a8e7"));
+    if (this->isEnabled()) {
+        painter.setPen(this->getDateNumColor());
+    } else {
+        painter.setPen(Qt::gray);
+    }
     painter.setFont(dayNumFont);
     painter.drawText(dayNumRect, Qt::AlignLeft | Qt::AlignVCenter, QString::number(dayNum));
+
+    if (!this->isEnabled()) {
+        return;
+    }
 
     // draw task complete percent
     QMargins percentMargin(5, 5, 5, 5);
@@ -89,4 +98,12 @@ const QList<todo::ItemDetail> &CalendarCellWidget::getItemDetailList() const {
 
 void CalendarCellWidget::setItemDetailList(const QList<todo::ItemDetail> &itemDetailList) {
     CalendarCellWidget::itemDetailList = itemDetailList;
+}
+
+const QColor &CalendarCellWidget::getDateNumColor() const {
+    return dateNumColor;
+}
+
+void CalendarCellWidget::setDateNumColor(const QColor &dateNumColor) {
+    CalendarCellWidget::dateNumColor = dateNumColor;
 }

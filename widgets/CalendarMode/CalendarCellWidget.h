@@ -24,6 +24,10 @@ public:
 
     void setItemDetailList(const QList<todo::ItemDetail> &itemDetailList);
 
+    const QColor &getDateNumColor() const;
+
+    void setDateNumColor(const QColor &dateNumColor);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
 
@@ -34,6 +38,7 @@ private:
     Ui::CalendarCellWidget *ui;
     QDate date;
     QList<todo::ItemDetail> itemDetailList;
+    QColor dateNumColor;
     double getTaskDonePercent();
 };
 
