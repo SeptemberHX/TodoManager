@@ -22,11 +22,12 @@ set (widgets_files
 	itemlistitemwidget.cpp
 	ItemListItemDelegate.cpp
 	FetchConfigFilePathWidget.cpp
-		TagMode/TagModeWidget.cpp
-		TagMode/TagModeListItemDelegate.cpp
-		TagMode/TagModeListItemDelegate.h
-		CalendarMode/CalendarModeWidget.cpp
-		CalendarMode/CalendarCellWidget.cpp)
+	TagMode/TagModeWidget.cpp
+	TagMode/TagModeListItemDelegate.cpp
+	CalendarMode/CalendarModeWidget.cpp
+	CalendarMode/CalendarCellWidget.cpp
+	CalendarMode/CalendarTimeLineWidget.cpp
+)
 
 add_library(widgets ${widgets_files})
 target_link_libraries(widgets Qt5::Widgets Qt5::Core Qt5::Gui core utils data)
