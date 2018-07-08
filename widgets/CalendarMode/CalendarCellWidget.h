@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QDate>
 #include <QList>
+#include <QMap>
 #include "../../core/ItemDetail.h"
 
 namespace Ui {
@@ -29,6 +30,9 @@ public:
     void setDateNumColor(const QColor &dateNumColor);
 
 protected:
+    void mousePressEvent(QMouseEvent *event) override;
+
+protected:
     void paintEvent(QPaintEvent *event) override;
 
 public:
@@ -39,6 +43,12 @@ private:
     QDate date;
     QList<todo::ItemDetail> itemDetailList;
     QColor dateNumColor;
+    QMap<QString, QRect> itemDetailID2Rect;
+    QPair<bool, QRect> mouseHoverPair;
+protected:
+    void mouseMoveEvent(QMouseEvent *event) override;
+
+private:
     double getTaskDonePercent();
 };
 

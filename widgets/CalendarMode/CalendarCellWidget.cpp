@@ -5,6 +5,7 @@
 #include <QPaintEvent>
 #include <QMargins>
 #include <QRect>
+#include <QDebug>
 #include "../../utils/DrawUtils.h"
 
 CalendarCellWidget::CalendarCellWidget(QWidget *parent) :
@@ -70,6 +71,7 @@ void CalendarCellWidget::paintEvent(QPaintEvent *event) {
     int taskSpacing = 5;
     QRect lastTaskRect(QPoint(taskMargin.left(), dayNumRect.bottom() + dayNumMargin.bottom()),
                        QSize(event->rect().width() - taskMargin.left() - taskMargin.right(), 24));
+    this->itemDetailID2Rect.clear();
     foreach (auto itemDetail, this->itemDetailList) {
         if (lastTaskRect.bottom() + taskMargin.bottom() <= event->rect().bottom()) {
             QColor itemColor(Qt::gray);
@@ -78,10 +80,17 @@ void CalendarCellWidget::paintEvent(QPaintEvent *event) {
             }
             todo::DrawUtils::drawRectWithCircle(painter, QFont("Aria", 10), Qt::white,
                                                 itemDetail.getTitle(), lastTaskRect, itemColor, 1);
+            this->itemDetailID2Rect.insert(itemDetail.getId(), lastTaskRect);
             lastTaskRect.moveTop(lastTaskRect.bottom() + taskSpacing);
         } else {
             break;
         }
+    }
+
+    // draw mouse hover box
+    if (this->mouseHoverPair.first) {
+        painter.setPen(QPen(Qt::red, 2));
+        painter.drawRect(this->mouseHoverPair.second);
     }
 }
 
@@ -121,4 +130,27 @@ const QColor &CalendarCellWidget::getDateNumColor() const {
 
 void CalendarCellWidget::setDateNumColor(const QColor &dateNumColor) {
     CalendarCellWidget::dateNumColor = dateNumColor;
+}
+
+void CalendarCellWidget::mousePressEvent(QMouseEvent *event) {
+    foreach(auto itemDetailID, this->itemDetailID2Rect.keys()) {
+        if (this->itemDetailID2Rect[itemDetailID].contains(event->pos())) {
+            qDebug() << "Item " << itemDetailID << " clicked";
+        }
+    }
+
+    QWidget::mousePressEvent(event);
+}
+
+void CalendarCellWidget::mouseMoveEvent(QMouseEvent *event) {
+    this->mouseHoverPair = QPair<bool, QRect>(false, QRect());
+    foreach(auto itemDetailID, this->itemDetailID2Rect.keys()) {
+        if (this->itemDetailID2Rect[itemDetailID].contains(event->pos())) {
+            this->mouseHoverPair = QPair<bool, QRect>(true, this->itemDetailID2Rect[itemDetailID]);
+            break;
+        }
+    }
+
+    this->repaint();
+    QWidget::mouseMoveEvent(event);
 }

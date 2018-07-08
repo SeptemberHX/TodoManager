@@ -2,6 +2,7 @@
 #include "ui_CalendarModeWidget.h"
 #include "CalendarCellWidget.h"
 #include <QDebug>
+#include <QLabel>
 
 CalendarModeWidget::CalendarModeWidget(QWidget *parent) :
     QWidget(parent),
@@ -9,8 +10,21 @@ CalendarModeWidget::CalendarModeWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    int weekDay = 7;
+    for (int column = 0; column < 7; ++column) {
+        if (weekDay > 7) {
+            weekDay %= 7;
+        }
+
+        QLabel *tagLabel = new QLabel(QDate::longDayName(weekDay), this);
+        tagLabel->setAlignment(Qt::AlignCenter);
+        tagLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+        ui->gridLayout->addWidget(tagLabel, 0, column);
+        ++weekDay;
+    }
+
     int d = 0;
-    for (int i = 0; i < 6; ++i) {
+    for (int i = 1; i < 7; ++i) {
         for (int j = 0; j < 7; ++j) {
             auto cellWidget = new CalendarCellWidget(this);
             QDate cellDate = QDate::currentDate().addDays(d++);
@@ -19,6 +33,7 @@ CalendarModeWidget::CalendarModeWidget(QWidget *parent) :
             }
 
             cellWidget->setDate(cellDate);
+            cellWidget->setMouseTracking(true);
             ui->gridLayout->addWidget(cellWidget, i, j);
         }
     }
@@ -50,11 +65,11 @@ void CalendarModeWidget::loadMonthData(int year, int month) {
     }
     QDate firstDayInCalendar = firstDayInMonth.addDays(-dayInterval);
 
-    // 5 rows, 7 columns
-    for (int row = 0; row < 6; ++row) {
+    // 6 rows, 7 columns. The first row is label.
+    for (int row = 1; row < 7; ++row) {
         for (int column = 0; column < 7; ++column) {
             auto cellWidget = dynamic_cast<CalendarCellWidget *>(ui->gridLayout->itemAtPosition(row, column)->widget());
-            cellWidget->setDate(firstDayInCalendar.addDays(row * 7 + column));
+            cellWidget->setDate(firstDayInCalendar.addDays((row - 1) * 7 + column));
 
             // load ItemDetail
             if (cellWidget->getDate().month() != month) {  // jump over days not in target month
