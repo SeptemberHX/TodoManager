@@ -6,7 +6,6 @@ FORMS += \
     $$PWD/logwidget.ui \
     $$PWD/itemaddtagwidget.ui \
     $$PWD/taglabelwidget.ui \
-    $$PWD/itemlistitemwidget.ui \
     $$PWD/FetchConfigFilePathWidget.ui \
     $$PWD/TagMode/TagModeWidget.ui \
     $$PWD/CalendarMode/CalendarModeWidget.ui \
@@ -23,7 +22,6 @@ HEADERS += \
     $$PWD/itemaddtagwidget.h \
     $$PWD/taglabelwidget.h \
     $$PWD/flowlayout.h \
-    $$PWD/itemlistitemwidget.h \
     $$PWD/ItemListItemDelegate.h \
     $$PWD/FetchConfigFilePathWidget.h \
     $$PWD/TagMode/TagModeWidget.h \
@@ -42,7 +40,6 @@ SOURCES += \
     $$PWD/itemaddtagwidget.cpp \
     $$PWD/taglabelwidget.cpp \
     $$PWD/flowlayout.cpp \
-    $$PWD/itemlistitemwidget.cpp \
     $$PWD/ItemListItemDelegate.cpp \
     $$PWD/FetchConfigFilePathWidget.cpp \
     $$PWD/TagMode/TagModeWidget.cpp \

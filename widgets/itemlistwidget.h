@@ -7,7 +7,6 @@
 #include "../core/ItemDetail.h"
 #include "../data/filters/DateFilter.h"
 #include "../data/sorters/AbstractSorter.h"
-#include "itemlistitemwidget.h"
 
 namespace Ui {
 class ItemListWidget;

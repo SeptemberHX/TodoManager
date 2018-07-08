@@ -19,8 +19,7 @@ set (widgets_files
 	itemaddtagwidget.cpp
 	taglabelwidget.cpp
 	flowlayout.cpp
-	itemlistitemwidget.cpp
-	ItemListItemDelegate.cpp
+		ItemListItemDelegate.cpp
 	FetchConfigFilePathWidget.cpp
 	TagMode/TagModeWidget.cpp
 	TagMode/TagModeListItemDelegate.cpp
