@@ -12,7 +12,7 @@ CalendarCellWidget::CalendarCellWidget(QWidget *parent) :
     ui(new Ui::CalendarCellWidget)
 {
     ui->setupUi(this);
-    this->setMinimumSize({200, 200});
+    this->setMinimumSize({150, 150});
 }
 
 CalendarCellWidget::~CalendarCellWidget()
@@ -23,7 +23,7 @@ CalendarCellWidget::~CalendarCellWidget()
 void CalendarCellWidget::paintEvent(QPaintEvent *event) {
     QWidget::paintEvent(event);
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
 
     // draw background
     painter.fillRect(event->rect(), Qt::white);
@@ -31,7 +31,7 @@ void CalendarCellWidget::paintEvent(QPaintEvent *event) {
     // draw date
     int dayNum = this->date.day();
     QMargins dayNumMargin(10, 10, 10, 10);
-    QSize dayNumRectSize(30, 30);
+    QSize dayNumRectSize(50, 30);
     QRect dayNumRect(event->rect().left() + dayNumMargin.left(),
                      event->rect().top() + dayNumMargin.top(),
                      dayNumRectSize.width(),
@@ -41,12 +41,38 @@ void CalendarCellWidget::paintEvent(QPaintEvent *event) {
     painter.setFont(dayNumFont);
     painter.drawText(dayNumRect, Qt::AlignLeft | Qt::AlignVCenter, QString::number(dayNum));
 
+    // draw task complete percent
+    QMargins percentMargin(5, 5, 5, 5);
+    QSize percentSize(80, 20);
+    QRect percentRect(dayNumRect.right() + dayNumMargin.right() + percentMargin.left(),
+                      dayNumRect.bottom() - percentSize.height(),
+                      percentSize.width(),
+                      percentSize.height());
+    QFont percentFont("Aria", 8);
+    double percent = this->getTaskDonePercent();
+    QString percentText = QString::number(percent * 100, 'g', 4) + QString("%");
+    todo::DrawUtils::drawRectWithCircle(painter, percentFont, QColor("#71a8e7"), percentText, percentRect, Qt::gray, percent);
+
     // draw task
     QMargins taskMargin(5, 5, 5, 5);
     QRect taskRect(dayNumRect.bottomRight() + QPoint(dayNumMargin.right(), dayNumMargin.bottom()),
                    QSize(event->rect().width() - dayNumMargin.left() - dayNumMargin.right() - dayNumRectSize.width() - taskMargin.left() - taskMargin.right(),
-                         40));
-    todo::DrawUtils::drawRectWithCircle(painter, QFont("Aria", 12), Qt::blue, "飞流直下三千尺，疑是银河落九天", taskRect, Qt::green, 0.98);
+                         24));
+    todo::DrawUtils::drawRectWithCircle(painter, QFont("Aria", 10), Qt::blue, "飞流直下三千尺，疑是银河落九天", taskRect, QColor("#fb5c5d"), 1);
+}
+
+double CalendarCellWidget::getTaskDonePercent() {
+    if (itemDetailList.empty()) return 0;
+
+    double taskCount = itemDetailList.size();
+    int doneCount = 0;
+    foreach(auto itemDetail, this->itemDetailList) {
+        if (itemDetail.isDone()) {
+            ++doneCount;
+        }
+    }
+
+    return doneCount / taskCount;
 }
 
 const QDate &CalendarCellWidget::getDate() const {
@@ -55,4 +81,12 @@ const QDate &CalendarCellWidget::getDate() const {
 
 void CalendarCellWidget::setDate(const QDate &date) {
     CalendarCellWidget::date = date;
+}
+
+const QList<todo::ItemDetail> &CalendarCellWidget::getItemDetailList() const {
+    return itemDetailList;
+}
+
+void CalendarCellWidget::setItemDetailList(const QList<todo::ItemDetail> &itemDetailList) {
+    CalendarCellWidget::itemDetailList = itemDetailList;
 }

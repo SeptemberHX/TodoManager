@@ -16,13 +16,23 @@ void todo::DrawUtils::drawRectWithCircle(QPainter &painter, const QFont &font, c
         return;
     }
 
+    // backup
+    auto oldPen = painter.pen();
+
     int circleRadius = rect.height() / 2;
     QPainterPath painterPath;
-    QRect leftCircleRect = QRect(rect.topLeft(), rect.topLeft() + QPoint(2 * circleRadius, 2 * circleRadius));
-    QRect rightCircleRect = QRect(rect.topRight() + QPoint(-2 * circleRadius, 0), rect.bottomRight());
+    QRect leftCircleRect = QRect(rect.left(), rect.top(), 2 * circleRadius, 2 * circleRadius);
+    QRect rightCircleRect = QRect(rect.right() - 2 * circleRadius, rect.top(), 2 * circleRadius, 2 * circleRadius);
 
     // fill background according to percent
     painter.setPen(Qt::NoPen);
+    if (percent > 1.0) {
+        percent = 1;
+    }
+
+    if (percent < 0) {
+        percent = 0;
+    }
     int progressWidth = int(rect.width() * percent);
     QPainterPath fillPath;
     if (progressWidth < circleRadius) {
@@ -66,4 +76,7 @@ void todo::DrawUtils::drawRectWithCircle(QPainter &painter, const QFont &font, c
     painter.setPen(fontColor);
     auto elidedStr = StringUtils::elideText(string, painter.fontMetrics(), rect.width() - 2 * circleRadius);
     painter.drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter, elidedStr);
+
+    // reset painter
+    painter.setPen(oldPen);
 }
