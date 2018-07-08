@@ -25,3 +25,13 @@ bool todo::StringUtils::ifStringStartWithChinese(const QString &str) {
     ushort unicode = str.at(1).unicode();
     return (unicode >= 0x4E00 && unicode <= 0x9FA5);
 }
+
+QString todo::StringUtils::elideText(const QString &str, const QFontMetrics &fontMetrics, int maxWidth) {
+    QString newStr(str);
+    newStr.replace('\n', ' ');
+
+    if (fontMetrics.width(newStr) > maxWidth) {
+        return fontMetrics.elidedText(newStr, Qt::ElideRight, maxWidth);
+    }
+    return newStr;
+}

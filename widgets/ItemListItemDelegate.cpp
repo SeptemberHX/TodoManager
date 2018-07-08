@@ -8,6 +8,7 @@
 #include "ItemListItemDelegate.h"
 #include "../core/ItemDetail.h"
 #include "../config/TodoConfig.h"
+#include "../utils/StringUtils.h"
 
 ItemListItemDelegate::ItemListItemDelegate(QObject *parent)
     : QStyledItemDelegate(parent) {
@@ -64,7 +65,7 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     auto titleRect = QRect(option.rect.topLeft() + QPoint(titleMargins.left() + arcLength, titleMargins.top()),
             QSize(titleWidth, titleHeight));
     painter->drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter,
-                      this->elideText(itemDetail.getTitle(), painter->fontMetrics(), titleWidth));
+                      todo::StringUtils::elideText(itemDetail.getTitle(), painter->fontMetrics(), titleWidth));
 
     // draw priority circle
     painter->setFont(QFont("Arias", 11));
@@ -158,7 +159,7 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     painter->setPen(Qt::gray);
     painter->setFont(QFont("Arias", 10));
     painter->drawText(descriptionRect, Qt::AlignLeft | Qt::AlignVCenter,
-                      this->elideText(itemDetail.getDescription(), painter->fontMetrics(), descriptionRect.width()));
+                      todo::StringUtils::elideText(itemDetail.getDescription(), painter->fontMetrics(), descriptionRect.width()));
 
     // draw isDone color label
     QPainterPath doneLabelPath;
@@ -188,14 +189,4 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 
 QSize ItemListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
     return QSize(400, 100);
-}
-
-QString ItemListItemDelegate::elideText(const QString &str, const QFontMetrics &fontMetrics, int maxWidth) const {
-    QString newStr(str);
-    newStr.replace('\n', ' ');
-
-    if (fontMetrics.width(newStr) > maxWidth) {
-        return fontMetrics.elidedText(newStr, Qt::ElideRight, maxWidth);
-    }
-    return newStr;
 }

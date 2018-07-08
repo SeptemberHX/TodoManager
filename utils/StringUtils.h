@@ -7,6 +7,7 @@
 
 
 #include <QString>
+#include <QFontMetrics>
 
 namespace todo {
 
@@ -14,6 +15,7 @@ class StringUtils {
 public:
     static bool compareString(const QString &str1, const QString &str2);
     static bool ifStringStartWithChinese(const QString &str);
+    static QString elideText(const QString &str, const QFontMetrics &fontMetrics, int maxWidth);
 };
 
 }

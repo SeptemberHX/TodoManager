@@ -18,6 +18,7 @@ public:
     /**
      * draw rect with two half circle, and draw text
      * and fill background with given color according to percent(like progress bar).
+     *
      * @param painter: painter
      * @param font: text font
      * @param fontColor: text font color

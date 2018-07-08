@@ -14,9 +14,6 @@ public:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-
-private:
-    QString elideText(const QString &str, const QFontMetrics &fontMetrics, int maxWidth) const;
 };
 
 

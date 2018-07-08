@@ -5,6 +5,7 @@
 #include "DrawUtils.h"
 #include <QDebug>
 #include <QtMath>
+#include "StringUtils.h"
 
 void todo::DrawUtils::drawRectWithCircle(QPainter &painter, const QFont &font, const QColor &fontColor,
                                          const QString &string, const QRect &rect, const QColor &rectBgColor,
@@ -46,7 +47,6 @@ void todo::DrawUtils::drawRectWithCircle(QPainter &painter, const QFont &font, c
         fillPath.arcTo(rightCircleRect, -90, 90 - halfArc);
         fillPath.closeSubpath();
     }
-
     painter.fillPath(fillPath, rectBgColor);
 
     // draw the bound
@@ -64,5 +64,6 @@ void todo::DrawUtils::drawRectWithCircle(QPainter &painter, const QFont &font, c
                    rightCircleRect.bottomRight() + QPoint(-circleRadius, 0));
     painter.setFont(font);
     painter.setPen(fontColor);
-    painter.drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter, string);
+    auto elidedStr = StringUtils::elideText(string, painter.fontMetrics(), rect.width() - 2 * circleRadius);
+    painter.drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter, elidedStr);
 }
