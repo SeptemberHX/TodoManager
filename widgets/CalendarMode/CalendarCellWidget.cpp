@@ -46,7 +46,7 @@ void CalendarCellWidget::paintEvent(QPaintEvent *event) {
     QRect taskRect(dayNumRect.bottomRight() + QPoint(dayNumMargin.right(), dayNumMargin.bottom()),
                    QSize(event->rect().width() - dayNumMargin.left() - dayNumMargin.right() - dayNumRectSize.width() - taskMargin.left() - taskMargin.right(),
                          40));
-    todo::DrawUtils::drawRectWithCircle(painter, QFont("Aria", 12), Qt::blue, "飞流直下三千尺，疑是银河落九天", taskRect, Qt::green, 0.8);
+    todo::DrawUtils::drawRectWithCircle(painter, QFont("Aria", 12), Qt::blue, "飞流直下三千尺，疑是银河落九天", taskRect, Qt::green, 0.98);
 }
 
 const QDate &CalendarCellWidget::getDate() const {

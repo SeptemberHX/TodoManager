@@ -39,7 +39,7 @@ void todo::DrawUtils::drawRectWithCircle(QPainter &painter, const QFont &font, c
     } else {
         qreal halfArc = qRadiansToDegrees(qAcos((circleRadius - rect.width() + progressWidth) * 1.0 / circleRadius));
         fillPath.arcMoveTo(rightCircleRect, halfArc);
-
+        fillPath.arcTo(rightCircleRect, halfArc, 90 - halfArc);
         fillPath.lineTo(leftCircleRect.topRight() + QPoint(-circleRadius, 0));
         fillPath.arcTo(leftCircleRect, 90, 180);
         fillPath.lineTo(rightCircleRect.bottomRight() + QPoint(-circleRadius, 0));
