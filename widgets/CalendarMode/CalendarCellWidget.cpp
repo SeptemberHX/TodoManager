@@ -51,23 +51,38 @@ void CalendarCellWidget::paintEvent(QPaintEvent *event) {
     }
 
     // draw task complete percent
-    QMargins percentMargin(5, 5, 5, 5);
-    QSize percentSize(80, 20);
+    QMargins percentMargin(5, 5, 20, 5);
+    QSize percentSize(event->rect().width() - dayNumMargin.left() - dayNumRect.width()
+                        - dayNumMargin.right() - percentMargin.left() - percentMargin.right(),
+                      20);
     QRect percentRect(dayNumRect.right() + dayNumMargin.right() + percentMargin.left(),
                       dayNumRect.bottom() - percentSize.height(),
                       percentSize.width(),
                       percentSize.height());
     QFont percentFont("Aria", 8);
     double percent = this->getTaskDonePercent();
-    QString percentText = QString::number(percent * 100, 'g', 4) + QString("%");
-    todo::DrawUtils::drawRectWithCircle(painter, percentFont, QColor("#71a8e7"), percentText, percentRect, Qt::gray, percent);
+    QString percentText = QString("%1% of %2").arg(QString::number(percent * 100, 'g', 4))
+                                              .arg(QString::number(this->itemDetailList.count()));
+    todo::DrawUtils::drawRectWithCircle(painter, percentFont, Qt::darkGray, percentText, percentRect, QColor("#55ffff"), percent);
 
     // draw task
-    QMargins taskMargin(5, 5, 5, 5);
-    QRect taskRect(dayNumRect.bottomRight() + QPoint(dayNumMargin.right(), dayNumMargin.bottom()),
-                   QSize(event->rect().width() - dayNumMargin.left() - dayNumMargin.right() - dayNumRectSize.width() - taskMargin.left() - taskMargin.right(),
-                         24));
-    todo::DrawUtils::drawRectWithCircle(painter, QFont("Aria", 10), Qt::blue, "飞流直下三千尺，疑是银河落九天", taskRect, QColor("#fb5c5d"), 1);
+    QMargins taskMargin(15, 5, 15, 5);
+    int taskSpacing = 5;
+    QRect lastTaskRect(QPoint(taskMargin.left(), dayNumRect.bottom() + dayNumMargin.bottom()),
+                       QSize(event->rect().width() - taskMargin.left() - taskMargin.right(), 24));
+    foreach (auto itemDetail, this->itemDetailList) {
+        if (lastTaskRect.bottom() + taskMargin.bottom() <= event->rect().bottom()) {
+            QColor itemColor(Qt::gray);
+            if (!itemDetail.getTags().isEmpty()) {
+                itemColor = itemDetail.getTags()[0].getColor();
+            }
+            todo::DrawUtils::drawRectWithCircle(painter, QFont("Aria", 10), Qt::white,
+                                                itemDetail.getTitle(), lastTaskRect, itemColor, 1);
+            lastTaskRect.moveTop(lastTaskRect.bottom() + taskSpacing);
+        } else {
+            break;
+        }
+    }
 }
 
 double CalendarCellWidget::getTaskDonePercent() {

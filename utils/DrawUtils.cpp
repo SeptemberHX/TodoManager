@@ -60,7 +60,7 @@ void todo::DrawUtils::drawRectWithCircle(QPainter &painter, const QFont &font, c
     painter.fillPath(fillPath, rectBgColor);
 
     // draw the bound
-    painter.setPen(QPen(Qt::gray, 2));
+    painter.setPen(QPen(Qt::gray, 1));
     painterPath.moveTo(leftCircleRect.topRight() + QPoint(-circleRadius, 0));
     painterPath.arcTo(leftCircleRect, 90, 180);
     painterPath.lineTo(rightCircleRect.bottomRight() + QPoint(-circleRadius, 0));

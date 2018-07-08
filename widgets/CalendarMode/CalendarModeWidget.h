@@ -2,6 +2,7 @@
 #define CALENDARMODEWIDGET_H
 
 #include <QWidget>
+#include "../../data/DataCenter.h"
 
 namespace Ui {
 class CalendarModeWidget;
@@ -21,6 +22,7 @@ public slots:
 
 private:
     Ui::CalendarModeWidget *ui;
+    todo::DataCenter dataCenter;
 
 private slots:
     void prevNextButton_pressed();

@@ -62,6 +62,7 @@ void CalendarModeWidget::loadMonthData(int year, int month) {
             } else {
                 cellWidget->setEnabled(true);
                 // load ItemDetail
+                cellWidget->setItemDetailList(this->dataCenter.selectItemDetailByDate(cellWidget->getDate()));
             }
             cellWidget->repaint();
         }
