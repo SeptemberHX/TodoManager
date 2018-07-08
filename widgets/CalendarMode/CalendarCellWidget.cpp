@@ -5,6 +5,7 @@
 #include <QPaintEvent>
 #include <QMargins>
 #include <QRect>
+#include <QToolTip>
 #include <QDebug>
 #include "../../utils/DrawUtils.h"
 
@@ -147,10 +148,22 @@ void CalendarCellWidget::mouseMoveEvent(QMouseEvent *event) {
     foreach(auto itemDetailID, this->itemDetailID2Rect.keys()) {
         if (this->itemDetailID2Rect[itemDetailID].contains(event->pos())) {
             this->mouseHoverPair = QPair<bool, QRect>(true, this->itemDetailID2Rect[itemDetailID]);
+
+            QString toolTipText("%1\n\n%2");
+            foreach(auto itemDetail, this->itemDetailList) {
+                if (itemDetail.getId() == itemDetailID) {
+                    toolTipText = toolTipText.arg(itemDetail.getTitle()).arg(itemDetail.getDescription());
+                    break;
+                }
+            }
+            QToolTip::showText(mapToGlobal(this->itemDetailID2Rect[itemDetailID].bottomRight()), toolTipText);
             break;
         }
     }
 
+    if (!this->mouseHoverPair.first) {
+        QToolTip::hideText();
+    }
     this->repaint();
     QWidget::mouseMoveEvent(event);
 }
