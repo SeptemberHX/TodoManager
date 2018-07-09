@@ -5,6 +5,7 @@
 #include <QPaintEvent>
 #include <QDebug>
 #include <QToolTip>
+#include "../../utils/StringUtils.h"
 
 bool compareFun(const todo::ItemDetail &item1, const todo::ItemDetail &item2) {
     return item1.getFromTime() < item2.getFromTime();
@@ -68,6 +69,8 @@ void CalendarTimeLineWidget::paintEvent(QPaintEvent *event) {
     painter.setPen(Qt::white);
     painter.setFont(QFont("Aria", 8));
     this->itemDetailID2Rect.clear();
+    int otherModeCount = 0;
+    // draw schedule mode tasks
     foreach(auto itemDetail, this->itemDetailList) {
         if (itemDetail.getMode() == todo::ItemMode::SCHEDULE) {
             int targetTop = int(itemDetail.getFromTime().msecsSinceStartOfDay() / totalMSecondOneDay * totalHeight);
@@ -80,9 +83,21 @@ void CalendarTimeLineWidget::paintEvent(QPaintEvent *event) {
                 targetBgColor = itemDetail.getTags()[0].getColor();
             }
             painter.fillRect(targetRect, targetBgColor);
-            painter.drawText(targetRect, Qt::AlignCenter, itemDetail.getTitle());
+            QString str = todo::StringUtils::elideText(itemDetail.getTitle(), painter.fontMetrics(), targetRect.width());
+            painter.drawText(targetRect, Qt::AlignCenter, str);
             this->itemDetailID2Rect.insert(itemDetail.getId(), targetRect);
+        } else {
+            ++otherModeCount;
         }
+    }
+
+    // draw rect for other type tasks
+    if (otherModeCount > 0) {
+        QRect targetRect(lastHourRect.right() + 5, hour2Rect[0].top(), rectWidget - 35, rectHeight - 10);
+        painter.fillRect(targetRect, Qt::gray);
+        QString str = todo::StringUtils::elideText(QString("%1 other tasks").arg(otherModeCount),
+                painter.fontMetrics(), targetRect.width());
+        painter.drawText(targetRect, Qt::AlignCenter, str);
     }
 
     // draw mouse hover box
