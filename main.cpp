@@ -11,6 +11,8 @@
 #include "utils/NofityUtils.h"
 #include "dao/DaoFactory.h"
 #include "widgets/CalendarMode/CalendarModeWidget.h"
+#include "widgets/CalendarMode/CalendarTimeLineWidget.h"
+#include "data/DataCenter.h"
 #include <QLabel>
 
 
@@ -24,6 +26,11 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     w.show();
+
+    CalendarTimeLineWidget timeLineWidget;
+    todo::DataCenter dataCenter;
+    timeLineWidget.setItemDetailList(dataCenter.selectItemDetailByDate(QDate(2018, 6, 13)));
+    timeLineWidget.show();
 
 //    CalendarModeWidget cellWidget;
 //    cellWidget.show();

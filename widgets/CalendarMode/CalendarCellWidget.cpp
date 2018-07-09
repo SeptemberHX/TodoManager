@@ -144,6 +144,7 @@ void CalendarCellWidget::mousePressEvent(QMouseEvent *event) {
 }
 
 void CalendarCellWidget::mouseMoveEvent(QMouseEvent *event) {
+    bool lastMouseHoverFlag = this->mouseHoverPair.first;
     this->mouseHoverPair = QPair<bool, QRect>(false, QRect());
     foreach(auto itemDetailID, this->itemDetailID2Rect.keys()) {
         if (this->itemDetailID2Rect[itemDetailID].contains(event->pos())) {
@@ -164,6 +165,8 @@ void CalendarCellWidget::mouseMoveEvent(QMouseEvent *event) {
     if (!this->mouseHoverPair.first) {
         QToolTip::hideText();
     }
-    this->repaint();
+    if (lastMouseHoverFlag != this->mouseHoverPair.first) {
+        this->repaint();
+    }
     QWidget::mouseMoveEvent(event);
 }

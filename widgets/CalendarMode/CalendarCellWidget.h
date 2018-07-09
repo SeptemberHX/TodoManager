@@ -31,9 +31,8 @@ public:
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
-
-protected:
     void paintEvent(QPaintEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 
 public:
     ~CalendarCellWidget();
@@ -45,8 +44,6 @@ private:
     QColor dateNumColor;
     QMap<QString, QRect> itemDetailID2Rect;
     QPair<bool, QRect> mouseHoverPair;
-protected:
-    void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
     double getTaskDonePercent();
