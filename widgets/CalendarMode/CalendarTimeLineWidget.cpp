@@ -69,11 +69,9 @@ void CalendarTimeLineWidget::paintEvent(QPaintEvent *event) {
     painter.setFont(QFont("Aria", 8));
     this->itemDetailID2Rect.clear();
     foreach(auto itemDetail, this->itemDetailList) {
-        qDebug () << itemDetail.getTitle() << itemDetail.getMode();
         if (itemDetail.getMode() == todo::ItemMode::SCHEDULE) {
             int targetTop = int(itemDetail.getFromTime().msecsSinceStartOfDay() / totalMSecondOneDay * totalHeight);
             int targetBottom = int(itemDetail.getToTime().msecsSinceStartOfDay() / totalMSecondOneDay * totalHeight);
-            qDebug() << targetTop << targetBottom;
             QRect targetRect(lastHourRect.right() + 5, event->rect().top() + targetTop,
                              rectWidget - 35, targetBottom - targetTop);
 
