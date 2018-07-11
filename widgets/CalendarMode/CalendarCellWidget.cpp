@@ -123,6 +123,8 @@ const QList<todo::ItemDetail> &CalendarCellWidget::getItemDetailList() const {
 
 void CalendarCellWidget::setItemDetailList(const QList<todo::ItemDetail> &itemDetailList) {
     CalendarCellWidget::itemDetailList = itemDetailList;
+    // remember to reset mouseHoverPair.first to false !!!
+    this->mouseHoverPair = QPair<bool, QRect>(false, QRect());
 }
 
 const QColor &CalendarCellWidget::getDateNumColor() const {

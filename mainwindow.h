@@ -68,7 +68,6 @@ private slots:
     void database_modified();
 
 public slots:
-    void change_statusBar_text(const QString &str);
     void update_notification_timer();
 };
 

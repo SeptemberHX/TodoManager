@@ -86,10 +86,6 @@ void MainWindow::logAppend(const QString &str)
     this->logWidget->append(str);
 }
 
-void MainWindow::change_statusBar_text(const QString &str) {
-    statusBar()->showMessage(str);
-}
-
 void MainWindow::initConfig() {
     todo::TodoConfig::getInstance()->setAppConfig(todo::AppConfig());
     QDir configDir(QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation)[0]);
