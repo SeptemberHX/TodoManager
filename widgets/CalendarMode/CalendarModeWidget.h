@@ -2,7 +2,9 @@
 #define CALENDARMODEWIDGET_H
 
 #include <QWidget>
+#include <QButtonGroup>
 #include "../../data/DataCenter.h"
+#include "CalendarMonthWidget.h"
 
 namespace Ui {
 class CalendarModeWidget;
@@ -15,7 +17,6 @@ class CalendarModeWidget : public QWidget
 public:
     explicit CalendarModeWidget(QWidget *parent = 0);
     ~CalendarModeWidget();
-    void loadMonthData(int year, int month);
 
 signals:
     void itemClicked(const todo::ItemDetail &item);
@@ -27,9 +28,13 @@ public slots:
 private:
     Ui::CalendarModeWidget *ui;
     todo::DataCenter dataCenter;
+    CalendarMonthWidget *monthWidget;
+    QButtonGroup *toolButtonGroup;
 
 private slots:
     void prevNextButton_pressed();
+    void monthToolButton_pressed();
+    void weekToolButton_pressed();
 };
 
 #endif // CALENDARMODEWIDGET_H
