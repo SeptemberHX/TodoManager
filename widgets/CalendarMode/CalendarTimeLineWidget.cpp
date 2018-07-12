@@ -27,7 +27,7 @@ CalendarTimeLineWidget::~CalendarTimeLineWidget()
 
 void CalendarTimeLineWidget::paintEvent(QPaintEvent *event) {
     QWidget::paintEvent(event);
-    QMargins timeLineMargin(5, 10, 5, 10);
+    QMargins timeLineMargin(5, 10, 5, 5);
     QPainter painter(this);
 
     // draw background
@@ -113,7 +113,6 @@ const QList<todo::ItemDetail> &CalendarTimeLineWidget::getItemDetailList() const
 
 void CalendarTimeLineWidget::setItemDetailList(const QList<todo::ItemDetail> &itemDetailList) {
     CalendarTimeLineWidget::itemDetailList = itemDetailList;
-    qDebug() << itemDetailList.size();
     // sort itemDetailList according to their startDate
     std::sort(this->itemDetailList.begin(), this->itemDetailList.end(), compareFun);
 }
@@ -149,9 +148,19 @@ void CalendarTimeLineWidget::mouseMoveEvent(QMouseEvent *event) {
 void CalendarTimeLineWidget::mousePressEvent(QMouseEvent *event) {
     foreach(auto itemDetailID, this->itemDetailID2Rect.keys()) {
         if (this->itemDetailID2Rect[itemDetailID].contains(event->pos())) {
-            qDebug() << "Item " << itemDetailID << " clicked";
+            foreach(auto itemDetail, this->itemDetailList) {
+                if (itemDetail.getId() == itemDetailID) {
+                    emit itemClicked(itemDetail);
+                    break;
+                }
+            }
         }
     }
 
     QWidget::mousePressEvent(event);
+}
+
+void CalendarTimeLineWidget::loadDayData(const QDate &targetDay) {
+    this->setItemDetailList(this->dataCenter.selectItemDetailByDate(targetDay));
+    this->repaint();
 }

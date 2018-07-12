@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QList>
+#include "../../data/DataCenter.h"
 #include "../../core/ItemDetail.h"
 
 namespace Ui {
@@ -20,6 +21,15 @@ public:
 
     void setItemDetailList(const QList<todo::ItemDetail> &itemDetailList);
 
+    /**
+     *  given a date, load tasks of this day.
+     * @param targetDay
+     */
+    void loadDayData(const QDate &targetDay);
+
+signals:
+    void itemClicked(const todo::ItemDetail &item);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -34,6 +44,7 @@ private:
     QMap<int, QRect> hour2Rect;
     QMap<QString, QRect> itemDetailID2Rect;
     QPair<bool, QRect> mouseHoverPair;
+    todo::DataCenter dataCenter;
 };
 
 #endif // CALENDARTIMELINEWIDGET_H

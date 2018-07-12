@@ -33,10 +33,16 @@ private:
     CalendarWeekWidget *weekWidget;
     QButtonGroup *toolButtonGroup;
 
+    QDate weekViewStartDay;
+    QDate weekViewEndDay;
+
 private slots:
     void prevNextButton_pressed();
     void monthToolButton_pressed();
     void weekToolButton_pressed();
+
+    void prevWeekButton_pressed();
+    void nextWeekButton_pressed();
 };
 
 #endif // CALENDARMODEWIDGET_H

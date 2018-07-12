@@ -14,7 +14,7 @@ CalendarCellWidget::CalendarCellWidget(QWidget *parent) :
     ui(new Ui::CalendarCellWidget)
 {
     ui->setupUi(this);
-    this->setMinimumSize({150, 150});
+    this->setMinimumSize({120, 120});
     this->setDateNumColor(QColor("#71a8e7"));
 }
 

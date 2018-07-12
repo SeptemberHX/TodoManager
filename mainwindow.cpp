@@ -206,6 +206,10 @@ void MainWindow::database_modified() {
     if (this->currentMode != this->tagMode) {
         this->tagModeWidget->refresh_current_items();
     }
+
+    if (this->currentMode != this->calendarMode) {
+        // todo: refresh CalendarModeWidget's data
+    }
 }
 
 void MainWindow::item_clicked(const todo::ItemDetail &item) {

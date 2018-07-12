@@ -32,6 +32,10 @@ CalendarModeWidget::CalendarModeWidget(QWidget *parent) :
     connect(ui->weekToolButton, &QToolButton::clicked, this, &CalendarModeWidget::weekToolButton_pressed);
 
     connect(this->monthWidget, &CalendarMonthWidget::itemClicked, this, &CalendarModeWidget::item_clicked);
+    connect(this->weekWidget, &CalendarWeekWidget::itemClicked, this, &CalendarModeWidget::item_clicked);
+
+    connect(ui->prevWeekButton, &QToolButton::clicked, this, &CalendarModeWidget::prevWeekButton_pressed);
+    connect(ui->nextWeekButton, &QToolButton::clicked, this, &CalendarModeWidget::nextWeekButton_pressed);
 
     ui->yearSpinBox->setValue(QDate::currentDate().year());
     ui->monthSpinBox->setValue(QDate::currentDate().month());
@@ -69,6 +73,8 @@ void CalendarModeWidget::monthToolButton_pressed() {
     }
 
     ui->mainStackedWidget->setCurrentWidget(this->monthWidget);
+    ui->monthOperationWidget->show();
+    ui->weekOperationWidget->hide();
 }
 
 void CalendarModeWidget::weekToolButton_pressed() {
@@ -77,4 +83,14 @@ void CalendarModeWidget::weekToolButton_pressed() {
     }
 
     ui->mainStackedWidget->setCurrentWidget(this->weekWidget);
+    ui->weekOperationWidget->show();
+    ui->monthOperationWidget->hide();
+}
+
+void CalendarModeWidget::prevWeekButton_pressed() {
+    this->weekWidget->loadPrevWeek();
+}
+
+void CalendarModeWidget::nextWeekButton_pressed() {
+    this->weekWidget->loadNextWeek();
 }
