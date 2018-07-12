@@ -139,6 +139,12 @@ void CalendarCellWidget::mousePressEvent(QMouseEvent *event) {
     foreach(auto itemDetailID, this->itemDetailID2Rect.keys()) {
         if (this->itemDetailID2Rect[itemDetailID].contains(event->pos())) {
             qDebug() << "Item " << itemDetailID << " clicked";
+            foreach(auto itemDetail, this->itemDetailList) {
+                if (itemDetail.getId() == itemDetailID) {
+                    emit itemClicked(itemDetail);
+                    break;
+                }
+            }
         }
     }
 

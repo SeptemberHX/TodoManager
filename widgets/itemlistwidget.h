@@ -66,9 +66,10 @@ public slots:
     /**
      * Refresh item info.
      * AND MOVE IT TO CORRECT POSITION DUE TO SORTERS
+     * ATTENTION: can't use reference here !!!
      * @param item
      */
-    void refresh_item_info_and_sort(const todo::ItemDetail &item);
+    void refresh_item_info_and_sort(todo::ItemDetail item);
 
     /**
      * Same like refresh_item_info. But it will remove item if item can't meet the condition.

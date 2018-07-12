@@ -69,6 +69,7 @@ private slots:
 
 public slots:
     void update_notification_timer();
+    void item_clicked(const todo::ItemDetail &item);
 };
 
 #endif // MAINWINDOW_H

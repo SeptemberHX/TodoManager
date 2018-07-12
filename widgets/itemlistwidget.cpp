@@ -159,13 +159,16 @@ QList<todo::ItemDetail> ItemListWidget::sortItemlist(const QList<todo::ItemDetai
     return results;
 }
 
-void ItemListWidget::refresh_item_info_and_sort(const todo::ItemDetail &item) {
+void ItemListWidget::refresh_item_info_and_sort(todo::ItemDetail item) {
     int targetRow = this->findRow(item);
     if (targetRow < 0) {
         return;
     }
 
     // remove it first, then compare it to others from top to bottom to find the right place.
+    // this removeRow func() will cause currentIndexChanged signal emitted.
+    // So TodoListWidget::currentItem will change
+    // parameter item can't be a reference to TodoListWidget::currentItem.
     itemModel->removeRow(targetRow);
     this->addItemDetail(item);
 }
@@ -193,5 +196,5 @@ void ItemListWidget::setCurrentItemByID(const QString &itemID) {
     }
 
     // set cursor to it
-//    this->listView->setCurrentIndex()
+    this->listView->setCurrentIndex(this->itemModel->index(targetRow, 0));
 }

@@ -17,8 +17,12 @@ public:
     ~CalendarModeWidget();
     void loadMonthData(int year, int month);
 
+signals:
+    void itemClicked(const todo::ItemDetail &item);
+
 public slots:
     void targetMonth_changes();
+    void item_clicked(const todo::ItemDetail &item);
 
 private:
     Ui::CalendarModeWidget *ui;

@@ -54,6 +54,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->inboxModePushButton->click();
 //    ui->stackedWidget->setCurrentIndex(dailyMode);
 
+    // jump
+    connect(this->calendarModeWidget, &CalendarModeWidget::itemClicked, this, &MainWindow::item_clicked);
+    // end
+
     // notification timer
     this->timer = new QTimer();
     this->interval = 60000;
@@ -202,4 +206,9 @@ void MainWindow::database_modified() {
     if (this->currentMode != this->tagMode) {
         this->tagModeWidget->refresh_current_items();
     }
+}
+
+void MainWindow::item_clicked(const todo::ItemDetail &item) {
+    ui->dailyModePushButton->click();
+    this->todoListWidget->jump_to_specific_item(item);
 }

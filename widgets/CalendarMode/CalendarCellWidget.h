@@ -29,6 +29,9 @@ public:
 
     void setDateNumColor(const QColor &dateNumColor);
 
+signals:
+    void itemClicked(const todo::ItemDetail &item);
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;

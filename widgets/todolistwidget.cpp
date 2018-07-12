@@ -307,7 +307,7 @@ bool TodoListWidget::isCurrentItemEdited() const {
 
 void TodoListWidget::jump_to_specific_item(const todo::ItemDetail targetItem) {
     // load target date's tasks
-    this->loadTargetDateData(targetItem.getTargetDate());
+    ui->filterDateEdit->setDate(targetItem.getTargetDate());
 
     // check whether targetItem exists
     if (this->currItemDetailMap.find(targetItem.getId()) == this->currItemDetailMap.end()) {
@@ -315,7 +315,7 @@ void TodoListWidget::jump_to_specific_item(const todo::ItemDetail targetItem) {
     }
 
     // set list cursor to targetItem
-
+    this->listWidget->setCurrentItemByID(targetItem.getId());
 }
 
 void TodoListWidget::loadTargetDateData(const QDate &targetDate) {

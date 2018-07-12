@@ -35,6 +35,7 @@ CalendarModeWidget::CalendarModeWidget(QWidget *parent) :
             cellWidget->setDate(cellDate);
             cellWidget->setMouseTracking(true);
             ui->gridLayout->addWidget(cellWidget, i, j);
+            connect(cellWidget, &CalendarCellWidget::itemClicked, this, &CalendarModeWidget::item_clicked);
         }
     }
 
@@ -99,4 +100,8 @@ void CalendarModeWidget::prevNextButton_pressed() {
     currDate = currDate.addMonths(monthBias);
     ui->yearSpinBox->setValue(currDate.year());
     ui->monthSpinBox->setValue(currDate.month());
+}
+
+void CalendarModeWidget::item_clicked(const todo::ItemDetail &item) {
+    emit itemClicked(item);
 }
