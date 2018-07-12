@@ -43,7 +43,7 @@ void ItemListWidget::addItemDetail(const todo::ItemDetail &item)
 {
     if (this->checkItem(item)) {
         todo::SorterOrganize comparer(this->sorters);
-        int newRowToInsert = 0;  // insert to top by default
+        int newRowToInsert = this->itemModel->rowCount();  // insert to top by default
         for (int i = 0; i < this->itemModel->rowCount(); ++i) {
             todo::ItemDetail rowItem = this->itemModel->item(i)->data(Qt::UserRole + 1).value<todo::ItemDetail>();
             if (!comparer(item, rowItem)) {
