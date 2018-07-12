@@ -27,10 +27,10 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    CalendarTimeLineWidget timeLineWidget;
-    todo::DataCenter dataCenter;
-    timeLineWidget.setItemDetailList(dataCenter.selectItemDetailByDate(QDate(2018, 6, 13)));
-    timeLineWidget.show();
+//    CalendarTimeLineWidget timeLineWidget;
+//    todo::DataCenter dataCenter;
+//    timeLineWidget.setItemDetailList(dataCenter.selectItemDetailByDate(QDate(2018, 6, 13)));
+//    timeLineWidget.show();
 
 //    CalendarModeWidget cellWidget;
 //    cellWidget.show();

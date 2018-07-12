@@ -14,15 +14,17 @@ ItemListWidget::ItemListWidget(QWidget *parent) :
     ui(new Ui::ItemListWidget)
 {
     ui->setupUi(this);
-    this->itemModel = new QStandardItemModel(ui->listView);
-    ui->listView->setModel(this->itemModel);
-    ui->listView->setItemDelegate(new ItemListItemDelegate(ui->listView));
-    ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->listView->setMinimumWidth(430);
-//    ui->listView->setDragEnabled(true);
-//    ui->listView->setDragDropMode(QAbstractItemView::DragDrop);
+    this->listView = new CustomListView(this);
+    ui->verticalLayout->addWidget(this->listView);
+    this->itemModel = new QStandardItemModel(this->listView);
+    this->listView->setModel(this->itemModel);
+    this->listView->setItemDelegate(new ItemListItemDelegate(this->listView));
+    this->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    this->listView->setMinimumWidth(430);
+//    this->listView->setDragEnabled(true);
+//    this->listView->setDragDropMode(QAbstractItemView::DragDrop);
 
-    connect(ui->listView, &QListView::clicked, this, &ItemListWidget::listWidget_selectedItem_changed);
+    connect(this->listView, &CustomListView::currentIndexChanged, this, &ItemListWidget::listWidget_selectedItem_changed);
 
     // ------ default sorter ------
     this->addSorter(todo::DoneSorter(true));
@@ -54,7 +56,7 @@ void ItemListWidget::addItemDetail(const todo::ItemDetail &item)
         auto newListItem = new QStandardItem();
         newListItem->setData(QVariant::fromValue(item), Qt::UserRole + 1);
         this->itemModel->insertRow(newRowToInsert, newListItem);
-        ui->listView->setCurrentIndex(this->itemModel->indexFromItem(newListItem));
+        this->listView->setCurrentIndex(this->itemModel->indexFromItem(newListItem));
     }
 }
 
@@ -67,7 +69,7 @@ void ItemListWidget::refresh_item_info(const todo::ItemDetail &item)
 }
 
 void ItemListWidget::listWidget_selectedItem_changed() {
-    todo::ItemDetail currItemDetail = ui->listView->currentIndex().data(Qt::UserRole + 1).value<todo::ItemDetail>();
+    todo::ItemDetail currItemDetail = this->listView->currentIndex().data(Qt::UserRole + 1).value<todo::ItemDetail>();
     emit selectedItemChanged(currItemDetail.getId());
 }
 
@@ -88,7 +90,7 @@ void ItemListWidget::loadItemDetails(const QList<todo::ItemDetail> &items) {
 }
 
 void ItemListWidget::removeItemDetailByID(const QString &itemID) {
-    todo::ItemDetail prevItemDetail = ui->listView->currentIndex().data(Qt::UserRole + 1).value<todo::ItemDetail>();
+    todo::ItemDetail prevItemDetail = this->listView->currentIndex().data(Qt::UserRole + 1).value<todo::ItemDetail>();
     qDebug() << prevItemDetail.getTitle();
     for (int i = 0; i < this->itemModel->rowCount(); ++i) {
         todo::ItemDetail rowItem = this->itemModel->item(i)->data(Qt::UserRole + 1).value<todo::ItemDetail>();
@@ -97,7 +99,7 @@ void ItemListWidget::removeItemDetailByID(const QString &itemID) {
             break;
         }
     }
-    todo::ItemDetail currItemDetail = ui->listView->currentIndex().data(Qt::UserRole + 1).value<todo::ItemDetail>();
+    todo::ItemDetail currItemDetail = this->listView->currentIndex().data(Qt::UserRole + 1).value<todo::ItemDetail>();
     qDebug() << currItemDetail.getTitle();
     if (currItemDetail.getId() != prevItemDetail.getId()) {
         emit selectedItemChanged(currItemDetail.getId());
@@ -169,13 +171,27 @@ void ItemListWidget::refresh_item_info_and_sort(const todo::ItemDetail &item) {
 }
 
 int ItemListWidget::findRow(const todo::ItemDetail &item) {
+    return this->findRowByID(item.getId());
+}
+
+int ItemListWidget::findRowByID(const QString &itemID) {
     int targetRow = -1;
     for (int i = 0; i < this->itemModel->rowCount(); ++i) {
         todo::ItemDetail rowItem = this->itemModel->item(i)->data(Qt::UserRole + 1).value<todo::ItemDetail>();
-        if (rowItem.getId() == item.getId()) {
+        if (rowItem.getId() == itemID) {
             targetRow = i;
             break;
         }
     }
     return targetRow;
+}
+
+void ItemListWidget::setCurrentItemByID(const QString &itemID) {
+    int targetRow = this->findRowByID(itemID);
+    if (targetRow < 0) {
+        return;
+    }
+
+    // set cursor to it
+//    this->listView->setCurrentIndex()
 }

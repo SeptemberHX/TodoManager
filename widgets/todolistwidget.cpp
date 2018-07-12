@@ -177,13 +177,7 @@ void TodoListWidget::current_item_edited(const todo::ItemDetail &currentItemDeta
 
 void TodoListWidget::date_filter_changed() {
     QDate targetDate = ui->filterDateEdit->date();
-    auto items = this->dataCenter.selectItemDetailByDate(targetDate);
-
-    this->listWidget->clearFilters();
-    todo::DateFilter dateFilter(targetDate);
-    this->listWidget->addFilter<todo::DateFilter>(dateFilter);
-
-    this->loadItems(items);
+    this->loadTargetDateData(targetDate);
 }
 
 void TodoListWidget::preDayBtn_clicked() {
@@ -309,6 +303,29 @@ void TodoListWidget::refresh_current_items() {
 
 bool TodoListWidget::isCurrentItemEdited() const {
     return currentItemEdited;
+}
+
+void TodoListWidget::jump_to_specific_item(const todo::ItemDetail targetItem) {
+    // load target date's tasks
+    this->loadTargetDateData(targetItem.getTargetDate());
+
+    // check whether targetItem exists
+    if (this->currItemDetailMap.find(targetItem.getId()) == this->currItemDetailMap.end()) {
+        return;
+    }
+
+    // set list cursor to targetItem
+
+}
+
+void TodoListWidget::loadTargetDateData(const QDate &targetDate) {
+    auto items = this->dataCenter.selectItemDetailByDate(targetDate);
+
+    this->listWidget->clearFilters();
+    todo::DateFilter dateFilter(targetDate);
+    this->listWidget->addFilter<todo::DateFilter>(dateFilter);
+
+    this->loadItems(items);
 }
 
 // --------- InboxViewFilterCondition --------

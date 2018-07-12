@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QStandardItemModel>
 #include <QList>
+#include "CustomListView.h"
 #include "../core/ItemDetail.h"
 #include "../data/filters/DateFilter.h"
 #include "../data/sorters/AbstractSorter.h"
@@ -48,6 +49,12 @@ public:
      */
     bool checkItem(const todo::ItemDetail &detail);
 
+    /**
+     * set cursor to target item according to given itemID and load it to detail widget
+     * @param itemID
+     */
+    void setCurrentItemByID(const QString &itemID);
+
 public slots:
     /**
      * Refresh item info, used then current item is edited so the list view can refresh immediately
@@ -91,6 +98,8 @@ private:
      */
     int findRow(const todo::ItemDetail &item);
 
+    int findRowByID(const QString &itemID);
+
     /**
      * add item to list view without considering whether it meets the conditions or not
      * @param item
@@ -99,6 +108,7 @@ private:
 
     Ui::ItemListWidget *ui;
     QStandardItemModel *itemModel;
+    CustomListView *listView;
     QList<todo::AbstractFilter*> filters;
     QList<todo::AbstractSorter*> sorters;
 };

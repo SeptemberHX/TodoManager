@@ -85,6 +85,12 @@ public slots:
      */
     void refresh_current_items();
 
+    /**
+     * jump to given targetItem: jump to target day and load it to detail widget
+     * @param targetItem
+     */
+    void jump_to_specific_item(const todo::ItemDetail targetItem);
+
 private:
     Ui::TodoListWidget *ui;
     QSplitter *mainSplitter;
@@ -107,6 +113,8 @@ private:
     void dealWithNewItemDetail(const todo::ItemDetail &newItemDetail);
     void saveNewItemDetail(const todo::ItemDetail &newItemDetail);
     void addNewItemDetailToListView(const todo::ItemDetail &newItemDetail);
+
+    void loadTargetDateData(const QDate &targetDate);
 
     /**
      * Update ItemDetail to database.
