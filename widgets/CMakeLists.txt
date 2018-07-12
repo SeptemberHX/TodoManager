@@ -27,6 +27,7 @@ set (widgets_files
 	CalendarMode/CalendarCellWidget.cpp
 	CalendarMode/CalendarTimeLineWidget.cpp
 	CalendarMode/CalendarMonthWidget.cpp
+	CalendarMode/CalendarWeekWidget.cpp
 		CustomListView.cpp CustomListView.h)
 add_library(widgets ${widgets_files})
 target_link_libraries(widgets Qt5::Widgets Qt5::Core Qt5::Gui core utils data)

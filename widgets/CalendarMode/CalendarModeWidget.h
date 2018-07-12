@@ -5,6 +5,7 @@
 #include <QButtonGroup>
 #include "../../data/DataCenter.h"
 #include "CalendarMonthWidget.h"
+#include "CalendarWeekWidget.h"
 
 namespace Ui {
 class CalendarModeWidget;
@@ -29,6 +30,7 @@ private:
     Ui::CalendarModeWidget *ui;
     todo::DataCenter dataCenter;
     CalendarMonthWidget *monthWidget;
+    CalendarWeekWidget *weekWidget;
     QButtonGroup *toolButtonGroup;
 
 private slots:

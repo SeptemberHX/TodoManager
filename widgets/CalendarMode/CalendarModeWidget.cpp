@@ -11,7 +11,9 @@ CalendarModeWidget::CalendarModeWidget(QWidget *parent) :
     ui->setupUi(this);
 
     this->monthWidget = new CalendarMonthWidget(this);
+    this->weekWidget = new CalendarWeekWidget(this);
     ui->mainStackedWidget->addWidget(this->monthWidget);
+    ui->mainStackedWidget->addWidget(this->weekWidget);
     ui->mainStackedWidget->setCurrentWidget(this->monthWidget);
 
     this->toolButtonGroup = new QButtonGroup(this);
@@ -70,5 +72,9 @@ void CalendarModeWidget::monthToolButton_pressed() {
 }
 
 void CalendarModeWidget::weekToolButton_pressed() {
-    // todo: change to weekWidget
+    if (ui->mainStackedWidget->currentWidget() == this->weekWidget) {
+        return;
+    }
+
+    ui->mainStackedWidget->setCurrentWidget(this->weekWidget);
 }

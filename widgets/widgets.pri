@@ -11,7 +11,8 @@ FORMS += \
     $$PWD/CalendarMode/CalendarModeWidget.ui \
     $$PWD/CalendarMode/CalendarCellWidget.ui \
     $$PWD/CalendarMode/CalendarTimeLineWidget.ui \
-    $$PWD/CalendarMode/CalendarMonthWidget.ui
+    $$PWD/CalendarMode/CalendarMonthWidget.ui \
+    $$PWD/CalendarMode/CalendarWeekWidget.ui
 
 HEADERS += \
     $$PWD/tagwidget.h \
@@ -30,7 +31,8 @@ HEADERS += \
     $$PWD/CalendarMode/CalendarModeWidget.h \
     $$PWD/CalendarMode/CalendarCellWidget.h \
     $$PWD/CalendarMode/CalendarTimeLineWidget.h \
-    $$PWD/CalendarMode/CalendarMonthWidget.h
+    $$PWD/CalendarMode/CalendarMonthWidget.h \
+    $$PWD/CalendarMode/CalendarWeekWidget.h
 
 SOURCES += \
     $$PWD/tagwidget.cpp \
@@ -49,4 +51,5 @@ SOURCES += \
     $$PWD/CalendarMode/CalendarModeWidget.cpp \
     $$PWD/CalendarMode/CalendarCellWidget.cpp \
     $$PWD/CalendarMode/CalendarTimeLineWidget.cpp \
-    $$PWD/CalendarMode/CalendarMonthWidget.cpp
+    $$PWD/CalendarMode/CalendarMonthWidget.cpp \
+    $$PWD/CalendarMode/CalendarWeekWidget.cpp
