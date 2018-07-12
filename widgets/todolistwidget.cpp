@@ -328,6 +328,10 @@ void TodoListWidget::loadTargetDateData(const QDate &targetDate) {
     this->loadItems(items);
 }
 
+void TodoListWidget::jump_to_specific_day(const QDate &targetDay) {
+    ui->filterDateEdit->setDate(targetDay);
+}
+
 // --------- InboxViewFilterCondition --------
 
 const QDate &InboxViewFilterCondition::getTargetFromDate() const {

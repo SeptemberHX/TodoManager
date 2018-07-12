@@ -90,6 +90,7 @@ public slots:
      * @param targetItem
      */
     void jump_to_specific_item(const todo::ItemDetail targetItem);
+    void jump_to_specific_day(const QDate &targetDay);
 
 private:
     Ui::TodoListWidget *ui;

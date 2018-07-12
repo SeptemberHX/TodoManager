@@ -146,8 +146,10 @@ void CalendarTimeLineWidget::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void CalendarTimeLineWidget::mousePressEvent(QMouseEvent *event) {
+    bool ifItemClicked = false;
     foreach(auto itemDetailID, this->itemDetailID2Rect.keys()) {
         if (this->itemDetailID2Rect[itemDetailID].contains(event->pos())) {
+            ifItemClicked = true;
             foreach(auto itemDetail, this->itemDetailList) {
                 if (itemDetail.getId() == itemDetailID) {
                     emit itemClicked(itemDetail);
@@ -157,10 +159,14 @@ void CalendarTimeLineWidget::mousePressEvent(QMouseEvent *event) {
         }
     }
 
+    if (ifItemClicked == false) {
+        emit targetDayClicked(this->currentDate);
+    }
     QWidget::mousePressEvent(event);
 }
 
 void CalendarTimeLineWidget::loadDayData(const QDate &targetDay) {
+    this->currentDate = targetDay;
     this->setItemDetailList(this->dataCenter.selectItemDetailByDate(targetDay));
     this->repaint();
 }

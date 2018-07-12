@@ -136,8 +136,10 @@ void CalendarCellWidget::setDateNumColor(const QColor &dateNumColor) {
 }
 
 void CalendarCellWidget::mousePressEvent(QMouseEvent *event) {
+    bool ifItemClicked = false;
     foreach(auto itemDetailID, this->itemDetailID2Rect.keys()) {
         if (this->itemDetailID2Rect[itemDetailID].contains(event->pos())) {
+            ifItemClicked = true;
             qDebug() << "Item " << itemDetailID << " clicked";
             foreach(auto itemDetail, this->itemDetailList) {
                 if (itemDetail.getId() == itemDetailID) {
@@ -145,9 +147,11 @@ void CalendarCellWidget::mousePressEvent(QMouseEvent *event) {
                     break;
                 }
             }
+            break;
         }
     }
 
+    emit targetDayClicked(this->date);
     QWidget::mousePressEvent(event);
 }
 

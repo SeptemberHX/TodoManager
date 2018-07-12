@@ -25,6 +25,7 @@ CalendarWeekWidget::CalendarWeekWidget(QWidget *parent) :
         // timeline widget
         CalendarTimeLineWidget *timeLineWidget = new CalendarTimeLineWidget(this);
         connect(timeLineWidget, &CalendarTimeLineWidget::itemClicked, this, &CalendarWeekWidget::item_clicked);
+        connect(timeLineWidget, &CalendarTimeLineWidget::targetDayClicked, this, &CalendarWeekWidget::targetDay_clicked);
         this->timeLineWidgetList.append(timeLineWidget);
         ui->gridLayout->addWidget(timeLineWidget, 1, column);
     }
@@ -83,4 +84,8 @@ void CalendarWeekWidget::loadNextWeek() {
 
 void CalendarWeekWidget::item_clicked(const todo::ItemDetail &item) {
     emit itemClicked(item);
+}
+
+void CalendarWeekWidget::targetDay_clicked(const QDate &targetDay) {
+    emit targetDayClicked(targetDay);
 }

@@ -36,8 +36,11 @@ public:
 
     void loadNextWeek();
 
+    void loadDataFromSaturday(const QDate &firstDayOfWeekInCalendar);
+
 signals:
     void itemClicked(const todo::ItemDetail &item);
+    void targetDayClicked(const QDate &targetDay);
 
 private:
     Ui::CalendarWeekWidget *ui;
@@ -46,8 +49,8 @@ private:
     QDate fromDate;
     QDate toDate;
 
-    void loadDataFromSaturday(const QDate &firstDayOfWeekInCalendar);
     void item_clicked(const todo::ItemDetail &item);
+    void targetDay_clicked(const QDate &targetDay);
 };
 
 #endif // CALENDARWEEKWIDGET_H

@@ -29,6 +29,7 @@ public:
 
 signals:
     void itemClicked(const todo::ItemDetail &item);
+    void targetDayClicked(const QDate &targetDay);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -45,6 +46,7 @@ private:
     QMap<QString, QRect> itemDetailID2Rect;
     QPair<bool, QRect> mouseHoverPair;
     todo::DataCenter dataCenter;
+    QDate currentDate;
 };
 
 #endif // CALENDARTIMELINEWIDGET_H

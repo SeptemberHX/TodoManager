@@ -21,6 +21,7 @@ public:
 
 signals:
     void itemClicked(const todo::ItemDetail &item);
+    void targetDayClicked(const QDate &targetDay);
 
 public slots:
     void targetMonth_changes();
@@ -36,6 +37,8 @@ private:
     QDate weekViewStartDay;
     QDate weekViewEndDay;
 
+    void setWeekLabelAccordingToWeekWidget();
+
 private slots:
     void prevNextButton_pressed();
     void monthToolButton_pressed();
@@ -43,6 +46,18 @@ private slots:
 
     void prevWeekButton_pressed();
     void nextWeekButton_pressed();
+
+    /**
+     * CalendarCellWidget will emit targetDayClicked signal when click on it, but not on the task item.
+     * @param targetDay
+     */
+    void targetDay_clicked(const QDate &targetDay);
+
+    /**
+     * Emitted by CalendarWeekWidget. This will cause jumping to daily view.
+     * @param targetDay
+     */
+    void week_targetDay_clicked(const QDate &targetDay);
 };
 
 #endif // CALENDARMODEWIDGET_H

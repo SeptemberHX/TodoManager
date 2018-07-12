@@ -20,9 +20,11 @@ public:
 
 signals:
     void itemClicked(const todo::ItemDetail &item);
+    void targetDayClicked(const QDate &targetDay);
 
 public slots:
     void item_clicked(const todo::ItemDetail &item);
+    void targetDay_cicked(const QDate &targetDay);
 
 private:
     Ui::CalendarMonthWidget *ui;

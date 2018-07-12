@@ -14,7 +14,6 @@ CalendarModeWidget::CalendarModeWidget(QWidget *parent) :
     this->weekWidget = new CalendarWeekWidget(this);
     ui->mainStackedWidget->addWidget(this->monthWidget);
     ui->mainStackedWidget->addWidget(this->weekWidget);
-    ui->mainStackedWidget->setCurrentWidget(this->monthWidget);
 
     this->toolButtonGroup = new QButtonGroup(this);
     this->toolButtonGroup->addButton(ui->monthToolButton);
@@ -37,8 +36,13 @@ CalendarModeWidget::CalendarModeWidget(QWidget *parent) :
     connect(ui->prevWeekButton, &QToolButton::clicked, this, &CalendarModeWidget::prevWeekButton_pressed);
     connect(ui->nextWeekButton, &QToolButton::clicked, this, &CalendarModeWidget::nextWeekButton_pressed);
 
+    connect(this->monthWidget, &CalendarMonthWidget::targetDayClicked, this, &CalendarModeWidget::targetDay_clicked);
+    connect(this->weekWidget, &CalendarWeekWidget::targetDayClicked, this, &CalendarModeWidget::week_targetDay_clicked);
+
     ui->yearSpinBox->setValue(QDate::currentDate().year());
     ui->monthSpinBox->setValue(QDate::currentDate().month());
+    ui->monthToolButton->click();
+    this->setWeekLabelAccordingToWeekWidget();
 }
 
 CalendarModeWidget::~CalendarModeWidget()
@@ -89,8 +93,30 @@ void CalendarModeWidget::weekToolButton_pressed() {
 
 void CalendarModeWidget::prevWeekButton_pressed() {
     this->weekWidget->loadPrevWeek();
+    this->setWeekLabelAccordingToWeekWidget();
 }
 
 void CalendarModeWidget::nextWeekButton_pressed() {
     this->weekWidget->loadNextWeek();
+    this->setWeekLabelAccordingToWeekWidget();
+}
+
+void CalendarModeWidget::targetDay_clicked(const QDate &targetDay) {
+    if (targetDay.dayOfWeek() == 7) {
+        this->weekWidget->loadDataFromSaturday(targetDay);
+    } else {
+        this->weekWidget->loadWeekData(targetDay);
+    }
+    ui->weekToolButton->click();
+    this->setWeekLabelAccordingToWeekWidget();
+}
+
+void CalendarModeWidget::setWeekLabelAccordingToWeekWidget() {
+    ui->weekLabel->setText(QString(" %1 - %2 ").arg(this->weekWidget->getFromDate().toString("yyyy/MM/dd"))
+                                             .arg(this->weekWidget->getToDate().toString("yyyy/MM/dd"))
+    );
+}
+
+void CalendarModeWidget::week_targetDay_clicked(const QDate &targetDay) {
+    emit targetDayClicked(targetDay);
 }

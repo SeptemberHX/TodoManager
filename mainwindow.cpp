@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // jump
     connect(this->calendarModeWidget, &CalendarModeWidget::itemClicked, this, &MainWindow::item_clicked);
+    connect(this->calendarModeWidget, &CalendarModeWidget::targetDayClicked, this, &MainWindow::targetDay_clicked);
     // end
 
     // notification timer
@@ -215,4 +216,9 @@ void MainWindow::database_modified() {
 void MainWindow::item_clicked(const todo::ItemDetail &item) {
     ui->dailyModePushButton->click();
     this->todoListWidget->jump_to_specific_item(item);
+}
+
+void MainWindow::targetDay_clicked(const QDate &targetDay) {
+    ui->dailyModePushButton->click();
+    this->todoListWidget->jump_to_specific_day(targetDay);
 }

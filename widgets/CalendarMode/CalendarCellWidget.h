@@ -31,6 +31,7 @@ public:
 
 signals:
     void itemClicked(const todo::ItemDetail &item);
+    void targetDayClicked(const QDate &targetDay);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

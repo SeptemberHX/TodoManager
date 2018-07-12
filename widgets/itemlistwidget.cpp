@@ -87,6 +87,11 @@ void ItemListWidget::loadItemDetails(const QList<todo::ItemDetail> &items) {
     foreach (auto const &item, itemsAfterFilter) {
         this->addItemDetail_(item);  // Use addItemDetail method to sort new item according to sorters.
     }
+
+    // todo: fix this crash
+//    if (this->itemModel->rowCount() > 0) {
+//        this->listView->setCurrentIndex(this->itemModel->index(0, 0));
+//    }
 }
 
 void ItemListWidget::removeItemDetailByID(const QString &itemID) {

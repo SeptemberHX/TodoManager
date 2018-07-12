@@ -36,6 +36,7 @@ CalendarMonthWidget::CalendarMonthWidget(QWidget *parent) :
             cellWidget->setMouseTracking(true);
             ui->gridLayout->addWidget(cellWidget, i, j);
             connect(cellWidget, &CalendarCellWidget::itemClicked, this, &CalendarMonthWidget::item_clicked);
+            connect(cellWidget, &CalendarCellWidget::targetDayClicked, this, &CalendarMonthWidget::targetDay_cicked);
         }
     }
 
@@ -49,9 +50,7 @@ CalendarMonthWidget::~CalendarMonthWidget()
 void CalendarMonthWidget::loadMonthData(int year, int month) {
     QDate firstDayInMonth(year, month, 1);
     int dayInterval = 0;
-    if (firstDayInMonth.dayOfWeek() == 7) {  // start from saturday
-        dayInterval = 6;
-    } else {
+    if (firstDayInMonth.dayOfWeek() != 7) {  // start from sunday
         dayInterval = firstDayInMonth.dayOfWeek();
     }
     QDate firstDayInCalendar = firstDayInMonth.addDays(-dayInterval);
@@ -77,4 +76,8 @@ void CalendarMonthWidget::loadMonthData(int year, int month) {
 
 void CalendarMonthWidget::item_clicked(const todo::ItemDetail &item) {
     emit itemClicked(item);
+}
+
+void CalendarMonthWidget::targetDay_cicked(const QDate &targetDay) {
+    emit targetDayClicked(targetDay);
 }
