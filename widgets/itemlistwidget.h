@@ -105,7 +105,7 @@ private:
      * add item to list view without considering whether it meets the conditions or not
      * @param item
      */
-    QList<todo::ItemDetail> addItemDetail_(const todo::ItemDetail &item);
+    void addItemDetail_(const todo::ItemDetail &item);
 
     Ui::ItemListWidget *ui;
     QStandardItemModel *itemModel;

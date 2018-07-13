@@ -88,10 +88,9 @@ void ItemListWidget::loadItemDetails(const QList<todo::ItemDetail> &items) {
         this->addItemDetail_(item);  // Use addItemDetail method to sort new item according to sorters.
     }
 
-    // todo: fix this crash
-//    if (this->itemModel->rowCount() > 0) {
-//        this->listView->setCurrentIndex(this->itemModel->index(0, 0));
-//    }
+    if (this->itemModel->rowCount() > 0) {
+        this->listView->setCurrentIndex(this->itemModel->index(0, 0));
+    }
 }
 
 void ItemListWidget::removeItemDetailByID(const QString &itemID) {
@@ -137,7 +136,7 @@ bool ItemListWidget::checkItem(const todo::ItemDetail &detail) {
     return passCheckFlag;
 }
 
-QList<todo::ItemDetail> ItemListWidget::addItemDetail_(const todo::ItemDetail &item) {
+void ItemListWidget::addItemDetail_(const todo::ItemDetail &item) {
     auto newListItem = new QStandardItem();
     newListItem->setData(QVariant::fromValue(item), Qt::UserRole + 1);
     this->itemModel->insertRow(0, newListItem);
