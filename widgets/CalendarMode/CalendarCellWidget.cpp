@@ -151,7 +151,9 @@ void CalendarCellWidget::mousePressEvent(QMouseEvent *event) {
         }
     }
 
-    emit targetDayClicked(this->date);
+    if (!ifItemClicked) {
+        emit targetDayClicked(this->date);
+    }
     QWidget::mousePressEvent(event);
 }
 
