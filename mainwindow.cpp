@@ -209,7 +209,7 @@ void MainWindow::database_modified() {
     }
 
     if (this->currentMode != this->calendarMode) {
-        // todo: refresh CalendarModeWidget's data
+        this->calendarModeWidget->refresh_current_items();
     }
 }
 

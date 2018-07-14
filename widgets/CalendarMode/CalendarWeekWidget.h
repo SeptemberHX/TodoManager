@@ -38,6 +38,8 @@ public:
 
     void loadDataFromSaturday(const QDate &firstDayOfWeekInCalendar);
 
+    void refresh_current_items();
+
 signals:
     void itemClicked(const todo::ItemDetail &item);
     void targetDayClicked(const QDate &targetDay);

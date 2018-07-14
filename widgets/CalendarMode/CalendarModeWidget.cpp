@@ -120,3 +120,8 @@ void CalendarModeWidget::setWeekLabelAccordingToWeekWidget() {
 void CalendarModeWidget::week_targetDay_clicked(const QDate &targetDay) {
     emit targetDayClicked(targetDay);
 }
+
+void CalendarModeWidget::refresh_current_items() {
+    this->targetMonth_changes();
+    this->weekWidget->refresh_current_items();
+}

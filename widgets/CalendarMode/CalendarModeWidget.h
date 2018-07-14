@@ -18,6 +18,7 @@ class CalendarModeWidget : public QWidget
 public:
     explicit CalendarModeWidget(QWidget *parent = 0);
     ~CalendarModeWidget();
+    void refresh_current_items();
 
 signals:
     void itemClicked(const todo::ItemDetail &item);

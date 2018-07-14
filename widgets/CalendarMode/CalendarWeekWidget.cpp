@@ -41,9 +41,7 @@ CalendarWeekWidget::~CalendarWeekWidget()
 
 void CalendarWeekWidget::loadWeekData(const QDate &targetDay) {
     int dayInterval = 0;
-    if (targetDay.dayOfWeek() == 7) {  // start from saturday
-        dayInterval = 6;
-    } else {
+    if (targetDay.dayOfWeek() != 7) {  // start from saturday
         dayInterval = targetDay.dayOfWeek();
     }
     this->loadDataFromSaturday(targetDay.addDays(-dayInterval));
@@ -88,4 +86,8 @@ void CalendarWeekWidget::item_clicked(const todo::ItemDetail &item) {
 
 void CalendarWeekWidget::targetDay_clicked(const QDate &targetDay) {
     emit targetDayClicked(targetDay);
+}
+
+void CalendarWeekWidget::refresh_current_items() {
+    this->loadDataFromSaturday(this->fromDate);
 }
