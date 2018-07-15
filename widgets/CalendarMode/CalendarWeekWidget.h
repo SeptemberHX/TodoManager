@@ -36,7 +36,7 @@ public:
 
     void loadNextWeek();
 
-    void loadDataFromSaturday(const QDate &firstDayOfWeekInCalendar);
+    void loadDataFromSunday(const QDate &firstDayOfWeekInCalendar);
 
     void refresh_current_items();
 

@@ -103,7 +103,7 @@ void CalendarModeWidget::nextWeekButton_pressed() {
 
 void CalendarModeWidget::targetDay_clicked(const QDate &targetDay) {
     if (targetDay.dayOfWeek() == 7) {
-        this->weekWidget->loadDataFromSaturday(targetDay);
+        this->weekWidget->loadDataFromSunday(targetDay);
     } else {
         this->weekWidget->loadWeekData(targetDay);
     }
