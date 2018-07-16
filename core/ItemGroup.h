@@ -13,7 +13,8 @@
 namespace todo {
 
 enum ItemGroupType {
-    PROJECT  // include project and sub project
+    PROJECT,  // top project
+    SUB_PROJECT  // child project. For sql operation simplify
 };
 
 /**
