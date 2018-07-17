@@ -5,20 +5,22 @@
 #include "ItemGroupUtils.h"
 #include <QMap>
 #include <QList>
+#include <QDebug>
 
 QList<todo::ItemGroup>
 todo::ItemGroupUtils::buildGroup(const QList<todo::ItemGroup> &itemGroupList, const QList<todo::ItemDetail> &itemList,
                                  const QList<todo::ItemGroupRelation> &relationList) {
-    QMap<QString, const ItemGroup&> itemGroupMap;
-    QMap<QString, const ItemDetail&> itemMap;
-    QMap<QString, QList<const ItemGroupRelation&>> relationListMap;
+    QMap<QString, ItemGroup> itemGroupMap;
+    QMap<QString, ItemDetail> itemMap;
+    QMap<QString, QList<ItemGroupRelation>> relationListMap;
     QList<ItemGroup> rootGroupList;
 
     // prepare for calculation
-    foreach(auto const &itemGroup, itemGroupList) {
+    foreach(const ItemGroup &itemGroup, itemGroupList) {
         if (itemGroup.getType() == ItemGroupType::PROJECT) {
             rootGroupList.append(itemGroup);
         } else {
+            qDebug() << typeid(itemGroup).name();
             itemGroupMap.insert(itemGroup.getId(), itemGroup);
         }
     }
@@ -27,7 +29,7 @@ todo::ItemGroupUtils::buildGroup(const QList<todo::ItemGroup> &itemGroupList, co
     }
     foreach(auto const &relation, relationList) {
         if (!relationListMap.contains(relation.getDirectGroupID())) {
-            relationListMap.insert(relation.getDirectGroupID(), QList<const ItemGroupRelation&>());
+            relationListMap.insert(relation.getDirectGroupID(), QList<ItemGroupRelation>());
         }
         relationListMap[relation.getDirectGroupID()].append(relation);
     }
@@ -44,9 +46,9 @@ todo::ItemGroupUtils::buildGroup(const QList<todo::ItemGroup> &itemGroupList, co
 }
 
 void
-todo::ItemGroupUtils::buildGroup_(todo::ItemGroup *rootGroupPtr, const QMap<QString, const todo::ItemGroup &> groupMap,
-                                  const QMap<QString, const todo::ItemDetail &> detailMap,
-                                  const QMap<QString, QList<const todo::ItemGroupRelation &>> relationListMap) {
+todo::ItemGroupUtils::buildGroup_(todo::ItemGroup *rootGroupPtr, const QMap<QString, todo::ItemGroup> &groupMap,
+                                  const QMap<QString, todo::ItemDetail> &detailMap,
+                                  const QMap<QString, QList<todo::ItemGroupRelation>> &relationListMap) {
     if (relationListMap.contains(rootGroupPtr->getId())) {
         foreach (auto &relation, relationListMap[rootGroupPtr->getId()]) {
             if (detailMap.contains(relation.getItemID())) {

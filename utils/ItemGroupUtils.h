@@ -23,9 +23,9 @@ public:
 
 private:
     static void buildGroup_(ItemGroup *rootGroupPtr,
-                            const QMap<QString, const ItemGroup &> groupMap,
-                            const QMap<QString, const ItemDetail &> detailMap,
-                            const QMap<QString, QList<const todo::ItemGroupRelation &>> relationMap
+                            const QMap<QString, ItemGroup> &groupMap,
+                            const QMap<QString, ItemDetail> &detailMap,
+                            const QMap<QString, QList<todo::ItemGroupRelation>> &relationMap
     );
 };
 
