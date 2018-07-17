@@ -19,7 +19,7 @@ set (widgets_files
 	itemaddtagwidget.cpp
 	taglabelwidget.cpp
 	flowlayout.cpp
-		ItemListItemDelegate.cpp
+	ItemListItemDelegate.cpp
 	FetchConfigFilePathWidget.cpp
 	TagMode/TagModeWidget.cpp
 	TagMode/TagModeListItemDelegate.cpp
@@ -28,8 +28,9 @@ set (widgets_files
 	CalendarMode/CalendarTimeLineWidget.cpp
 	CalendarMode/CalendarMonthWidget.cpp
 	CalendarMode/CalendarWeekWidget.cpp
-		CustomListView.cpp CustomListView.h
+	CustomListView.cpp
 	ProjectMode/ProjectModeWidget.cpp
-	ProjectMode/GroupWidget.cpp)
+	ProjectMode/GroupWidget.cpp
+	ProjectMode/GroupDetailWidget.cpp)
 add_library(widgets ${widgets_files})
 target_link_libraries(widgets Qt5::Widgets Qt5::Core Qt5::Gui core utils data)
