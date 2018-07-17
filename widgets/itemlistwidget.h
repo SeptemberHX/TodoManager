@@ -6,6 +6,7 @@
 #include <QList>
 #include "CustomListView.h"
 #include "../core/ItemDetail.h"
+#include "../core/ItemAndGroupPair.h"
 #include "../data/filters/DateFilter.h"
 #include "../data/sorters/AbstractSorter.h"
 
@@ -106,6 +107,9 @@ private:
      * @param item
      */
     void addItemDetail_(const todo::ItemDetail &item);
+
+    todo::ItemAndGroupPair getItemPairByRow(int row);
+    todo::ItemAndGroupPair getCurrSelectedItemPair();
 
     Ui::ItemListWidget *ui;
     QStandardItemModel *itemModel;
