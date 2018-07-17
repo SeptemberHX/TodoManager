@@ -4,7 +4,8 @@ HEADERS += \
     $$PWD/ItemDetailAndTag.h \
     $$PWD/SqlErrorException.h \
     $$PWD/ItemGroup.h \
-    $$PWD/ItemGroupRelation.h
+    $$PWD/ItemGroupRelation.h \
+    $$PWD/ItemAndGroupPair.h
 
 SOURCES += \
     $$PWD/ItemDetail.cpp \
@@ -12,4 +13,5 @@ SOURCES += \
     $$PWD/ItemDetailAndTag.cpp \
     $$PWD/SqlErrorException.cpp \
     $$PWD/ItemGroup.cpp \
-    $$PWD/ItemGroupRelation.cpp
+    $$PWD/ItemGroupRelation.cpp \
+    $$PWD/ItemAndGroupPair.cpp
