@@ -60,6 +60,10 @@ public:
 
     void setItemDetailList(const QList<ItemDetail> &itemDetailList);
 
+    void addItemDetail(const ItemDetail &itemDetail);
+
+    void addItemGroup(const ItemGroup &itemGroup);
+
 private:
     // persistence in sql
     QString title;
