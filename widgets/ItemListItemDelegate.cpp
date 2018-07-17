@@ -5,8 +5,8 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QDebug>
+#include <QVariant>
 #include "ItemListItemDelegate.h"
-#include "../core/ItemDetail.h"
 #include "../config/TodoConfig.h"
 #include "../utils/StringUtils.h"
 
@@ -26,26 +26,37 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     painter->setPen(QPen(Qt::lightGray, 1));
     painter->drawLine(QLine(lineStartPos, lineEndPos));
 
-    // get ItemDetail Object
-    todo::ItemDetail itemDetail = index.data(Qt::UserRole + 1).value<todo::ItemDetail>();
+    todo::ItemAndGroupPair itemAndGroupPair = index.data(Qt::UserRole + 1).value<todo::ItemAndGroupPair>();
 
+    if (!itemAndGroupPair.isGroup()) {
+        this->paintItemDetail(itemAndGroupPair.getItemDetail(), painter, option, index);
+    }
+}
+
+QSize ItemListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    return QSize(400, 100);
+}
+
+void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, QPainter *painter,
+                                           const QStyleOptionViewItem &option, const QModelIndex &index) const {
     // draw tag color
     painter->setRenderHint(QPainter::Antialiasing, true);
     QPainterPath painterPath;
     int arcLength = 10;
-    auto const & itemTags = itemDetail.getTags();
+    auto const &itemTags = itemDetail.getTags();
     if (!itemTags.empty()) {
         auto firstTag = itemTags[0];
         auto tagColorRect = QRect(option.rect.topLeft() + QPoint(0, arcLength), option.rect.bottomLeft()
-                + QPoint(arcLength, -arcLength));
+                                                                                + QPoint(arcLength, -arcLength));
         auto arcRectF = QRectF(tagColorRect.topLeft() + QPoint(-arcLength, 0), tagColorRect.topRight()
-                + QPoint(0, arcLength * 2));
+                                                                               + QPoint(0, arcLength * 2));
         painterPath.moveTo(arcRectF.center());
         painterPath.arcTo(arcRectF, 0, 90);
         painterPath.closeSubpath();
         painterPath.lineTo(tagColorRect.topLeft());
         painterPath.lineTo(tagColorRect.bottomLeft() + QPoint(0, -arcLength));
-        auto arcRectF2 = QRectF(tagColorRect.bottomLeft() + QPoint(-arcLength, -arcLength * 2), tagColorRect.bottomRight());
+        auto arcRectF2 = QRectF(tagColorRect.bottomLeft() + QPoint(-arcLength, -arcLength * 2),
+                                tagColorRect.bottomRight());
         painterPath.arcTo(arcRectF2, -90, 90);
 
         painterPath.lineTo(tagColorRect.topRight() + QPoint(0, 10));
@@ -60,10 +71,12 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     QMargins titleMargins(10, 5, 10, 2);
     int priorityNumWidth = 20;
     int titleSpace = 5;
-    int titleWidth = option.rect.width() - 2 * arcLength - titleMargins.left() - titleMargins.right() - priorityNumWidth - titleSpace;
+    int titleWidth =
+            option.rect.width() - 2 * arcLength - titleMargins.left() - titleMargins.right() - priorityNumWidth -
+            titleSpace;
     int titleHeight = 30;
     auto titleRect = QRect(option.rect.topLeft() + QPoint(titleMargins.left() + arcLength, titleMargins.top()),
-            QSize(titleWidth, titleHeight));
+                           QSize(titleWidth, titleHeight));
     painter->drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter,
                       todo::StringUtils::elideText(itemDetail.getTitle(), painter->fontMetrics(), titleWidth));
 
@@ -82,7 +95,8 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     painter->drawEllipse(priorityNumRect);
 
     painter->setPen(Qt::white);
-    painter->drawText(priorityNumRect, Qt::AlignHCenter | Qt::AlignVCenter, QString::number(itemDetail.getPriority()));
+    painter->drawText(priorityNumRect, Qt::AlignHCenter | Qt::AlignVCenter,
+                      QString::number(itemDetail.getPriority()));
     painter->setBrush(oldBrush);
 
     // draw tags
@@ -91,10 +105,11 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     QMargins tagGroupMargins(30, 0, 10, 0);
     QRect tagGroupRect(
             option.rect.left() + arcLength + tagGroupMargins.left(),
-            option.rect.top() + titleMargins.top() + titleRect.height() + titleMargins.bottom() + tagGroupMargins.top(),
+            option.rect.top() + titleMargins.top() + titleRect.height() + titleMargins.bottom() +
+            tagGroupMargins.top(),
             option.rect.width() - arcLength * 2 - tagGroupMargins.left() - tagGroupMargins.right(),
             20
-            );
+    );
     QRect availableRect(tagGroupRect);
     int fixedWidth = painter->fontMetrics().width("...");
 
@@ -125,7 +140,8 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     painter->setPen(Qt::gray);
     QMargins infoMargins(5, 5, 5, 5);
     int infoRectTop = titleMargins.top() + titleRect.height() + titleMargins.bottom()
-            + tagGroupMargins.top() + tagGroupRect.height() + tagGroupMargins.bottom() + infoMargins.top();
+                      + tagGroupMargins.top() + tagGroupRect.height() + tagGroupMargins.bottom() +
+                      infoMargins.top();
     int infoWidth = 100;
     int infoHeight = option.rect.height() - infoRectTop - infoMargins.bottom();
     QRect dateRect(
@@ -142,35 +158,40 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
         painter->setPen(Qt::gray);
         timeRect.moveBottom(dateRect.bottom() + infoHeight / 2);
         painter->drawText(timeRect, Qt::AlignLeft | Qt::AlignBottom,
-                          itemDetail.getFromTime().toString("hh:mm") + "-" + itemDetail.getToTime().toString("hh:mm"));
+                          itemDetail.getFromTime().toString("hh:mm") + "-" +
+                          itemDetail.getToTime().toString("hh:mm"));
     }
 
     // draw description
     QMargins descriptionMargins(20, 5, 5, 5);
     int descriptionRectTop = titleMargins.top() + titleRect.height() + titleMargins.bottom()
-            + tagGroupMargins.top() + tagGroupRect.height() + tagGroupMargins.bottom() + descriptionMargins.top();
+                             + tagGroupMargins.top() + tagGroupRect.height() + tagGroupMargins.bottom() +
+                             descriptionMargins.top();
     int descriptionHeight = option.rect.height() - descriptionRectTop - descriptionMargins.bottom();
     QRect descriptionRect(
             option.rect.left() + arcLength + descriptionMargins.left(),
             option.rect.bottom() - descriptionMargins.bottom() - descriptionHeight,
-            option.rect.width() - arcLength - infoMargins.left() - infoMargins.right() - infoWidth - descriptionMargins.right() - descriptionMargins.left() - arcLength,
+            option.rect.width() - arcLength - infoMargins.left() - infoMargins.right() - infoWidth -
+            descriptionMargins.right() - descriptionMargins.left() - arcLength,
             descriptionHeight
     );
     painter->setPen(Qt::gray);
     painter->setFont(QFont("Arias", 10));
     painter->drawText(descriptionRect, Qt::AlignLeft | Qt::AlignVCenter,
-                      todo::StringUtils::elideText(itemDetail.getDescription(), painter->fontMetrics(), descriptionRect.width()));
+                      todo::StringUtils::elideText(itemDetail.getDescription(), painter->fontMetrics(),
+                                                   descriptionRect.width()));
 
     // draw isDone color label
     QPainterPath doneLabelPath;
     QRect isDoneColorRect(option.rect.topRight() + QPoint(-arcLength, arcLength),
                           option.rect.bottomRight() + QPoint(0, -arcLength));
-    QRectF isDoneArcRect(isDoneColorRect.topLeft(), isDoneColorRect.topLeft() + QPoint(arcLength*2, arcLength*2));
+    QRectF isDoneArcRect(isDoneColorRect.topLeft(),
+                         isDoneColorRect.topLeft() + QPoint(arcLength * 2, arcLength * 2));
     doneLabelPath.moveTo(isDoneArcRect.center());
     doneLabelPath.arcTo(isDoneArcRect, 90, 90);
     doneLabelPath.lineTo(isDoneColorRect.bottomLeft() + QPoint(0, -arcLength));
 
-    QRect isDoneArcRect2(isDoneColorRect.bottomLeft() + QPoint(0, -arcLength*2),
+    QRect isDoneArcRect2(isDoneColorRect.bottomLeft() + QPoint(0, -arcLength * 2),
                          isDoneColorRect.bottomRight() + QPoint(arcLength, 0));
     doneLabelPath.arcTo(isDoneArcRect2, 180, 90);
     doneLabelPath.lineTo(isDoneColorRect.topRight());
@@ -185,8 +206,4 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
         painter->setPen(QPen(option.palette.color(QPalette::Highlight), 4));
         painter->drawRect(option.rect);
     }
-}
-
-QSize ItemListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    return QSize(400, 100);
 }

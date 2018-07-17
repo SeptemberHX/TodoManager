@@ -55,7 +55,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->viewButtonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, &MainWindow::modeBtn_clicked);
     this->currentMode = -1;  // initialization
     ui->inboxModePushButton->click();
-//    ui->stackedWidget->setCurrentIndex(dailyMode);
 
     // jump
     connect(this->calendarModeWidget, &CalendarModeWidget::itemClicked, this, &MainWindow::item_clicked);
@@ -122,7 +121,6 @@ void MainWindow::update_notification_timer() {
     QMutexLocker locker(&this->notificationListMutex);
     for (auto const &item : this->targetItemDetails) {
         if (QTime::currentTime().msecsTo(item.getFromTime()) <= 0) {
-//            NofityUtils::push(tr("Task begins!"), item.getTitle());
             this->trayIcon->showMessage(tr("Task begins!"), item.getTitle(), QIcon(":/icons/tray.png"));
         }
     }

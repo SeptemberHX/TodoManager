@@ -3,6 +3,7 @@
 #include "widgets/todolistwidget.h"
 #include "widgets/tagwidget.h"
 #include "core/ItemDetail.h"
+#include "core/ItemAndGroupPair.h"
 #include "widgets/itemaddtagwidget.h"
 #include "widgets/taglabelwidget.h"
 #include "widgets/FetchConfigFilePathWidget.h"
@@ -23,6 +24,7 @@ int main(int argc, char *argv[])
     StyleUtils::setStyle(":/styles/defaultStyle.qss");
     qRegisterMetaTypeStreamOperators<todo::ItemDetail>();
     qRegisterMetaTypeStreamOperators<todo::ItemTag>();
+    qRegisterMetaTypeStreamOperators<todo::ItemAndGroupPair>();
 
     MainWindow w;
     w.show();

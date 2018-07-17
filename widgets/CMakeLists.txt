@@ -29,6 +29,7 @@ set (widgets_files
 	CalendarMode/CalendarMonthWidget.cpp
 	CalendarMode/CalendarWeekWidget.cpp
 		CustomListView.cpp CustomListView.h
-	ProjectMode/ProjectModeWidget.cpp)
+	ProjectMode/ProjectModeWidget.cpp
+	ProjectMode/GroupWidget.cpp)
 add_library(widgets ${widgets_files})
 target_link_libraries(widgets Qt5::Widgets Qt5::Core Qt5::Gui core utils data)
