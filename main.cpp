@@ -13,6 +13,7 @@
 #include "dao/DaoFactory.h"
 #include "widgets/CalendarMode/CalendarModeWidget.h"
 #include "widgets/CalendarMode/CalendarTimeLineWidget.h"
+#include "widgets/ProjectMode/GroupDetailWidget.h"
 #include "data/DataCenter.h"
 #include <QLabel>
 
@@ -26,8 +27,10 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<todo::ItemTag>();
     qRegisterMetaTypeStreamOperators<todo::ItemAndGroupPair>();
 
-    MainWindow w;
-    w.show();
+//    MainWindow w;
+//    w.show();
+    GroupDetailWidget gdw;
+    gdw.show();
 
 //    CalendarTimeLineWidget timeLineWidget;
 //    todo::DataCenter dataCenter;
