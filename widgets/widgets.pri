@@ -12,7 +12,8 @@ FORMS += \
     $$PWD/CalendarMode/CalendarCellWidget.ui \
     $$PWD/CalendarMode/CalendarTimeLineWidget.ui \
     $$PWD/CalendarMode/CalendarMonthWidget.ui \
-    $$PWD/CalendarMode/CalendarWeekWidget.ui
+    $$PWD/CalendarMode/CalendarWeekWidget.ui \
+    $$PWD/ProjectMode/ProjectModeWidget.ui
 
 HEADERS += \
     $$PWD/tagwidget.h \
@@ -32,7 +33,9 @@ HEADERS += \
     $$PWD/CalendarMode/CalendarCellWidget.h \
     $$PWD/CalendarMode/CalendarTimeLineWidget.h \
     $$PWD/CalendarMode/CalendarMonthWidget.h \
-    $$PWD/CalendarMode/CalendarWeekWidget.h
+    $$PWD/CalendarMode/CalendarWeekWidget.h \
+    $$PWD/CustomListView.h \
+    $$PWD/ProjectMode/ProjectModeWidget.h
 
 SOURCES += \
     $$PWD/tagwidget.cpp \
@@ -52,4 +55,6 @@ SOURCES += \
     $$PWD/CalendarMode/CalendarCellWidget.cpp \
     $$PWD/CalendarMode/CalendarTimeLineWidget.cpp \
     $$PWD/CalendarMode/CalendarMonthWidget.cpp \
-    $$PWD/CalendarMode/CalendarWeekWidget.cpp
+    $$PWD/CalendarMode/CalendarWeekWidget.cpp \
+    $$PWD/CustomListView.cpp \
+    $$PWD/ProjectMode/ProjectModeWidget.cpp

@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->inboxViewWidget = new TodoListWidget(this, TodoListWidgetMode::INBOX);
     this->tagModeWidget = new TagModeWidget(this);
     this->calendarModeWidget = new CalendarModeWidget(this);
+    this->projectModeWidget = new ProjectModeWidget(this);
 
     this->logWidget = new LogWidget();
     Logger::getInstance()->init(this->logWidget);
@@ -40,10 +41,12 @@ MainWindow::MainWindow(QWidget *parent) :
     this->viewButtonGroup->addButton(ui->dailyModePushButton);
     this->viewButtonGroup->addButton(ui->tagModePushButton);
     this->viewButtonGroup->addButton(ui->calendarPushButton);
+    this->viewButtonGroup->addButton(ui->projectPushButton);
     dailyMode = ui->stackedWidget->addWidget(this->todoListWidget);
     inboxMode = ui->stackedWidget->addWidget(this->inboxViewWidget);
     tagMode = ui->stackedWidget->addWidget(this->tagModeWidget);
     calendarMode = ui->stackedWidget->addWidget(this->calendarModeWidget);
+    projectMode = ui->stackedWidget->addWidget(this->projectModeWidget);
 
     connect(this->inboxViewWidget, &TodoListWidget::databaseModified, this, &MainWindow::database_modified);
     connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &MainWindow::database_modified);
@@ -192,6 +195,14 @@ void MainWindow::modeBtn_clicked(QAbstractButton *button) {
 
         ui->stackedWidget->setCurrentIndex(this->calendarMode);
         this->currentMode = this->calendarMode;
+    } else if (btn == ui->projectPushButton && this->currentMode != this->projectMode) {
+        if (this->inboxViewWidget->isCurrentItemEdited()) {
+            QMessageBox::information(this, tr("Can't switch view mode !"), tr("Current item is under editing !"));
+            return;
+        }
+
+        ui->stackedWidget->setCurrentIndex(this->projectMode);
+        this->currentMode = this->projectMode;
     }
 }
 
@@ -210,6 +221,10 @@ void MainWindow::database_modified() {
 
     if (this->currentMode != this->calendarMode) {
         this->calendarModeWidget->refresh_current_items();
+    }
+
+    if (this->currentMode != this->projectMode) {
+        // todo: refresh projectModeWidget
     }
 }
 
