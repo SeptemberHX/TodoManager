@@ -26,3 +26,12 @@ void GroupDetailWidget::loadItemGroup(const todo::ItemGroup &itemGroup) {
                                            .arg(itemGroup.getLastUpdatedTime().toString("yyyy-MM-dd"))
     );
 }
+
+todo::ItemGroup GroupDetailWidget::collectData() const {
+    // todo: collect data
+    return todo::ItemGroup();
+}
+
+void GroupDetailWidget::item_modified() {
+    emit itemModified(todo::ItemAndGroupWrapper(this->collectData()));
+}
