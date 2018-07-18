@@ -26,7 +26,7 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     painter->setPen(QPen(Qt::lightGray, 1));
     painter->drawLine(QLine(lineStartPos, lineEndPos));
 
-    todo::ItemAndGroupPair itemAndGroupPair = index.data(Qt::UserRole + 1).value<todo::ItemAndGroupPair>();
+    todo::ItemAndGroupWrapper itemAndGroupPair = index.data(Qt::UserRole + 1).value<todo::ItemAndGroupWrapper>();
 
     if (!itemAndGroupPair.isGroup()) {
         this->paintItemDetail(itemAndGroupPair.getItemDetail(), painter, option, index);

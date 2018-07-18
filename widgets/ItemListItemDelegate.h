@@ -7,7 +7,7 @@
 
 #include <QStyledItemDelegate>
 #include "../core/ItemDetail.h"
-#include "../core/ItemAndGroupPair.h"
+#include "../core/ItemAndGroupWrapper.h"
 
 
 class ItemListItemDelegate : public QStyledItemDelegate {

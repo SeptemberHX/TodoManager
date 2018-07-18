@@ -60,6 +60,14 @@ public:
 
     void setItemDetailList(const QList<ItemDetail> &itemDetailList);
 
+    const QDate &getFromDate() const;
+
+    void setFromDate(const QDate &fromDate);
+
+    const QDate &getToDate() const;
+
+    void setToDate(const QDate &toDate);
+
     void addItemDetail(const ItemDetail &itemDetail);
 
     void addItemGroup(const ItemGroup &itemGroup);
@@ -73,6 +81,8 @@ private:
     bool mileStone;
     QDateTime createdTime;
     QDateTime lastUpdatedTime;
+    QDate fromDate;
+    QDate toDate;
 
     // store in ItemGroupRelation
     QList<ItemGroup> subGroupList;

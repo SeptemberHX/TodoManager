@@ -15,13 +15,13 @@ namespace todo {
 /**
  * For list view delegate usage.
  */
-class ItemAndGroupPair {
+class ItemAndGroupWrapper {
 public:
-    ItemAndGroupPair();
+    ItemAndGroupWrapper();
 
-    explicit ItemAndGroupPair(const ItemDetail &itemDetail);
+    explicit ItemAndGroupWrapper(const ItemDetail &itemDetail);
 
-    explicit ItemAndGroupPair(const ItemGroup &itemGroup);
+    explicit ItemAndGroupWrapper(const ItemGroup &itemGroup);
 
     const ItemDetail &getItemDetail() const;
 
@@ -33,15 +33,15 @@ public:
 
     bool isGroup() const;
 
-    void setGroup(bool group);
+    bool isDetail() const;
 
     const QString &getID() const;
 
-    friend std::ostream &operator<<(std::ostream &os, const ItemAndGroupPair &itemAndGroupPair);
+    friend std::ostream &operator<<(std::ostream &os, const ItemAndGroupWrapper &itemAndGroupPair);
 
-    friend QDataStream&operator<<(QDataStream &os, const ItemAndGroupPair &itemAndGroupPair);
+    friend QDataStream&operator<<(QDataStream &os, const ItemAndGroupWrapper &itemAndGroupPair);
 
-    friend QDataStream&operator>>(QDataStream &os, ItemAndGroupPair &itemAndGroupPair);
+    friend QDataStream&operator>>(QDataStream &os, ItemAndGroupWrapper &itemAndGroupPair);
 
 private:
     ItemDetail itemDetail;
@@ -49,11 +49,11 @@ private:
     bool group;
 };
 
-inline uint qHash(const ItemAndGroupPair &itemAndGroupPair) {
+inline uint qHash(const ItemAndGroupWrapper &itemAndGroupPair) {
     return qHash(itemAndGroupPair.getItemDetail().getId() + itemAndGroupPair.getItemGroup().getId());
 }
 }
 
-Q_DECLARE_METATYPE(todo::ItemAndGroupPair);
+Q_DECLARE_METATYPE(todo::ItemAndGroupWrapper);
 
 #endif //TODOMANAGER_ITEMANDGROUPPAIR_H

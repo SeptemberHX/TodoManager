@@ -87,3 +87,19 @@ void todo::ItemGroup::addItemDetail(const todo::ItemDetail &itemDetail) {
 void todo::ItemGroup::addItemGroup(const todo::ItemGroup &itemGroup) {
     this->subGroupList.append(itemGroup);
 }
+
+const QDate &todo::ItemGroup::getFromDate() const {
+    return fromDate;
+}
+
+void todo::ItemGroup::setFromDate(const QDate &fromDate) {
+    ItemGroup::fromDate = fromDate;
+}
+
+const QDate &todo::ItemGroup::getToDate() const {
+    return toDate;
+}
+
+void todo::ItemGroup::setToDate(const QDate &toDate) {
+    ItemGroup::toDate = toDate;
+}

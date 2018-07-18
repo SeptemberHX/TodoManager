@@ -5,7 +5,7 @@
 #include "../data/sorters/DoneSorter.h"
 #include "ItemListItemDelegate.h"
 #include "../data/sorters/DateSorter.h"
-#include "../core/ItemAndGroupPair.h"
+#include "../core/ItemAndGroupWrapper.h"
 #include <QScrollBar>
 #include <QDebug>
 #include <QListView>
@@ -46,7 +46,7 @@ void ItemListWidget::addItemDetail(const todo::ItemDetail &item)
         todo::SorterOrganize comparer(this->sorters);
         int newRowToInsert = this->itemModel->rowCount();  // insert to top by default
         for (int i = 0; i < this->itemModel->rowCount(); ++i) {
-            todo::ItemAndGroupPair itemAndGroupPair = this->getItemPairByRow(i);
+            todo::ItemAndGroupWrapper itemAndGroupPair = this->getItemPairByRow(i);
             if (!itemAndGroupPair.isGroup()) {
                 if (!comparer(item, itemAndGroupPair.getItemDetail())) {
                     newRowToInsert = i;
@@ -57,7 +57,7 @@ void ItemListWidget::addItemDetail(const todo::ItemDetail &item)
 
         // insert it
         auto newListItem = new QStandardItem();
-        newListItem->setData(QVariant::fromValue(todo::ItemAndGroupPair(item)), Qt::UserRole + 1);
+        newListItem->setData(QVariant::fromValue(todo::ItemAndGroupWrapper(item)), Qt::UserRole + 1);
         this->itemModel->insertRow(newRowToInsert, newListItem);
         this->listView->setCurrentIndex(this->itemModel->indexFromItem(newListItem));
     }
@@ -67,12 +67,12 @@ void ItemListWidget::refresh_item_info(const todo::ItemDetail &item)
 {
     int targetRow = this->findRow(item);
     if (targetRow != -1) {
-        this->itemModel->item(targetRow)->setData(QVariant::fromValue(todo::ItemAndGroupPair(item)), Qt::UserRole + 1);
+        this->itemModel->item(targetRow)->setData(QVariant::fromValue(todo::ItemAndGroupWrapper(item)), Qt::UserRole + 1);
     }
 }
 
 void ItemListWidget::listWidget_selectedItem_changed() {
-    todo::ItemAndGroupPair itemAndGroupPair = this->getCurrSelectedItemPair();
+    todo::ItemAndGroupWrapper itemAndGroupPair = this->getCurrSelectedItemPair();
     emit selectedItemChanged(itemAndGroupPair.getItemDetail().getId());
 }
 
@@ -97,14 +97,14 @@ void ItemListWidget::loadItemDetails(const QList<todo::ItemDetail> &items) {
 }
 
 void ItemListWidget::removeItemDetailByID(const QString &itemID) {
-    todo::ItemAndGroupPair prevPair = this->getCurrSelectedItemPair();
+    todo::ItemAndGroupWrapper prevPair = this->getCurrSelectedItemPair();
     for (int i = 0; i < this->itemModel->rowCount(); ++i) {
         if (this->getItemPairByRow(i).getID() == itemID) {
             this->itemModel->removeRow(i);
             break;
         }
     }
-    todo::ItemAndGroupPair currPair = this->getCurrSelectedItemPair();
+    todo::ItemAndGroupWrapper currPair = this->getCurrSelectedItemPair();
     if (currPair.getID() != prevPair.getID()) {
         emit selectedItemChanged(currPair.getID());
     }
@@ -138,7 +138,7 @@ bool ItemListWidget::checkItem(const todo::ItemDetail &detail) {
 
 void ItemListWidget::addItemDetail_(const todo::ItemDetail &item) {
     auto newListItem = new QStandardItem();
-    newListItem->setData(QVariant::fromValue(todo::ItemAndGroupPair(item)), Qt::UserRole + 1);
+    newListItem->setData(QVariant::fromValue(todo::ItemAndGroupWrapper(item)), Qt::UserRole + 1);
     this->itemModel->insertRow(0, newListItem);
 }
 
@@ -184,7 +184,7 @@ int ItemListWidget::findRow(const todo::ItemDetail &item) {
 int ItemListWidget::findRowByID(const QString &itemID) {
     int targetRow = -1;
     for (int i = 0; i < this->itemModel->rowCount(); ++i) {
-        todo::ItemAndGroupPair rowItem = this->getItemPairByRow(i);
+        todo::ItemAndGroupWrapper rowItem = this->getItemPairByRow(i);
         if (rowItem.getID() == itemID) {
             targetRow = i;
             break;
@@ -203,10 +203,10 @@ void ItemListWidget::setCurrentItemByID(const QString &itemID) {
     this->listView->setCurrentIndex(this->itemModel->index(targetRow, 0));
 }
 
-todo::ItemAndGroupPair ItemListWidget::getItemPairByRow(int row) {
-    return this->itemModel->item(row)->data(Qt::UserRole + 1).value<todo::ItemAndGroupPair>();
+todo::ItemAndGroupWrapper ItemListWidget::getItemPairByRow(int row) {
+    return this->itemModel->item(row)->data(Qt::UserRole + 1).value<todo::ItemAndGroupWrapper>();
 }
 
-todo::ItemAndGroupPair ItemListWidget::getCurrSelectedItemPair() {
-    return this->listView->currentIndex().data(Qt::UserRole + 1).value<todo::ItemAndGroupPair>();
+todo::ItemAndGroupWrapper ItemListWidget::getCurrSelectedItemPair() {
+    return this->listView->currentIndex().data(Qt::UserRole + 1).value<todo::ItemAndGroupWrapper>();
 }

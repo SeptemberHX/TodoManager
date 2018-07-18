@@ -54,6 +54,9 @@
           <pointsize>14</pointsize>
          </font>
         </property>
+        <property name="text">
+         <string/>
+        </property>
        </widget>
       </item>
       <item>
@@ -123,7 +126,7 @@
               <number>3</number>
              </property>
              <item>
-              <widget class="QTextEdit" name="textEdit"/>
+              <widget class="QTextEdit" name="descriptionTextEdit"/>
              </item>
             </layout>
            </widget>
@@ -284,6 +287,11 @@
           </item>
           <item>
            <widget class="QLabel" name="timeLabel">
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;CreatedTime:&lt;/p&gt;&lt;p&gt;2018-07-17 22:27:34&lt;/p&gt;&lt;p&gt;LastUpdatedTime:&lt;/p&gt;&lt;p&gt;2018-07-17 22:27:34&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
