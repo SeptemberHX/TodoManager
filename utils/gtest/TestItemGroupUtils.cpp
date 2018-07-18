@@ -45,7 +45,34 @@ TEST(ItemGroupUtils, getGroupOverview) {
 }
 
 TEST(ItemGroupUtils, buildGroup) {
-    EXPECT_EQ(1, 1);
+    todo::ItemDetail itemDetail1("1");
+    todo::ItemDetail itemDetail2("2");
+    todo::ItemGroup itemGroup1;
+    itemGroup1.setType(todo::ItemGroupType::PROJECT);
+    todo::ItemGroup subGroup1;
+    subGroup1.setType(todo::ItemGroupType::SUB_PROJECT);
+
+    todo::ItemGroupRelation r1;
+    r1.setRootGroupID(itemGroup1.getId());
+    r1.setDirectGroupID(subGroup1.getId());
+    r1.setItemID(itemDetail1.getId());
+
+    todo::ItemGroupRelation r2;
+    r2.setRootGroupID(itemGroup1.getId());
+    r2.setDirectGroupID(itemGroup1.getId());
+    r2.setItemID(itemDetail2.getId());
+
+    todo::ItemGroupRelation r3;
+    r3.setRootGroupID(itemGroup1.getId());
+    r3.setDirectGroupID(itemGroup1.getId());
+    r3.setItemID(subGroup1.getId());
+
+    QList<todo::ItemDetail> itemList{itemDetail1, itemDetail2};
+    QList<todo::ItemGroupRelation> relationList{r1, r2, r3};
+    QList<todo::ItemGroup> groupList{itemGroup1, subGroup1};
+
+    auto groupResult = todo::ItemGroupUtils::buildGroup(groupList, itemList, relationList);
+    EXPECT_EQ(groupResult.size(), 1);
 }
 
 int main(int argc, char *argv[]) {

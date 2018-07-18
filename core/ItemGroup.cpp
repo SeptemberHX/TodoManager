@@ -2,6 +2,7 @@
 // Created by septemberhx on 7/16/18.
 //
 
+#include <QUuid>
 #include "ItemGroup.h"
 
 const QString &todo::ItemGroup::getTitle() const {
@@ -77,7 +78,8 @@ void todo::ItemGroup::setItemDetailList(const QList<todo::ItemDetail> &itemDetai
 }
 
 todo::ItemGroup::ItemGroup() {
-    this->id = QString("group_") + QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
+    this->id = QString("group_%1_%2").arg(QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()))
+                                     .arg(QUuid::createUuid().toString().remove('{').remove('}'));
     this->createdTime = QDateTime::currentDateTime();
     this->lastUpdatedTime = this->createdTime;
 }

@@ -20,7 +20,6 @@ todo::ItemGroupUtils::buildGroup(const QList<todo::ItemGroup> &itemGroupList, co
         if (itemGroup.getType() == ItemGroupType::PROJECT) {
             rootGroupList.append(itemGroup);
         } else {
-            qDebug() << typeid(itemGroup).name();
             itemGroupMap.insert(itemGroup.getId(), itemGroup);
         }
     }
