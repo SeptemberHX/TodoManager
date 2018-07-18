@@ -78,6 +78,8 @@ void todo::ItemGroup::setItemDetailList(const QList<todo::ItemDetail> &itemDetai
 
 todo::ItemGroup::ItemGroup() {
     this->id = QString("group_") + QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
+    this->createdTime = QDateTime::currentDateTime();
+    this->lastUpdatedTime = this->createdTime;
 }
 
 void todo::ItemGroup::addItemDetail(const todo::ItemDetail &itemDetail) {

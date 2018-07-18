@@ -61,3 +61,38 @@ todo::ItemGroupUtils::buildGroup_(todo::ItemGroup *rootGroupPtr, const QMap<QStr
         }
     }
 }
+
+todo::ItemGroupOverview todo::ItemGroupUtils::getGroupOverview(const todo::ItemGroup &itemGroup) {
+    ItemGroupOverview overview;
+
+    int totalItemCount = 0;
+    int totalItemDoneCount = 0;
+    int subGroupDoneCount = 0;
+    foreach (auto const &childGroup, itemGroup.getSubGroupList()) {
+        auto childOverview = ItemGroupUtils::getGroupOverview(childGroup);
+        if (childOverview.isDone()) {
+            ++subGroupDoneCount;
+        }
+
+        totalItemCount += childOverview.getTotalItemCount();
+        totalItemDoneCount += childOverview.getTotalItemDoneCount();
+    }
+
+    int subItemDoneCount = 0;
+    foreach (auto const &item, itemGroup.getItemDetailList()) {
+        if (item.isDone()) {
+            ++subItemDoneCount;
+        }
+    }
+    totalItemCount += itemGroup.getItemDetailList().size();
+    totalItemDoneCount += subItemDoneCount;
+
+    overview.setSubGroupCount(itemGroup.getSubGroupList().size());
+    overview.setSubGroupDoneCount(subGroupDoneCount);
+    overview.setSubItemCount(itemGroup.getItemDetailList().size());
+    overview.setSubItemDoneCount(subItemDoneCount);
+    overview.setTotalItemCount(totalItemCount);
+    overview.setTotalItemDoneCount(totalItemDoneCount);
+
+    return overview;
+}

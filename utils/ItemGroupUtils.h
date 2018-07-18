@@ -8,6 +8,7 @@
 #include "../core/ItemGroup.h"
 #include "../core/ItemDetail.h"
 #include "../core/ItemGroupRelation.h"
+#include "../core/ItemGroupOverview.h"
 #include <QList>
 #include <QMap>
 #include <QString>
@@ -20,6 +21,8 @@ public:
                                 const QList<ItemDetail> &itemList,
                                 const QList<ItemGroupRelation> &relationList
     );
+
+    static ItemGroupOverview getGroupOverview(const ItemGroup &itemGroup);
 
 private:
     static void buildGroup_(ItemGroup *rootGroupPtr,
