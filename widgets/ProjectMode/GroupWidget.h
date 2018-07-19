@@ -2,6 +2,8 @@
 #define GROUPWIDGET_H
 
 #include <QWidget>
+#include <QSplitter>
+#include "GroupDetailWidget.h"
 
 namespace Ui {
 class GroupWidget;
@@ -17,6 +19,8 @@ public:
 
 private:
     Ui::GroupWidget *ui;
+    GroupDetailWidget *groupDetailWidget;
+    QSplitter *mainSplitter;
 };
 
 #endif // GROUPWIDGET_H

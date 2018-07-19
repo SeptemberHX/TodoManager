@@ -29,6 +29,8 @@ public:
 
     void setDateNumColor(const QColor &dateNumColor);
 
+
+
 signals:
     void itemClicked(const todo::ItemDetail &item);
     void targetDayClicked(const QDate &targetDay);

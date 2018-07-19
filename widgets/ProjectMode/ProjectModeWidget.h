@@ -2,6 +2,9 @@
 #define PROJECTMODEWIDGET_H
 
 #include <QWidget>
+#include <QVBoxLayout>
+#include "GroupWidget.h"
+#include "NavigationBarWidget.h"
 
 namespace Ui {
 class ProjectModeWidget;
@@ -17,6 +20,9 @@ public:
 
 private:
     Ui::ProjectModeWidget *ui;
+    QVBoxLayout *mainVBoxLayout;
+    GroupWidget *groupWidget;
+    NavigationBarWidget *navigationBarWidget;
 };
 
 #endif // PROJECTMODEWIDGET_H

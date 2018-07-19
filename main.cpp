@@ -27,10 +27,11 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<todo::ItemTag>();
     qRegisterMetaTypeStreamOperators<todo::ItemAndGroupWrapper>();
 
-//    MainWindow w;
-//    w.show();
-    GroupDetailWidget gdw;
-    gdw.show();
+    MainWindow w;
+    w.show();
+
+//    GroupDetailWidget gdw;
+//    gdw.show();
 
 //    CalendarTimeLineWidget timeLineWidget;
 //    todo::DataCenter dataCenter;

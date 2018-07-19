@@ -14,7 +14,7 @@ CalendarCellWidget::CalendarCellWidget(QWidget *parent) :
     ui(new Ui::CalendarCellWidget)
 {
     ui->setupUi(this);
-    this->setMinimumSize({120, 120});
+    this->setMinimumSize(QSize(120, 120));
     this->setDateNumColor(QColor("#71a8e7"));
 }
 
@@ -33,13 +33,13 @@ void CalendarCellWidget::paintEvent(QPaintEvent *event) {
 
     // draw date
     int dayNum = this->date.day();
-    QMargins dayNumMargin(10, 10, 10, 10);
-    QSize dayNumRectSize(50, 30);
+    QMargins dayNumMargin(5, 5, 5, 5);
+    QSize dayNumRectSize(30, 20);
     QRect dayNumRect(event->rect().left() + dayNumMargin.left(),
                      event->rect().top() + dayNumMargin.top(),
                      dayNumRectSize.width(),
                      dayNumRectSize.height());
-    QFont dayNumFont("Aria", 22);
+    QFont dayNumFont("Aria", 12);
     if (this->isEnabled()) {
         painter.setPen(this->getDateNumColor());
     } else {
@@ -69,7 +69,7 @@ void CalendarCellWidget::paintEvent(QPaintEvent *event) {
 
     // draw task
     QMargins taskMargin(15, 5, 15, 5);
-    int taskSpacing = 5;
+    int taskSpacing = 3;
     QRect lastTaskRect(QPoint(taskMargin.left(), dayNumRect.bottom() + dayNumMargin.bottom()),
                        QSize(event->rect().width() - taskMargin.left() - taskMargin.right(), 24));
     this->itemDetailID2Rect.clear();
@@ -79,7 +79,7 @@ void CalendarCellWidget::paintEvent(QPaintEvent *event) {
             if (!itemDetail.getTags().isEmpty()) {
                 itemColor = itemDetail.getTags()[0].getColor();
             }
-            todo::DrawUtils::drawRectWithCircle(painter, QFont("Aria", 10), Qt::white,
+            todo::DrawUtils::drawRectWithCircle(painter, QFont("Aria", 8), Qt::white,
                                                 itemDetail.getTitle(), lastTaskRect, itemColor, 1);
             this->itemDetailID2Rect.insert(itemDetail.getId(), lastTaskRect);
             lastTaskRect.moveTop(lastTaskRect.bottom() + taskSpacing);
