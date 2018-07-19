@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "../ItemGroupUtils.h"
+#include "../utils/ItemGroupUtils.h"
 
 TEST(ItemGroupUtils, getGroupOverview) {
     todo::ItemGroup rootGroup;
@@ -73,9 +73,4 @@ TEST(ItemGroupUtils, buildGroup) {
 
     auto groupResult = todo::ItemGroupUtils::buildGroup(groupList, itemList, relationList);
     EXPECT_EQ(groupResult.size(), 1);
-}
-
-int main(int argc, char *argv[]) {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }

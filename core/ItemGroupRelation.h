@@ -23,6 +23,8 @@ public:
 
     void setItemID(const QString &itemID);
 
+    bool operator==(const ItemGroupRelation &otherRelation) const;
+
 private:
     QString directGroupID;
     QString rootGroupID;

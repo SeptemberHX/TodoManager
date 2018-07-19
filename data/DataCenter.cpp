@@ -131,3 +131,36 @@ QList<todo::ItemDetail> todo::DataCenter::selectItemDetailsByTag(const todo::Ite
     this->fillTagInfo(itemDetails);
     return itemDetails;
 }
+
+QList<todo::ItemGroup> todo::DataCenter::selectItemGroupByID(const QString &groupID) {
+    return DaoFactory::getInstance()->getSQLDao()->selectItemGroupByID(groupID);
+}
+
+void todo::DataCenter::updateItemGroupByID(const QString &groupID, const todo::ItemGroup &itemGroup) {
+    DaoFactory::getInstance()->getSQLDao()->updateItemGroupByID(groupID, itemGroup);
+}
+
+void todo::DataCenter::deleteItemGroupByID(const QString &groupID) {
+    DaoFactory::getInstance()->getSQLDao()->deleteItemGroupByID(groupID);
+}
+
+QList<todo::ItemGroup> todo::DataCenter::selectItemGroupByIDs(const QList<QString> &groupIDs) {
+    return DaoFactory::getInstance()->getSQLDao()->selectItemGroupByIDs(groupIDs);
+}
+
+void todo::DataCenter::insertItemGroup(const todo::ItemGroup &itemGroup) {
+    DaoFactory::getInstance()->getSQLDao()->insertItemGroup(itemGroup);
+}
+
+QList<todo::ItemGroupRelation> todo::DataCenter::selectItemGroupRelationByRootID(const QString &rootID) {
+    return DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByRootID(rootID);
+}
+
+void todo::DataCenter::deleteItemGroupRelationByDirectParentIDAndItemID(const QString &directParentID,
+                                                                        const QString &itemID) {
+    DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByDirectParentIDAndItemID(directParentID, itemID);
+}
+
+void todo::DataCenter::insertItemGroupRelation(const todo::ItemGroupRelation &relation) {
+    DaoFactory::getInstance()->getSQLDao()->insertItemGroupRelation(relation);
+}

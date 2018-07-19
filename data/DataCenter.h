@@ -48,7 +48,27 @@ public:
 
     // ---------------- for TagMode ----------------
     QList<ItemDetail> selectItemDetailsByTag(const ItemTag &itemTag);
-    // ---------------- ends ------------------
+    // ---------------- ends -----------------------
+
+    // ---------------- ItemGroup ----------------
+    QList<ItemGroup> selectItemGroupByID(const QString &groupID);
+
+    void updateItemGroupByID(const QString &groupID, const ItemGroup &itemGroup);
+
+    void deleteItemGroupByID(const QString &groupID);
+
+    void insertItemGroup(const ItemGroup &itemGroup);
+
+    QList<ItemGroup> selectItemGroupByIDs(const QList<QString> &groupIDs);
+    // ---------------- ends ---------------------
+
+    // ItemGroupRelation
+    QList<ItemGroupRelation> selectItemGroupRelationByRootID(const QString &rootID);
+
+    void deleteItemGroupRelationByDirectParentIDAndItemID(const QString &directParentID, const QString &itemID);
+
+    void insertItemGroupRelation(const ItemGroupRelation &relation);
+    // End
 
 signals:
     void itemDetailModified();

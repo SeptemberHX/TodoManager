@@ -8,6 +8,7 @@ add_subdirectory(widgets)
 add_subdirectory(utils)
 add_subdirectory(dao)
 add_subdirectory(data)
+add_subdirectory(gtest)
 
 # Find the QtWidgets library
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)

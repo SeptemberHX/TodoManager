@@ -27,3 +27,9 @@ const QString &todo::ItemGroupRelation::getItemID() const {
 void todo::ItemGroupRelation::setItemID(const QString &itemID) {
     ItemGroupRelation::itemID = itemID;
 }
+
+bool todo::ItemGroupRelation::operator==(const todo::ItemGroupRelation &otherRelation) const {
+    return this->getRootGroupID() == otherRelation.getRootGroupID() &&
+           this->getDirectGroupID() == otherRelation.getDirectGroupID() &&
+           this->getItemID() == otherRelation.getItemID();
+}

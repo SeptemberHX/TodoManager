@@ -7,8 +7,7 @@
 #include "ItemDetail.h"
 
 
-todo::ItemDetail::ItemDetail() {
-    ItemDetail("");
+todo::ItemDetail::ItemDetail() : ItemDetail("") {
 }
 
 

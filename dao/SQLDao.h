@@ -77,6 +77,15 @@ public:
     QList<ItemGroup> selectItemGroupByIDs(const QList<QString> &groupIDs) override;
     // End
 
+    // ItemGroupRelation
+    QList<ItemGroupRelation> selectItemGroupRelationByRootID(const QString &rootID) override;
+
+    void
+    deleteItemGroupRelationByDirectParentIDAndItemID(const QString &directParentID, const QString &itemID) override;
+
+    void insertItemGroupRelation(const ItemGroupRelation &relation) override;
+    // End
+
     void init() override;
 
     ~SQLDao() override;

@@ -72,6 +72,8 @@ public:
 
     void addItemGroup(const ItemGroup &itemGroup);
 
+    bool operator==(const ItemGroup &otherGroup) const;
+
 private:
     // persistence in sql
     QString title;

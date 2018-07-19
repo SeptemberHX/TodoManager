@@ -2,8 +2,6 @@ find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-add_subdirectory(gtest)
-
 set(utils_files
     ItemTagUtils.cpp
     styleutils.cpp

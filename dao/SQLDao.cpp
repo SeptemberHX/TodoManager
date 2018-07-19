@@ -178,7 +178,7 @@ void todo::SQLDao::createTables() {
                       "     foreign key(tagID) references tags(name)"
                       ");");
     sqlScripts.append("CREATE TABLE if not exists item_groups ("
-                      "     id VARCHAR(50) NOT NULL,"
+                      "     id VARCHAR(255) NOT NULL,"
                       "     title VARCHAR(255) NOT NULL,"
                       "     description text,"
                       "     fromDate DATETIME,"
@@ -188,6 +188,11 @@ void todo::SQLDao::createTables() {
                       "     createdTime DATETIME,"
                       "     lastUpdatedTime DATETIME,"
                       "     PRIMARY KEY (id)"
+                      ");");
+    sqlScripts.append("CREATE TABLE if not exists item_group_relations("
+                      "     rootGroupID VARCHAR(255) NOT NULL,"
+                      "     directGroupID VARCHAR(255) NOT NULL,"
+                      "     itemID VARCHAR(255) NOT NULL"
                       ");");
 
     QSqlQuery query(this->db);
@@ -624,7 +629,7 @@ void todo::SQLDao::deleteItemGroupByID(const QString &groupID) {
 void todo::SQLDao::insertItemGroup(const ItemGroup &itemGroup) {
     QSqlQuery query(this->db);
     query.prepare("INSERT INTO item_groups"
-                  " (id, title, description, fromDate, toDate, `type`, milestone, createTime, lastUpdatedTime)"
+                  " (id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime)"
                   " VALUES(:id, :title, :description, :fromDate, :toDate, :type, :milestone,"
                   "        :createTime, :lastUpdatedTime)");
     query.bindValue(":id", itemGroup.getId());
@@ -638,6 +643,7 @@ void todo::SQLDao::insertItemGroup(const ItemGroup &itemGroup) {
     query.bindValue(":lastUpdatedTime", itemGroup.getLastUpdatedTime());
 
     if (!query.exec()) {
+        qDebug() << "insertItemGroup: exception happens";
         throw SqlErrorException();
     }
 }
@@ -676,4 +682,55 @@ QList<todo::ItemGroup> todo::SQLDao::selectItemGroupByIDs(const QList<QString> &
         }
     }
     return resultList;
+}
+
+QList<todo::ItemGroupRelation> todo::SQLDao::selectItemGroupRelationByRootID(const QString &rootID) {
+    QList<ItemGroupRelation> resultList;
+    QSqlQuery query(this->db);
+    query.prepare("SELECT rootGroupID, directGroupID, itemID"
+                  " FROM item_group_relations"
+                  " WHERE rootGroupID = :rootGroupID");
+    query.bindValue(":rootGroupID", rootID);
+
+    if (!query.exec()) {
+        throw SqlErrorException();
+    } else {
+        while (query.next()) {
+            ItemGroupRelation relation;
+            relation.setRootGroupID(query.value("rootGroupID").toString());
+            relation.setDirectGroupID(query.value("directGroupID").toString());
+            relation.setItemID(query.value("itemID").toString());
+            resultList.append(relation);
+        }
+    }
+
+    return resultList;
+}
+
+void
+todo::SQLDao::deleteItemGroupRelationByDirectParentIDAndItemID(const QString &directParentID, const QString &itemID) {
+    QSqlQuery query(this->db);
+    query.prepare("DELETE FROM item_group_relations"
+                  " WHERE directGroupID = :directGroupID AND itemID = :itemID");
+    query.bindValue(":directGroupID", directParentID);
+    query.bindValue(":itemID", itemID);
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
+}
+
+void todo::SQLDao::insertItemGroupRelation(const todo::ItemGroupRelation &relation) {
+    QSqlQuery query(this->db);
+    query.prepare("INSERT INTO item_group_relations"
+                  " (rootGroupID, directGroupID, itemID)"
+                  " VALUES(:rootGroupID, :directGroupID, :itemID)");
+    query.bindValue(":rootGroupID", relation.getRootGroupID());
+    query.bindValue(":directGroupID", relation.getDirectGroupID());
+    query.bindValue(":itemID", relation.getItemID());
+
+    if (!query.exec()) {
+        qDebug() << "insertItemGroupRelation: exception happens";
+        qDebug() << relation.getRootGroupID() << relation.getDirectGroupID() << relation.getItemID();
+        throw SqlErrorException();
+    }
 }

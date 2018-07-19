@@ -82,6 +82,11 @@ todo::ItemGroup::ItemGroup() {
                                      .arg(QUuid::createUuid().toString().remove('{').remove('}'));
     this->createdTime = QDateTime::currentDateTime();
     this->lastUpdatedTime = this->createdTime;
+
+    this->fromDate = QDate::currentDate();
+    this->toDate = this->fromDate;
+    this->mileStone = false;
+    this->type = todo::ItemGroupType::SUB_PROJECT;
 }
 
 void todo::ItemGroup::addItemDetail(const todo::ItemDetail &itemDetail) {
@@ -106,4 +111,8 @@ const QDate &todo::ItemGroup::getToDate() const {
 
 void todo::ItemGroup::setToDate(const QDate &toDate) {
     ItemGroup::toDate = toDate;
+}
+
+bool todo::ItemGroup::operator==(const todo::ItemGroup &otherGroup) const {
+    return this->getId() == otherGroup.getId();
 }
