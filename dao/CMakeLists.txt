@@ -3,9 +3,9 @@ find_package(Qt5 REQUIRED COMPONENTS Core Sql)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(files
-    AbstractDao.cpp
     DaoFactory.cpp
-        SQLDao.cpp
+    SQLDao.cpp
+    AbstractDao.h
 )
 
 add_library(dao ${files})

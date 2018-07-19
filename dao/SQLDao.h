@@ -65,6 +65,18 @@ public:
     QList<ItemDetail> selectNextNotifiedItemDetail() override;
     // End
 
+    // ItemGroup
+    QList<ItemGroup> selectItemGroupByID(const QString &groupID) override;
+
+    void updateItemGroupByID(const QString &groupID, const ItemGroup &itemGroup) override;
+
+    void deleteItemGroupByID(const QString &groupID) override;
+
+    void insertItemGroup(const ItemGroup &itemGroup) override;
+
+    QList<ItemGroup> selectItemGroupByIDs(const QList<QString> &groupIDs) override;
+    // End
+
     void init() override;
 
     ~SQLDao() override;

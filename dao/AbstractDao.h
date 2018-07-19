@@ -11,6 +11,7 @@
 #include "../core/ItemDetail.h"
 #include "../core/ItemTag.h"
 #include "../core/ItemDetailAndTag.h"
+#include "../core/ItemGroup.h"
 
 namespace todo {
 class AbstractDao {
@@ -46,6 +47,14 @@ public:
 
     // For notification
     virtual QList<ItemDetail> selectNextNotifiedItemDetail() = 0;
+    // End
+
+    // ItemGroup
+    virtual QList<ItemGroup> selectItemGroupByID(const QString &groupID) = 0;
+    virtual void updateItemGroupByID(const QString &groupID, const ItemGroup &itemGroup) = 0;
+    virtual void deleteItemGroupByID(const QString &groupID) = 0;
+    virtual void insertItemGroup(const ItemGroup &itemGroup) = 0;
+    virtual QList<ItemGroup> selectItemGroupByIDs(const QList<QString> &groupIDs) = 0;
     // End
 
     virtual void init() = 0;

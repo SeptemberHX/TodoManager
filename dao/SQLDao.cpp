@@ -177,6 +177,18 @@ void todo::SQLDao::createTables() {
                       "     foreign key(itemID) references todo_items(id),"
                       "     foreign key(tagID) references tags(name)"
                       ");");
+    sqlScripts.append("CREATE TABLE if not exists item_groups ("
+                      "     id VARCHAR(50) NOT NULL,"
+                      "     title VARCHAR(255) NOT NULL,"
+                      "     description text,"
+                      "     fromDate DATETIME,"
+                      "     toDate DATETIME,"
+                      "     type INTEGER NOT NULL,"
+                      "     milestone BOOLEAN NOT NULL,"
+                      "     createdTime DATETIME,"
+                      "     lastUpdatedTime DATETIME,"
+                      "     PRIMARY KEY (id)"
+                      ");");
 
     QSqlQuery query(this->db);
     for (auto &sqlScript : sqlScripts) {
@@ -546,5 +558,122 @@ QList<todo::ItemDetail> todo::SQLDao::selectItemDetailByIDs(const QList<QString>
         }
     }
 
+    return resultList;
+}
+
+QList<todo::ItemGroup> todo::SQLDao::selectItemGroupByID(const QString &groupID) {
+    QList<ItemGroup> resultList;
+    QSqlQuery query(this->db);
+    query.prepare("SELECT id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime"
+                  " FROM item_groups"
+                  " WHERE id = :id");
+    query.bindValue(":id", groupID);
+    if (!query.exec()) {
+        throw SqlErrorException();
+    } else {
+        while (query.next()) {
+            todo::ItemGroup itemGroup;
+            itemGroup.setId(query.value("id").toString());
+            itemGroup.setTitle(query.value("title").toString());
+            itemGroup.setDescription(query.value("description").toString());
+            itemGroup.setFromDate(query.value("fromDate").toDate());
+            itemGroup.setToDate(query.value("toDate").toDate());
+            itemGroup.setType(todo::ItemGroupType(query.value("type").toInt()));
+            itemGroup.setMileStone(query.value("milestone").toBool());
+            itemGroup.setCreatedTime(query.value("createdTime").toDateTime());
+            itemGroup.setLastUpdatedTime(query.value("lastUpdatedTime").toDateTime());
+            resultList.append(itemGroup);
+        }
+    }
+    return resultList;
+}
+
+void todo::SQLDao::updateItemGroupByID(const QString &groupID, const ItemGroup &itemGroup) {
+    QSqlQuery query(this->db);
+    query.prepare("UPDATE item_groups"
+                  " SET title=:title, description=:description, fromDate=:fromDate, toDate=:toDate,"
+                  "     `type`=:type, milestone=:milestone,"
+                  "     createdTime=:createdTime, lastUpdatedTime=:lastUpdatedTime"
+                  " WHERE id=:id");
+    query.bindValue(":id", groupID);
+    query.bindValue(":title", itemGroup.getTitle());
+    query.bindValue(":description", itemGroup.getDescription());
+    query.bindValue(":fromDate", itemGroup.getFromDate());
+    query.bindValue(":toDate", itemGroup.getToDate());
+    query.bindValue(":type", itemGroup.getType());
+    query.bindValue(":milestone", itemGroup.isMileStone());
+    query.bindValue(":createdTime", itemGroup.getCreatedTime());
+    query.bindValue(":lastUpdatedTime", itemGroup.getLastUpdatedTime());
+
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
+}
+
+void todo::SQLDao::deleteItemGroupByID(const QString &groupID) {
+    QSqlQuery query(this->db);
+    query.prepare("DELETE FROM item_groups"
+                  " WHERE id=:id");
+    query.bindValue(":id", groupID);
+
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
+}
+
+void todo::SQLDao::insertItemGroup(const ItemGroup &itemGroup) {
+    QSqlQuery query(this->db);
+    query.prepare("INSERT INTO item_groups"
+                  " (id, title, description, fromDate, toDate, `type`, milestone, createTime, lastUpdatedTime)"
+                  " VALUES(:id, :title, :description, :fromDate, :toDate, :type, :milestone,"
+                  "        :createTime, :lastUpdatedTime)");
+    query.bindValue(":id", itemGroup.getId());
+    query.bindValue(":title", itemGroup.getTitle());
+    query.bindValue(":description", itemGroup.getDescription());
+    query.bindValue(":fromDate", itemGroup.getFromDate());
+    query.bindValue(":toDate", itemGroup.getToDate());
+    query.bindValue(":type", itemGroup.getType());
+    query.bindValue(":milestone", itemGroup.isMileStone());
+    query.bindValue(":createdTime", itemGroup.getCreatedTime());
+    query.bindValue(":lastUpdatedTime", itemGroup.getLastUpdatedTime());
+
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
+}
+
+QList<todo::ItemGroup> todo::SQLDao::selectItemGroupByIDs(const QList<QString> &groupIDs) {
+    QList<ItemGroup> resultList;
+    QSqlQuery query(this->db);
+    QStringList itemIDList;
+    for (auto const &groupId : groupIDs) {
+        itemIDList.append(QString(" id = \"%1\"").arg(groupId));
+    }
+    QString itemIDListStr = itemIDList.join(" or ");
+    if (itemIDListStr.isEmpty()) {
+        return resultList;
+    }
+
+    QString queryStr("SELECT id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime"
+              " FROM item_groups"
+              " WHERE ");
+    queryStr += itemIDListStr;
+    if (!query.exec(queryStr)) {
+        throw SqlErrorException();
+    } else {
+        while (query.next()) {
+            todo::ItemGroup itemGroup;
+            itemGroup.setId(query.value("id").toString());
+            itemGroup.setTitle(query.value("title").toString());
+            itemGroup.setDescription(query.value("description").toString());
+            itemGroup.setFromDate(query.value("fromDate").toDate());
+            itemGroup.setToDate(query.value("toDate").toDate());
+            itemGroup.setType(todo::ItemGroupType(query.value("type").toInt()));
+            itemGroup.setMileStone(query.value("milestone").toBool());
+            itemGroup.setCreatedTime(query.value("createdTime").toDateTime());
+            itemGroup.setLastUpdatedTime(query.value("lastUpdatedTime").toDateTime());
+            resultList.append(itemGroup);
+        }
+    }
     return resultList;
 }
