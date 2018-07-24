@@ -1,7 +1,5 @@
 find_package(Qt5 REQUIRED COMPONENTS Core Gui)
 
-add_subdirectory(gtest)
-
 set(core_files
         ItemDetail.cpp
         ItemDetail.h
