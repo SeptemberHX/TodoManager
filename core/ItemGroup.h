@@ -76,15 +76,15 @@ public:
 
 private:
     // persistence in sql
-    QString title;
-    QString id;
-    QString description;
-    ItemGroupType type;
-    bool mileStone;
-    QDateTime createdTime;
-    QDateTime lastUpdatedTime;
-    QDate fromDate;
-    QDate toDate;
+    QString title;                  // 1
+    QString id;                     // 2
+    QString description;            // 3
+    ItemGroupType type;             // 4
+    bool mileStone;                 // 5
+    QDateTime createdTime;          // 6
+    QDateTime lastUpdatedTime;      // 7
+    QDate fromDate;                 // 8
+    QDate toDate;                   // 9
 
     // store in ItemGroupRelation
     QList<ItemGroup> subGroupList;

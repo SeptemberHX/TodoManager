@@ -60,17 +60,38 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="deleteToolButton">
-        <property name="text">
-         <string>D</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="editToolButton">
-        <property name="text">
-         <string>E</string>
-        </property>
+       <widget class="QWidget" name="operationWidget" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <property name="spacing">
+          <number>3</number>
+         </property>
+         <property name="leftMargin">
+          <number>3</number>
+         </property>
+         <property name="topMargin">
+          <number>3</number>
+         </property>
+         <property name="rightMargin">
+          <number>3</number>
+         </property>
+         <property name="bottomMargin">
+          <number>3</number>
+         </property>
+         <item>
+          <widget class="QToolButton" name="deleteToolButton">
+           <property name="text">
+            <string>D</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="editToolButton">
+           <property name="text">
+            <string>E</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>

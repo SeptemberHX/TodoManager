@@ -21,6 +21,7 @@ signals:
     void itemModified(const todo::ItemAndGroupWrapper &itemWrapper);
 private:
     Ui::GroupDetailWidget *ui;
+    todo::ItemGroup rawItemGroup;  // backup for the original itemGroup
 
     /**
      * Only collect current group's details.
@@ -28,8 +29,13 @@ private:
      * @return
      */
     todo::ItemGroup collectData() const;
+
+    // ui change between view and edit mode
+    void changeReadOnly(bool readOnly) const;
 private slots:
     void item_modified();
+    void changeToViewMode();
+    void changeToEditMode();
 };
 
 #endif // GROUPDETAILWIDGET_H
