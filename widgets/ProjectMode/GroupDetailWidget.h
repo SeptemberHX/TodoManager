@@ -32,6 +32,8 @@ private:
 
     // ui change between view and edit mode
     void changeReadOnly(bool readOnly) const;
+
+    void connectModifiedSignal();
 private slots:
     void item_modified();
     void changeToViewMode();

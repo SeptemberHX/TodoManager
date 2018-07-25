@@ -9,10 +9,11 @@
 #include "ItemListItemDelegate.h"
 #include "../config/TodoConfig.h"
 #include "../utils/StringUtils.h"
+#include "../utils/DrawUtils.h"
 
 ItemListItemDelegate::ItemListItemDelegate(QObject *parent)
     : QStyledItemDelegate(parent) {
-
+    this->arcLength = 10;
 }
 
 void
@@ -30,6 +31,8 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 
     if (!itemAndGroupPair.isGroup()) {
         this->paintItemDetail(itemAndGroupPair.getItemDetail(), painter, option, index);
+    } else {
+        this->paintItemGroup(itemAndGroupPair.getItemGroup(), painter, option, index);
     }
 }
 
@@ -42,7 +45,6 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     // draw tag color
     painter->setRenderHint(QPainter::Antialiasing, true);
     QPainterPath painterPath;
-    int arcLength = 10;
     auto const &itemTags = itemDetail.getTags();
     if (!itemTags.empty()) {
         auto firstTag = itemTags[0];
@@ -206,4 +208,32 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
         painter->setPen(QPen(option.palette.color(QPalette::Highlight), 4));
         painter->drawRect(option.rect);
     }
+}
+
+void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPainter *painter,
+                                          const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    // draw task percent
+    QSize percentSize(60, 20);
+    QMargins percentMargin(5, 10, 5, 5);
+    QRect percentRect(option.rect.right() - this->arcLength - percentMargin.right() - percentSize.width(),
+                      option.rect.top() + percentMargin.top(),
+                      percentSize.width(),
+                      percentSize.height()
+    );
+    todo::DrawUtils::drawRectWithCircle(*painter, QFont("Arial", 8), Qt::white, "50%", percentRect, Qt::darkRed, 0.5);
+
+    // draw title
+    painter->setFont(QFont("Arias", 14));
+    painter->setPen(Qt::black);
+    QBrush oldBrush = painter->brush();
+    QMargins titleMargins(10, 5, 0, 2);
+    int priorityNumWidth = 20;
+    int titleWidth =
+            option.rect.width() - 2 * arcLength - titleMargins.left() - titleMargins.right() - priorityNumWidth
+            - percentSize.width() - percentMargin.left() - percentMargin.right();
+    int titleHeight = 30;
+    auto titleRect = QRect(option.rect.topLeft() + QPoint(titleMargins.left() + arcLength, titleMargins.top()),
+                           QSize(titleWidth, titleHeight));
+    painter->drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter,
+                      todo::StringUtils::elideText(itemGroup.getTitle(), painter->fontMetrics(), titleWidth));
 }

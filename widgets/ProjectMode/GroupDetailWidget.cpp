@@ -73,3 +73,11 @@ void GroupDetailWidget::changeReadOnly(bool readOnly) const {
     ui->milestoneCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, readOnly);
     ui->milestoneCheckBox->setFocusPolicy(readOnly ? Qt::NoFocus : Qt::StrongFocus);
 }
+
+void GroupDetailWidget::connectModifiedSignal() {
+    connect(ui->titleLineEdit, &QLineEdit::textChanged, this, &GroupDetailWidget::item_modified);
+    connect(ui->descriptionTextEdit, &QTextEdit::textChanged, this, &GroupDetailWidget::item_modified);
+    connect(ui->milestoneCheckBox, &QCheckBox::stateChanged, this, &GroupDetailWidget::item_modified);
+    connect(ui->fromDateEdit, &QDateEdit::dateChanged, this, &GroupDetailWidget::item_modified);
+    connect(ui->toDateEdit, &QDateEdit::dateChanged, this, &GroupDetailWidget::item_modified);
+}

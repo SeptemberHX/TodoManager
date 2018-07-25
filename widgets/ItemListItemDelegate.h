@@ -18,7 +18,12 @@ public:
 
     void paintItemDetail(const todo::ItemDetail &itemDetail, QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
+    void paintItemGroup(const todo::ItemGroup &itemGroup, QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
+private:
+    int arcLength;
 };
 
 

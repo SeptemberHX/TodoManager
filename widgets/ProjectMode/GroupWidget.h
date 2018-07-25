@@ -3,7 +3,9 @@
 
 #include <QWidget>
 #include <QSplitter>
+#include <QStandardItemModel>
 #include "GroupDetailWidget.h"
+#include "../../core/ItemAndGroupWrapper.h"
 
 namespace Ui {
 class GroupWidget;
@@ -21,6 +23,9 @@ private:
     Ui::GroupWidget *ui;
     GroupDetailWidget *groupDetailWidget;
     QSplitter *mainSplitter;
+    QStandardItemModel *itemModel;
+
+    void appendItem(const todo::ItemAndGroupWrapper &wrapper);
 };
 
 #endif // GROUPWIDGET_H
