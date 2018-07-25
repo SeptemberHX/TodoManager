@@ -5,6 +5,8 @@
 #include <QSplitter>
 #include <QStandardItemModel>
 #include "GroupDetailWidget.h"
+#include "../itemlistwidget.h"
+#include "../itemdetailwidget.h"
 #include "../../core/ItemAndGroupWrapper.h"
 
 namespace Ui {
@@ -22,10 +24,16 @@ public:
 private:
     Ui::GroupWidget *ui;
     GroupDetailWidget *groupDetailWidget;
+    ItemDetailWidget *itemDetailWidget;
+    ItemListWidget *listWidget;
     QSplitter *mainSplitter;
-    QStandardItemModel *itemModel;
 
-    void appendItem(const todo::ItemAndGroupWrapper &wrapper);
+    QMap<QString, todo::ItemAndGroupWrapper> itemMap;
+
+    void loadItems(const QList<todo::ItemAndGroupWrapper> &itemList);
+private slots:
+
+    void selected_item_changed(const QString &itemID);
 };
 
 #endif // GROUPWIDGET_H

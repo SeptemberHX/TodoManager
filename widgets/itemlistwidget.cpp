@@ -73,7 +73,7 @@ void ItemListWidget::refresh_item_info(const todo::ItemDetail &item)
 
 void ItemListWidget::listWidget_selectedItem_changed() {
     todo::ItemAndGroupWrapper itemAndGroupPair = this->getCurrSelectedItemPair();
-    emit selectedItemChanged(itemAndGroupPair.getItemDetail().getId());
+    emit selectedItemChanged(itemAndGroupPair.getID());
 }
 
 void ItemListWidget::loadItemDetails(const QList<todo::ItemDetail> &items) {
@@ -83,17 +83,12 @@ void ItemListWidget::loadItemDetails(const QList<todo::ItemDetail> &items) {
         itemsAfterFilter = filterPtr->filter(itemsAfterFilter);
     }
 
-    itemsAfterFilter = this->sortItemlist(itemsAfterFilter);  // sort it
-
-    // strange here. If we use range-based for loop, then we will get SIGSEGV
-    // Due to Qt 5.11 official document, range-based for loop might force a Qt container to detach.
+    QList<todo::ItemAndGroupWrapper> wrapperList;
     foreach (auto const &item, itemsAfterFilter) {
-        this->addItemDetail_(item);  // Use addItemDetail method to sort new item according to sorters.
+        wrapperList.append(todo::ItemAndGroupWrapper(item));
     }
 
-    if (this->itemModel->rowCount() > 0) {
-        this->listView->setCurrentIndex(this->itemModel->index(0, 0));
-    }
+    this->loadItemWrappers(wrapperList);
 }
 
 void ItemListWidget::removeItemDetailByID(const QString &itemID) {
@@ -136,12 +131,6 @@ bool ItemListWidget::checkItem(const todo::ItemDetail &detail) {
     return passCheckFlag;
 }
 
-void ItemListWidget::addItemDetail_(const todo::ItemDetail &item) {
-    auto newListItem = new QStandardItem();
-    newListItem->setData(QVariant::fromValue(todo::ItemAndGroupWrapper(item)), Qt::UserRole + 1);
-    this->itemModel->insertRow(0, newListItem);
-}
-
 void ItemListWidget::refresh_or_remove_item_info(const todo::ItemDetail &item) {
     if (this->checkItem(item)) {
         this->refresh_item_info_and_sort(item);
@@ -157,8 +146,8 @@ void ItemListWidget::clearSorters() {
     this->sorters.clear();
 }
 
-QList<todo::ItemDetail> ItemListWidget::sortItemlist(const QList<todo::ItemDetail> &details) {
-    QList<todo::ItemDetail> results(details);
+QList<todo::ItemAndGroupWrapper> ItemListWidget::sortItemList(const QList<todo::ItemAndGroupWrapper> &wrappers) {
+    QList<todo::ItemAndGroupWrapper> results(wrappers);
     std::sort(results.begin(), results.end(), todo::SorterOrganize(this->sorters));
     return results;
 }
@@ -209,4 +198,26 @@ todo::ItemAndGroupWrapper ItemListWidget::getItemPairByRow(int row) {
 
 todo::ItemAndGroupWrapper ItemListWidget::getCurrSelectedItemPair() {
     return this->listView->currentIndex().data(Qt::UserRole + 1).value<todo::ItemAndGroupWrapper>();
+}
+
+void ItemListWidget::loadItemWrappers(const QList<todo::ItemAndGroupWrapper> &wrappers) {
+    QList<todo::ItemAndGroupWrapper> wrapperList(wrappers);
+
+    wrapperList = this->sortItemList(wrapperList);  // sort it
+
+    // strange here. If we use range-based for loop, then we will get SIGSEGV
+    // Due to Qt 5.11 official document, range-based for loop might force a Qt container to detach.
+    foreach (auto const &wrapper, wrapperList) {
+        this->addItemWrapper_(wrapper);  // Use addItemDetail method to sort new item according to sorters.
+    }
+
+    if (this->itemModel->rowCount() > 0) {
+        this->listView->setCurrentIndex(this->itemModel->index(0, 0));
+    }
+}
+
+void ItemListWidget::addItemWrapper_(const todo::ItemAndGroupWrapper &itemWrapper) {
+    auto newListItem = new QStandardItem();
+    newListItem->setData(QVariant::fromValue(itemWrapper), Qt::UserRole + 1);
+    this->itemModel->insertRow(0, newListItem);
 }

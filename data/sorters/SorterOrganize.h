@@ -8,6 +8,7 @@
 
 #include <QList>
 #include "./AbstractSorter.h"
+#include "../../core/ItemAndGroupWrapper.h"
 
 namespace todo {
 
@@ -15,6 +16,7 @@ class SorterOrganize {
 public:
     SorterOrganize(const QList<AbstractSorter*> &sorterPtrs);
     bool operator()(const todo::ItemDetail &item1, const todo::ItemDetail &item2);
+    bool operator()(const todo::ItemAndGroupWrapper &wrapper1, const todo::ItemAndGroupWrapper &wrapper2);
 
 private:
     QList<AbstractSorter*> sorterPtrs;

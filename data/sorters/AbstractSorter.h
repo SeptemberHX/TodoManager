@@ -8,6 +8,7 @@
 
 #include <QList>
 #include "../../core/ItemDetail.h"
+#include "../../core/ItemAndGroupWrapper.h"
 
 namespace todo {
 
@@ -26,7 +27,8 @@ public:
      * @param item2
      * @return -1 if item1 < item2; 0 if item1 = item2; 1 if item1 > item2
      */
-    virtual int compare(const ItemDetail &item1, const ItemDetail &item2) = 0;
+    virtual int compare(const ItemDetail &item1, const ItemDetail &item2);
+    virtual int compare(const ItemAndGroupWrapper &wrapper1, const ItemAndGroupWrapper &wrapper2) = 0;
 
 protected:
     bool desc;

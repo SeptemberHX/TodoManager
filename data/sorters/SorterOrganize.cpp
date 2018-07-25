@@ -9,8 +9,13 @@ todo::SorterOrganize::SorterOrganize(const QList<todo::AbstractSorter *> &sorter
 }
 
 bool todo::SorterOrganize::operator()(const todo::ItemDetail &item1, const todo::ItemDetail &item2) {
+    return operator()(ItemAndGroupWrapper(item1), ItemAndGroupWrapper(item2));
+}
+
+bool
+todo::SorterOrganize::operator()(const todo::ItemAndGroupWrapper &wrapper1, const todo::ItemAndGroupWrapper &wrapper2) {
     for (auto sorterPtr : this->sorterPtrs) {
-        int compareResult = sorterPtr->compare(item1, item2);
+        int compareResult = sorterPtr->compare(wrapper1, wrapper2);
         switch (compareResult) {
             case 0:
                 continue;

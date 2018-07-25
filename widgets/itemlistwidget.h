@@ -30,6 +30,8 @@ public:
     void loadItemDetails(const QList<todo::ItemDetail> &items);  // Attention: will clear pre items first.
     void removeItemDetailByID(const QString& itemID);
 
+    void loadItemWrappers(const QList<todo::ItemAndGroupWrapper> &itemWrappers);
+
     /**
      * clear condition filters, and release their memory
      */
@@ -91,7 +93,7 @@ private:
      */
     QList<todo::ItemDetail> filtItemList(const QList<todo::ItemDetail> &details);
 
-    QList<todo::ItemDetail> sortItemlist(const QList<todo::ItemDetail> &details);
+    QList<todo::ItemAndGroupWrapper> sortItemList(const QList<todo::ItemAndGroupWrapper> &wrapper);
 
     /**
      * find which row item is at.
@@ -104,9 +106,9 @@ private:
 
     /**
      * add item to list view without considering whether it meets the conditions or not
-     * @param item
+     * @param itemWrapper
      */
-    void addItemDetail_(const todo::ItemDetail &item);
+    void addItemWrapper_(const todo::ItemAndGroupWrapper &itemWrapper);
 
     todo::ItemAndGroupWrapper getItemPairByRow(int row);
     todo::ItemAndGroupWrapper getCurrSelectedItemPair();

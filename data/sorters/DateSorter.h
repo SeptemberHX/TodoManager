@@ -6,13 +6,14 @@
 #define TODOMANAGER_DATESORTER_H
 
 #include "AbstractSorter.h"
+#include "../../core/ItemAndGroupWrapper.h"
 
 namespace todo {
 
 class DateSorter : public AbstractSorter {
 public:
     DateSorter(bool desc = false);
-    int compare(const ItemDetail &item1, const ItemDetail &item2) override;
+    int compare(const ItemAndGroupWrapper &wrapper1, const ItemAndGroupWrapper &wrapper2) override;
 };
 
 }
