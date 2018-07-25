@@ -23,6 +23,8 @@ GroupWidget::GroupWidget(QWidget *parent) :
 
     todo::ItemGroup testGroup;
     testGroup.setTitle("这是一个测试，一个非常非常长的一个测试。");
+    testGroup.setMileStone(true);
+    testGroup.setDescription("这是一个很长的测试字符串。你说什么，我听不见。\n散人干不死\n哈哈哈");
     this->appendItem(todo::ItemAndGroupWrapper(testGroup));
 }
 

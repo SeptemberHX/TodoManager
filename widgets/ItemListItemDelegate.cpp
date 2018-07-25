@@ -18,6 +18,8 @@ ItemListItemDelegate::ItemListItemDelegate(QObject *parent)
 
 void
 ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    painter->save();
+
     // draw background
     painter->fillRect(option.rect, Qt::white);
 
@@ -34,6 +36,8 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     } else {
         this->paintItemGroup(itemAndGroupPair.getItemGroup(), painter, option, index);
     }
+
+    painter->restore();
 }
 
 QSize ItemListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
@@ -212,6 +216,8 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
 
 void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPainter *painter,
                                           const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    painter->setRenderHint(QPainter::Antialiasing, true);
+
     // draw task percent
     QSize percentSize(60, 20);
     QMargins percentMargin(5, 10, 5, 5);
@@ -223,7 +229,7 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
     todo::DrawUtils::drawRectWithCircle(*painter, QFont("Arial", 8), Qt::white, "50%", percentRect, Qt::darkRed, 0.5);
 
     // draw title
-    painter->setFont(QFont("Arias", 14));
+    painter->setFont(QFont("Arial", 14));
     painter->setPen(Qt::black);
     QBrush oldBrush = painter->brush();
     QMargins titleMargins(10, 5, 0, 2);
@@ -236,4 +242,55 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
                            QSize(titleWidth, titleHeight));
     painter->drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter,
                       todo::StringUtils::elideText(itemGroup.getTitle(), painter->fontMetrics(), titleWidth));
+
+    // draw milestone flag
+    if (itemGroup.isMileStone()) {
+        painter->setFont(QFont("Arial", 8));
+        painter->setPen(Qt::white);
+        auto mRect = painter->fontMetrics().boundingRect("Milestone");
+        QMargins milestoneMargin(5, 5, 5, 5);
+        QRect milestoneRect(option.rect.right() - this->arcLength - milestoneMargin.right() - mRect.width() - 5,
+                            titleRect.bottom() + milestoneMargin.top(),
+                            mRect.width() + 5,
+                            mRect.height() + 5
+        );
+        painter->fillRect(milestoneRect, "#35b9ab");
+        painter->drawText(milestoneRect, Qt::AlignCenter, "Milestone");
+    }
+
+    // draw date
+    QString fromStr("F: %1");
+    QString toStr("T: %1");
+    fromStr = fromStr.arg(itemGroup.getFromDate().toString("yyyy/MM/dd"));
+    toStr = toStr.arg(itemGroup.getToDate().toString("yyyy/MM/dd"));
+    painter->setPen(Qt::gray);
+    painter->setFont(QFont("Arial", 8));
+    auto fRect = painter->fontMetrics().boundingRect(fromStr);
+    auto tRect = painter->fontMetrics().boundingRect(toStr);
+    int finalWidth = std::max(fRect.width(), tRect.width());
+    QMargins dateLabelMargin(5, 5, 5, 3);
+    QRect fromRect(option.rect.right() - this->arcLength - dateLabelMargin.right() - finalWidth,
+                   option.rect.bottom() - dateLabelMargin.bottom() - fRect.height() - tRect.height(),
+                   fRect.width(),
+                   fRect.height()
+    );
+    painter->drawText(fromRect, Qt::AlignCenter, fromStr);
+    QRect toRect(fromRect.left(), fromRect.bottom(), tRect.width(), tRect.height());
+    painter->drawText(toRect, Qt::AlignCenter, toStr);
+
+    // draw description
+    QMargins descriptionMargins(0, 10, 0, 0);
+    painter->setPen(Qt::gray);
+    painter->setFont(QFont("Arial", 10));
+    int maxHeight = painter->fontMetrics().height() * 2;  // 2 line
+    QRect availableRect(QPoint(titleRect.left(), titleRect.bottom() + titleMargins.bottom() + descriptionMargins.top()),
+                        toRect.bottomLeft() + QPoint(-dateLabelMargin.left(), 0));
+    availableRect.setBottom(availableRect.bottom() - availableRect.height() + maxHeight);
+    painter->drawText(availableRect, Qt::TextWordWrap | Qt::TextSingleLine | Qt::AlignTop, itemGroup.getDescription(), &availableRect);
+
+    // draw selection item's border
+    if (option.state & QStyle::State_Selected) {
+        painter->setPen(QPen(option.palette.color(QPalette::Highlight), 4));
+        painter->drawRect(option.rect);
+    }
 }
