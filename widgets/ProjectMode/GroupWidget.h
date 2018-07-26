@@ -32,8 +32,8 @@ private:
 
     void loadItems(const QList<todo::ItemAndGroupWrapper> &itemList);
 private slots:
-
     void selected_item_changed(const QString &itemID);
+    void current_item_modified(const todo::ItemAndGroupWrapper &wrapper);
 };
 
 #endif // GROUPWIDGET_H

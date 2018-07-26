@@ -26,7 +26,7 @@ public:
      * if new item meets the conditions, add it to correct position
      * @param item
      */
-    void addItemDetail(const todo::ItemDetail &item);
+    void addItemWrapper(const todo::ItemAndGroupWrapper &wrapper);
     void loadItemDetails(const QList<todo::ItemDetail> &items);  // Attention: will clear pre items first.
     void removeItemDetailByID(const QString& itemID);
 
@@ -50,7 +50,7 @@ public:
     /**
      * check detail whether meets the condition
      */
-    bool checkItem(const todo::ItemDetail &detail);
+    bool checkItem(const todo::ItemAndGroupWrapper &wrapper);
 
     /**
      * set cursor to target item according to given itemID and load it to detail widget
@@ -62,9 +62,9 @@ public slots:
     /**
      * Refresh item info, used then current item is edited so the list view can refresh immediately
      * ONLY REFRESH.
-     * @param item: item after edited but has the same item id
+     * @param wrapper: item after edited but has the same item id
      */
-    void refresh_item_info(const todo::ItemDetail &item);
+    void refresh_item_info(const todo::ItemAndGroupWrapper &wrapper);
 
     /**
      * Refresh item info.
@@ -72,12 +72,12 @@ public slots:
      * ATTENTION: can't use reference here !!!
      * @param item
      */
-    void refresh_item_info_and_sort(todo::ItemDetail item);
+    void refresh_item_info_and_sort(todo::ItemAndGroupWrapper wrapper);
 
     /**
      * Same like refresh_item_info. But it will remove item if item can't meet the condition.
      */
-    void refresh_or_remove_item_info(const todo::ItemDetail &item);
+    void refresh_or_remove_item_info(const todo::ItemAndGroupWrapper &wrapper);
 
 private slots:
     void listWidget_selectedItem_changed();
@@ -97,10 +97,10 @@ private:
 
     /**
      * find which row item is at.
-     * @param item
+     * @param wrapper
      * @return -1 if not exists
      */
-    int findRow(const todo::ItemDetail &item);
+    int findRow(const todo::ItemAndGroupWrapper &wrapper);
 
     int findRowByID(const QString &itemID);
 

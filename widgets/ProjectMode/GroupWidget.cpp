@@ -23,6 +23,7 @@ GroupWidget::GroupWidget(QWidget *parent) :
     ui->horizontalLayout->addWidget(this->mainSplitter);
 
     connect(this->listWidget, &ItemListWidget::selectedItemChanged, this, &GroupWidget::selected_item_changed);
+    connect(this->groupDetailWidget, &GroupDetailWidget::itemModified, this, &GroupWidget::current_item_modified);
 
     // For test
     todo::ItemGroup testGroup;
@@ -63,4 +64,8 @@ void GroupWidget::loadItems(const QList<todo::ItemAndGroupWrapper> &itemList) {
     }
 
     this->listWidget->loadItemWrappers(itemList);
+}
+
+void GroupWidget::current_item_modified(const todo::ItemAndGroupWrapper &wrapper) {
+    this->listWidget->refresh_item_info(wrapper);
 }

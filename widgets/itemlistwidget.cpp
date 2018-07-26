@@ -40,18 +40,16 @@ ItemListWidget::~ItemListWidget()
     this->clearSorters();
 }
 
-void ItemListWidget::addItemDetail(const todo::ItemDetail &item)
+void ItemListWidget::addItemWrapper(const todo::ItemAndGroupWrapper &item)
 {
     if (this->checkItem(item)) {
         todo::SorterOrganize comparer(this->sorters);
         int newRowToInsert = this->itemModel->rowCount();  // insert to top by default
         for (int i = 0; i < this->itemModel->rowCount(); ++i) {
             todo::ItemAndGroupWrapper itemAndGroupPair = this->getItemPairByRow(i);
-            if (!itemAndGroupPair.isGroup()) {
-                if (!comparer(item, itemAndGroupPair.getItemDetail())) {
-                    newRowToInsert = i;
-                    break;
-                }
+            if (!comparer(item, itemAndGroupPair)) {
+                newRowToInsert = i;
+                break;
             }
         }
 
@@ -63,11 +61,11 @@ void ItemListWidget::addItemDetail(const todo::ItemDetail &item)
     }
 }
 
-void ItemListWidget::refresh_item_info(const todo::ItemDetail &item)
+void ItemListWidget::refresh_item_info(const todo::ItemAndGroupWrapper &wrapper)
 {
-    int targetRow = this->findRow(item);
+    int targetRow = this->findRow(wrapper);
     if (targetRow != -1) {
-        this->itemModel->item(targetRow)->setData(QVariant::fromValue(todo::ItemAndGroupWrapper(item)), Qt::UserRole + 1);
+        this->itemModel->item(targetRow)->setData(QVariant::fromValue(wrapper), Qt::UserRole + 1);
     }
 }
 
@@ -120,10 +118,14 @@ QList<todo::ItemDetail> ItemListWidget::filtItemList(const QList<todo::ItemDetai
     return resultLists;
 }
 
-bool ItemListWidget::checkItem(const todo::ItemDetail &detail) {
+bool ItemListWidget::checkItem(const todo::ItemAndGroupWrapper &wrapper) {
+    if (wrapper.isGroup()) {
+        return true;  // todo: ItemAndGroupWrapper support for filters
+    }
+
     bool passCheckFlag = true;
     foreach (auto const &filterPtr, this->filters) {
-        passCheckFlag &= filterPtr->check(detail);
+        passCheckFlag &= filterPtr->check(wrapper.getItemDetail());
         if (!passCheckFlag) {
             break;
         }
@@ -131,11 +133,11 @@ bool ItemListWidget::checkItem(const todo::ItemDetail &detail) {
     return passCheckFlag;
 }
 
-void ItemListWidget::refresh_or_remove_item_info(const todo::ItemDetail &item) {
-    if (this->checkItem(item)) {
-        this->refresh_item_info_and_sort(item);
+void ItemListWidget::refresh_or_remove_item_info(const todo::ItemAndGroupWrapper &wrapper) {
+    if (this->checkItem(wrapper)) {
+        this->refresh_item_info_and_sort(wrapper);
     } else {
-        this->removeItemDetailByID(item.getId());
+        this->removeItemDetailByID(wrapper.getID());
     }
 }
 
@@ -152,8 +154,8 @@ QList<todo::ItemAndGroupWrapper> ItemListWidget::sortItemList(const QList<todo::
     return results;
 }
 
-void ItemListWidget::refresh_item_info_and_sort(todo::ItemDetail item) {
-    int targetRow = this->findRow(item);
+void ItemListWidget::refresh_item_info_and_sort(todo::ItemAndGroupWrapper wrapper) {
+    int targetRow = this->findRow(wrapper);
     if (targetRow < 0) {
         return;
     }
@@ -163,11 +165,11 @@ void ItemListWidget::refresh_item_info_and_sort(todo::ItemDetail item) {
     // So TodoListWidget::currentItem will change
     // parameter item can't be a reference to TodoListWidget::currentItem.
     itemModel->removeRow(targetRow);
-    this->addItemDetail(item);
+    this->addItemWrapper(wrapper);
 }
 
-int ItemListWidget::findRow(const todo::ItemDetail &item) {
-    return this->findRowByID(item.getId());
+int ItemListWidget::findRow(const todo::ItemAndGroupWrapper &wrapper) {
+    return this->findRowByID(wrapper.getID());
 }
 
 int ItemListWidget::findRowByID(const QString &itemID) {

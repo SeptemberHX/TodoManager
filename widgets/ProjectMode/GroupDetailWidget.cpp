@@ -10,6 +10,7 @@ GroupDetailWidget::GroupDetailWidget(QWidget *parent) :
     this->changeToViewMode();
 
     connect(ui->editToolButton, &QToolButton::clicked, this, &GroupDetailWidget::changeToEditMode);
+    this->connectModifiedSignal();
 }
 
 GroupDetailWidget::~GroupDetailWidget()

@@ -19,9 +19,9 @@ class ItemAndGroupWrapper {
 public:
     ItemAndGroupWrapper();
 
-    explicit ItemAndGroupWrapper(const ItemDetail &itemDetail);
+    ItemAndGroupWrapper(const ItemDetail &itemDetail);
 
-    explicit ItemAndGroupWrapper(const ItemGroup &itemGroup);
+    ItemAndGroupWrapper(const ItemGroup &itemGroup);
 
     const ItemDetail &getItemDetail() const;
 

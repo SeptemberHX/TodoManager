@@ -94,7 +94,7 @@ void TodoListWidget::todayBtn_clicked()
 
 void TodoListWidget::loadItemDetailToListView(const QList<todo::ItemDetail> &itemDetails) {
     foreach (auto const &itemDetail, itemDetails) {
-        this->listWidget->addItemDetail(itemDetail);
+        this->listWidget->addItemWrapper(itemDetail);
     }
 }
 
@@ -113,7 +113,7 @@ void TodoListWidget::dealWithNewItemDetail(const todo::ItemDetail &newItemDetail
     this->currItemDetailMap[newItemDetail.getId()] = newItemDetail;
 
     // step 3: load new item to list view if possible
-    this->listWidget->addItemDetail(newItemDetail);
+    this->listWidget->addItemWrapper(newItemDetail);
 
     // step 4: change status bar info
     this->updateStatusBarInfo();
@@ -128,7 +128,7 @@ void TodoListWidget::saveNewItemDetail(const todo::ItemDetail &newItemDetail)
 void TodoListWidget::addNewItemDetailToListView(const todo::ItemDetail &newItemDetail)
 {
     if (newItemDetail.getTargetDate() == ui->filterDateEdit->date()) {
-        this->listWidget->addItemDetail(newItemDetail);
+        this->listWidget->addItemWrapper(newItemDetail);
     }
 }
 
