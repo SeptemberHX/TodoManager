@@ -20,6 +20,8 @@ GroupWidget::GroupWidget(QWidget *parent) :
     this->mainSplitter = new QSplitter(this);
     this->mainSplitter->addWidget(this->listWidget);
     this->mainSplitter->addWidget(ui->stackedWidget);
+    this->mainSplitter->setStretchFactor(0, 1);
+    this->mainSplitter->setStretchFactor(1, 3);
     ui->horizontalLayout->addWidget(this->mainSplitter);
 
     connect(this->listWidget, &ItemListWidget::selectedItemChanged, this, &GroupWidget::selected_item_changed);
@@ -39,7 +41,6 @@ GroupWidget::GroupWidget(QWidget *parent) :
     testDetail.setDescription("赶紧睡觉！");
     wrappers.append(todo::ItemAndGroupWrapper(testDetail));
     this->loadItems(wrappers);
-
 }
 
 GroupWidget::~GroupWidget()
