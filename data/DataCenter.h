@@ -12,6 +12,7 @@
 #include "../core/ItemDetail.h"
 #include "../dao/DaoFactory.h"
 #include "../core/ItemDetailAndTag.h"
+#include "../core/ItemAndGroupWrapper.h"
 
 namespace todo {
 
@@ -53,6 +54,8 @@ public:
     // ---------------- ItemGroup ----------------
     QList<ItemGroup> selectItemGroupByID(const QString &groupID);
 
+    QList<ItemGroup> selectItemGroupByType(const todo::ItemGroupType &type);
+
     void updateItemGroupByID(const QString &groupID, const ItemGroup &itemGroup);
 
     void deleteItemGroupByID(const QString &groupID);
@@ -69,6 +72,8 @@ public:
 
     void insertItemGroupRelation(const ItemGroupRelation &relation);
     // End
+
+    QList<todo::ItemAndGroupWrapper> selectItemByDirectGroupID(const QString &groupID);
 
 signals:
     void itemDetailModified();

@@ -593,6 +593,33 @@ QList<todo::ItemGroup> todo::SQLDao::selectItemGroupByID(const QString &groupID)
     return resultList;
 }
 
+QList<todo::ItemGroup> todo::SQLDao::selectItemGroupByType(const todo::ItemGroupType &type) {
+    QList<ItemGroup> resultList;
+    QSqlQuery query(this->db);
+    query.prepare("SELECT id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime"
+                  " FROM item_groups"
+                  " WHERE `type` = :type");
+    query.bindValue(":type", type);
+    if (!query.exec()) {
+        throw SqlErrorException();
+    } else {
+        while (query.next()) {
+            todo::ItemGroup itemGroup;
+            itemGroup.setId(query.value("id").toString());
+            itemGroup.setTitle(query.value("title").toString());
+            itemGroup.setDescription(query.value("description").toString());
+            itemGroup.setFromDate(query.value("fromDate").toDate());
+            itemGroup.setToDate(query.value("toDate").toDate());
+            itemGroup.setType(todo::ItemGroupType(query.value("type").toInt()));
+            itemGroup.setMileStone(query.value("milestone").toBool());
+            itemGroup.setCreatedTime(query.value("createdTime").toDateTime());
+            itemGroup.setLastUpdatedTime(query.value("lastUpdatedTime").toDateTime());
+            resultList.append(itemGroup);
+        }
+    }
+    return resultList;
+}
+
 void todo::SQLDao::updateItemGroupByID(const QString &groupID, const ItemGroup &itemGroup) {
     QSqlQuery query(this->db);
     query.prepare("UPDATE item_groups"

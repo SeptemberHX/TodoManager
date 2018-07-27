@@ -68,6 +68,8 @@ public:
     // ItemGroup
     QList<ItemGroup> selectItemGroupByID(const QString &groupID) override;
 
+    QList<ItemGroup> selectItemGroupByType(const todo::ItemGroupType &type) override;
+
     void updateItemGroupByID(const QString &groupID, const ItemGroup &itemGroup) override;
 
     void deleteItemGroupByID(const QString &groupID) override;

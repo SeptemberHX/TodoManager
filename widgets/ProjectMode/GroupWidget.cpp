@@ -70,29 +70,32 @@ void GroupWidget::item_double_clicked(const QString &itemID) {
 }
 
 QList<todo::ItemAndGroupWrapper> GroupWidget::getSubItemsForGroup(const QString &groupID) {
-    QList<todo::ItemAndGroupWrapper> subItemList;
-    // todo: read sql and return it
-    return subItemList;
+    return this->dataCenter.selectItemByDirectGroupID(groupID);
 }
 
 QList<todo::ItemAndGroupWrapper> GroupWidget::getRootGroups() {
-    QList<todo::ItemAndGroupWrapper> rootGroups;
-
     // For test
-    todo::ItemGroup testGroup;
-    testGroup.setTitle("这是一个测试，一个非常非常长的一个测试。");
-    testGroup.setMileStone(true);
-    testGroup.setDescription("这是一个很长的测试字符串。你说什么，我听不见。\n散人干不死\n哈哈哈");
-    QList<todo::ItemAndGroupWrapper> wrappers{todo::ItemAndGroupWrapper(testGroup)};
+//    todo::ItemGroup testGroup;
+//    testGroup.setTitle("这是一个测试，一个非常非常长的一个测试。");
+//    testGroup.setMileStone(true);
+//    testGroup.setDescription("这是一个很长的测试字符串。你说什么，我听不见。\n散人干不死\n哈哈哈");
+//    QList<todo::ItemAndGroupWrapper> wrappers{todo::ItemAndGroupWrapper(testGroup)};
+//
+//    todo::ItemDetail testDetail;
+//    testDetail.setTitle("测试task");
+//    testDetail.setMode(todo::ItemMode::SIMPLE);
+//    testDetail.setPriority(2);
+//    testDetail.setDescription("赶紧睡觉！");
+//    wrappers.append(todo::ItemAndGroupWrapper(testDetail));
+//
+//    return wrappers;
 
-    todo::ItemDetail testDetail;
-    testDetail.setTitle("测试task");
-    testDetail.setMode(todo::ItemMode::SIMPLE);
-    testDetail.setPriority(2);
-    testDetail.setDescription("赶紧睡觉！");
-    wrappers.append(todo::ItemAndGroupWrapper(testDetail));
-
-    return wrappers;
+     auto groupList = this->dataCenter.selectItemGroupByType(todo::ItemGroupType::PROJECT);
+     QList<todo::ItemAndGroupWrapper> wrapperList;
+     foreach (auto const &group, groupList) {
+         wrapperList.append(group);
+     }
+     return wrapperList;
 }
 
 void GroupWidget::jump_to(const QString &itemID) {

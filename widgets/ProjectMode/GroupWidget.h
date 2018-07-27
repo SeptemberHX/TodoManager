@@ -7,6 +7,7 @@
 #include "GroupDetailWidget.h"
 #include "../itemlistwidget.h"
 #include "../itemdetailwidget.h"
+#include "../../data/DataCenter.h"
 #include "../../core/ItemAndGroupWrapper.h"
 
 namespace Ui {
@@ -33,6 +34,7 @@ private:
     ItemDetailWidget *itemDetailWidget;
     ItemListWidget *listWidget;
     QSplitter *mainSplitter;
+    todo::DataCenter dataCenter;
 
     QMap<QString, todo::ItemAndGroupWrapper> itemMap;
 

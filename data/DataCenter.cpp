@@ -4,6 +4,7 @@
 
 #include <QDebug>
 #include "DataCenter.h"
+#include "../utils/ItemUtils.h"
 
 bool compareFunc(const todo::ItemDetailAndTag &t1, const todo::ItemDetailAndTag &t2) {
     if (t1.getItemID() < t2.getItemID()) {
@@ -163,4 +164,32 @@ void todo::DataCenter::deleteItemGroupRelationByDirectParentIDAndItemID(const QS
 
 void todo::DataCenter::insertItemGroupRelation(const todo::ItemGroupRelation &relation) {
     DaoFactory::getInstance()->getSQLDao()->insertItemGroupRelation(relation);
+}
+
+QList<todo::ItemAndGroupWrapper> todo::DataCenter::selectItemByDirectGroupID(const QString &groupID) {
+    auto relationList = DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByParentID(groupID);
+    QList<QString> itemDetailIDs;
+    QList<QString> itemGroupIDs;
+    foreach (auto const &relation, relationList) {
+        if (todo::ItemUtils::checkIfItemDetail(relation.getItemID())) {
+            itemDetailIDs.append(relation.getItemID());
+        } else if (todo::ItemUtils::checkIfItemGroup(relation.getItemID())) {
+            itemGroupIDs.append(relation.getItemID());
+        }
+    }
+
+    auto itemDetailList = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByIDs(itemDetailIDs);
+    auto itemGroupList = DaoFactory::getInstance()->getSQLDao()->selectItemGroupByIDs(itemGroupIDs);
+    QList<todo::ItemAndGroupWrapper> wrapperList;
+    foreach (auto const &itemDetail, itemDetailList) {
+        wrapperList.append(itemDetail);
+    }
+    foreach (auto const &itemGroup, itemGroupList) {
+        wrapperList.append(itemGroup);
+    }
+    return wrapperList;
+}
+
+QList<todo::ItemGroup> todo::DataCenter::selectItemGroupByType(const todo::ItemGroupType &type) {
+    return DaoFactory::getInstance()->getSQLDao()->selectItemGroupByType(type);
 }

@@ -52,6 +52,7 @@ public:
 
     // ItemGroup
     virtual QList<ItemGroup> selectItemGroupByID(const QString &groupID) = 0;
+    virtual QList<ItemGroup> selectItemGroupByType(const todo::ItemGroupType &type) = 0;
     virtual void updateItemGroupByID(const QString &groupID, const ItemGroup &itemGroup) = 0;
     virtual void deleteItemGroupByID(const QString &groupID) = 0;
     virtual void insertItemGroup(const ItemGroup &itemGroup) = 0;
