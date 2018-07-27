@@ -23,6 +23,9 @@ private:
     QVBoxLayout *mainVBoxLayout;
     GroupWidget *groupWidget;
     NavigationBarWidget *navigationBarWidget;
+
+private slots:
+    void enter_item(const QString &itemID, const QString &name);
 };
 
 #endif // PROJECTMODEWIDGET_H

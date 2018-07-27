@@ -15,9 +15,16 @@ ProjectModeWidget::ProjectModeWidget(QWidget *parent) :
     this->mainVBoxLayout->addWidget(this->groupWidget);
 
     this->setLayout(this->mainVBoxLayout);
+
+    connect(this->groupWidget, &GroupWidget::enterItem, this, &ProjectModeWidget::enter_item);
+    connect(this->navigationBarWidget, &NavigationBarWidget::jumpTo, this->groupWidget, &GroupWidget::jump_to);
 }
 
 ProjectModeWidget::~ProjectModeWidget()
 {
     delete ui;
+}
+
+void ProjectModeWidget::enter_item(const QString &itemID, const QString &name) {
+    this->navigationBarWidget->append(itemID, name);
 }

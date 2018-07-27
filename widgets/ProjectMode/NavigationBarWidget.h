@@ -18,6 +18,9 @@ public:
     ~NavigationBarWidget();
     void append(const QString &id, const QString &name);
 
+signals:
+    void jumpTo(const QString &id);
+
 private:
     Ui::NavigationBarWidget *ui;
     QList<QWidget*> widgetPtrList;  // store button, label by order

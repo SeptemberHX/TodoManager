@@ -734,3 +734,26 @@ void todo::SQLDao::insertItemGroupRelation(const todo::ItemGroupRelation &relati
         throw SqlErrorException();
     }
 }
+
+QList<todo::ItemGroupRelation> todo::SQLDao::selectItemGroupRelationByParentID(const QString &parentID) {
+    QList<ItemGroupRelation> resultList;
+    QSqlQuery query(this->db);
+    query.prepare("SELECT rootGroupID, directGroupID, itemID"
+                  " FROM item_group_relations"
+                  " WHERE directGroupID = :directGroupID");
+    query.bindValue(":directGroupID", parentID);
+
+    if (!query.exec()) {
+        throw SqlErrorException();
+    } else {
+        while (query.next()) {
+            ItemGroupRelation relation;
+            relation.setRootGroupID(query.value("rootGroupID").toString());
+            relation.setDirectGroupID(query.value("directGroupID").toString());
+            relation.setItemID(query.value("itemID").toString());
+            resultList.append(relation);
+        }
+    }
+
+    return resultList;
+}

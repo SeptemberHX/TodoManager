@@ -1,6 +1,8 @@
 #include "NavigationBarWidget.h"
 #include "ui_NavigationBarWidget.h"
 #include <QLabel>
+#include <QList>
+#include <QToolButton>
 #include <QDebug>
 
 const QString NavigationBarWidget::ROOT = QString("navigation_root");
@@ -14,12 +16,6 @@ NavigationBarWidget::NavigationBarWidget(QWidget *parent) :
     this->widgetPtrList.append(ui->rootToolButton);
     this->buttonObjectName2ID.insert(ui->rootToolButton->objectName(), NavigationBarWidget::ROOT);
     connect(ui->rootToolButton, &QToolButton::clicked, this, &NavigationBarWidget::toolButton_clicked);
-
-    // for test
-    this->append("group_school", "school");
-    this->append("group_week4", "week4");
-    this->append("group_english", "English");
-    this->append("group_talk", "talk");
 }
 
 NavigationBarWidget::~NavigationBarWidget()
@@ -53,8 +49,8 @@ void NavigationBarWidget::toolButton_clicked() {
                 newWidgetPtrList.append(wPtr);
             } else {
                 meetTheWidget = true;
-                delete wPtr;
                 this->buttonObjectName2ID.remove(wPtr->objectName());
+                delete wPtr;
                 continue;
             }
 
@@ -63,6 +59,6 @@ void NavigationBarWidget::toolButton_clicked() {
             }
         }
         this->widgetPtrList = newWidgetPtrList;
-        qDebug() << this->buttonObjectName2ID[senderObjectName] << "clicked";
+        emit jumpTo(this->buttonObjectName2ID[senderObjectName]);
     }
 }

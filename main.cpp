@@ -9,7 +9,6 @@
 #include "widgets/FetchConfigFilePathWidget.h"
 #include "utils/styleutils.h"
 #include "utils/itemdetailutils.h"
-#include "utils/NofityUtils.h"
 #include "dao/DaoFactory.h"
 #include "widgets/CalendarMode/CalendarModeWidget.h"
 #include "widgets/CalendarMode/CalendarTimeLineWidget.h"

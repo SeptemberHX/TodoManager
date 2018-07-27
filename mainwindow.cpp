@@ -2,7 +2,6 @@
 #include "ui_mainwindow.h"
 #include "widgets/logger.h"
 #include "widgets/FetchConfigFilePathWidget.h"
-#include "utils/NofityUtils.h"
 #include "./config/TodoConfig.h"
 
 #include <QStandardPaths>

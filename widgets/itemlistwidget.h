@@ -81,9 +81,11 @@ public slots:
 
 private slots:
     void listWidget_selectedItem_changed();
+    void item_double_clicked(const QModelIndex &current);
 
 signals:
     void selectedItemChanged(const QString &newItemID);
+    void doubleClicked(const QString &itemID);
 
 private:
     /**

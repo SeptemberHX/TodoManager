@@ -62,6 +62,7 @@ public:
     virtual QList<ItemGroupRelation> selectItemGroupRelationByRootID(const QString &rootID) = 0;
     virtual void deleteItemGroupRelationByDirectParentIDAndItemID(const QString &directParentID, const QString &itemID) = 0;
     virtual void insertItemGroupRelation(const ItemGroupRelation &relation) = 0;
+    virtual QList<ItemGroupRelation> selectItemGroupRelationByParentID(const QString &parentID) = 0;
     // End
 
     virtual void init() = 0;

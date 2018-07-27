@@ -1,6 +1,7 @@
 #include "GroupWidget.h"
 #include "ui_groupwidget.h"
 #include "../ItemListItemDelegate.h"
+#include "NavigationBarWidget.h"
 #include <QDebug>
 
 GroupWidget::GroupWidget(QWidget *parent) :
@@ -26,21 +27,9 @@ GroupWidget::GroupWidget(QWidget *parent) :
 
     connect(this->listWidget, &ItemListWidget::selectedItemChanged, this, &GroupWidget::selected_item_changed);
     connect(this->groupDetailWidget, &GroupDetailWidget::itemModified, this, &GroupWidget::current_item_modified);
+    connect(this->listWidget, &ItemListWidget::doubleClicked, this, &GroupWidget::item_double_clicked);
 
-    // For test
-    todo::ItemGroup testGroup;
-    testGroup.setTitle("这是一个测试，一个非常非常长的一个测试。");
-    testGroup.setMileStone(true);
-    testGroup.setDescription("这是一个很长的测试字符串。你说什么，我听不见。\n散人干不死\n哈哈哈");
-    QList<todo::ItemAndGroupWrapper> wrappers{todo::ItemAndGroupWrapper(testGroup)};
-
-    todo::ItemDetail testDetail;
-    testDetail.setTitle("测试task");
-    testDetail.setMode(todo::ItemMode::SIMPLE);
-    testDetail.setPriority(2);
-    testDetail.setDescription("赶紧睡觉！");
-    wrappers.append(todo::ItemAndGroupWrapper(testDetail));
-    this->loadItems(wrappers);
+    this->loadItems(this->getRootGroups());
 }
 
 GroupWidget::~GroupWidget()
@@ -69,4 +58,47 @@ void GroupWidget::loadItems(const QList<todo::ItemAndGroupWrapper> &itemList) {
 
 void GroupWidget::current_item_modified(const todo::ItemAndGroupWrapper &wrapper) {
     this->listWidget->refresh_item_info(wrapper);
+}
+
+void GroupWidget::item_double_clicked(const QString &itemID) {
+    qDebug() << itemID << "double clicked";
+    if (this->itemMap[itemID].isGroup()) {
+        auto subItemList = this->getSubItemsForGroup(itemID);
+        emit enterItem(itemID, this->itemMap[itemID].getItemGroup().getTitle());
+        this->loadItems(subItemList);
+    }
+}
+
+QList<todo::ItemAndGroupWrapper> GroupWidget::getSubItemsForGroup(const QString &groupID) {
+    QList<todo::ItemAndGroupWrapper> subItemList;
+    // todo: read sql and return it
+    return subItemList;
+}
+
+QList<todo::ItemAndGroupWrapper> GroupWidget::getRootGroups() {
+    QList<todo::ItemAndGroupWrapper> rootGroups;
+
+    // For test
+    todo::ItemGroup testGroup;
+    testGroup.setTitle("这是一个测试，一个非常非常长的一个测试。");
+    testGroup.setMileStone(true);
+    testGroup.setDescription("这是一个很长的测试字符串。你说什么，我听不见。\n散人干不死\n哈哈哈");
+    QList<todo::ItemAndGroupWrapper> wrappers{todo::ItemAndGroupWrapper(testGroup)};
+
+    todo::ItemDetail testDetail;
+    testDetail.setTitle("测试task");
+    testDetail.setMode(todo::ItemMode::SIMPLE);
+    testDetail.setPriority(2);
+    testDetail.setDescription("赶紧睡觉！");
+    wrappers.append(todo::ItemAndGroupWrapper(testDetail));
+
+    return wrappers;
+}
+
+void GroupWidget::jump_to(const QString &itemID) {
+    if (itemID != NavigationBarWidget::ROOT) {
+        this->loadItems(this->getSubItemsForGroup(itemID));
+    } else {
+        this->loadItems(this->getRootGroups());
+    }
 }

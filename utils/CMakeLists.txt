@@ -6,7 +6,7 @@ set(utils_files
     ItemTagUtils.cpp
     styleutils.cpp
     itemdetailutils.cpp
-        NofityUtils.cpp NofityUtils.h StringUtils.cpp StringUtils.h DrawUtils.cpp DrawUtils.h ItemGroupUtils.cpp ItemGroupUtils.h)
+        StringUtils.cpp StringUtils.h DrawUtils.cpp DrawUtils.h ItemGroupUtils.cpp ItemGroupUtils.h ItemUtils.cpp ItemUtils.h)
 
 set(CMAKE_AUTOMOC ON)
 

@@ -3,8 +3,8 @@
 //
 
 #include <QStringBuilder>
-#include <QUuid>
 #include "ItemDetail.h"
+#include "../utils/ItemUtils.h"
 
 
 todo::ItemDetail::ItemDetail() : ItemDetail("") {
@@ -15,8 +15,7 @@ todo::ItemDetail::ItemDetail(QString title) {
     this->title = title;
     this->mode = ItemMode::SIMPLE;
     this->done = false;
-    this->id = QString("todo_%1_%2").arg(QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()))
-                                    .arg(QUuid::createUuid().toString().remove('{').remove('}'));
+    this->id = todo::ItemUtils::generateItemDetailUniqueID();
     this->priority = 3;
 }
 

@@ -26,6 +26,7 @@ ItemListWidget::ItemListWidget(QWidget *parent) :
 //    this->listView->setDragDropMode(QAbstractItemView::DragDrop);
 
     connect(this->listView, &CustomListView::currentIndexChanged, this, &ItemListWidget::listWidget_selectedItem_changed);
+    connect(this->listView, &CustomListView::doubleClicked, this, &ItemListWidget::item_double_clicked);
 
     // ------ default sorter ------
     this->addSorter(todo::DoneSorter(true));
@@ -203,6 +204,8 @@ todo::ItemAndGroupWrapper ItemListWidget::getCurrSelectedItemPair() {
 }
 
 void ItemListWidget::loadItemWrappers(const QList<todo::ItemAndGroupWrapper> &wrappers) {
+    this->itemModel->clear();
+
     QList<todo::ItemAndGroupWrapper> wrapperList(wrappers);
 
     wrapperList = this->sortItemList(wrapperList);  // sort it
@@ -222,4 +225,8 @@ void ItemListWidget::addItemWrapper_(const todo::ItemAndGroupWrapper &itemWrappe
     auto newListItem = new QStandardItem();
     newListItem->setData(QVariant::fromValue(itemWrapper), Qt::UserRole + 1);
     this->itemModel->insertRow(0, newListItem);
+}
+
+void ItemListWidget::item_double_clicked(const QModelIndex &current) {
+    emit doubleClicked(current.data(Qt::UserRole + 1).value<todo::ItemAndGroupWrapper>().getID());
 }
