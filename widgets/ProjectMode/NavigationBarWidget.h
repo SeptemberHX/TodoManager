@@ -19,12 +19,14 @@ public:
     void append(const QString &id, const QString &name);
 
 signals:
-    void jumpTo(const QString &id);
+    void jumpTo(const QList<QString> &pathList);
 
 private:
     Ui::NavigationBarWidget *ui;
     QList<QWidget*> widgetPtrList;  // store button, label by order
     QMap<QString, QString> buttonObjectName2ID;
+
+    QList<QString> getPathIDList();  // get the id path chain
 
 private slots:
     void toolButton_clicked();

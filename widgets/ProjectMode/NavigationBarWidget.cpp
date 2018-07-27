@@ -59,6 +59,16 @@ void NavigationBarWidget::toolButton_clicked() {
             }
         }
         this->widgetPtrList = newWidgetPtrList;
-        emit jumpTo(this->buttonObjectName2ID[senderObjectName]);
+        emit jumpTo(this->getPathIDList());
     }
+}
+
+QList<QString> NavigationBarWidget::getPathIDList() {
+    QList<QString> pathList;
+    foreach (auto wPtr, this->widgetPtrList) {
+        if (this->buttonObjectName2ID.find(wPtr->objectName()) != this->buttonObjectName2ID.end()) {
+            pathList.append(this->buttonObjectName2ID[wPtr->objectName()]);
+        }
+    }
+    return pathList;
 }

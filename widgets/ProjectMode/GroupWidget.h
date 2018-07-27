@@ -2,7 +2,9 @@
 #define GROUPWIDGET_H
 
 #include <QWidget>
+#include <QString>
 #include <QSplitter>
+#include <QInputDialog>
 #include <QStandardItemModel>
 #include "GroupDetailWidget.h"
 #include "../itemlistwidget.h"
@@ -23,7 +25,7 @@ public:
     ~GroupWidget();
 
 public slots:
-    void jump_to(const QString &itemID);
+    void jump_to(const QList<QString> &pathList);
 
 signals:
     void enterItem(const QString &itemID, const QString &name);
@@ -35,16 +37,20 @@ private:
     ItemListWidget *listWidget;
     QSplitter *mainSplitter;
     todo::DataCenter dataCenter;
+    QInputDialog *newItemInputDialog;
+    QList<QString> currPathList;
 
     QMap<QString, todo::ItemAndGroupWrapper> itemMap;
 
     void loadItems(const QList<todo::ItemAndGroupWrapper> &itemList);
     QList<todo::ItemAndGroupWrapper> getSubItemsForGroup(const QString &groupID);
     QList<todo::ItemAndGroupWrapper> getRootGroups();
+    void dealWithNewItem(const todo::ItemAndGroupWrapper &newWrapper);
 private slots:
     void selected_item_changed(const QString &itemID);
     void current_item_modified(const todo::ItemAndGroupWrapper &wrapper);
     void item_double_clicked(const QString &itemID);
+    void new_group_button_clicked();
 };
 
 #endif // GROUPWIDGET_H

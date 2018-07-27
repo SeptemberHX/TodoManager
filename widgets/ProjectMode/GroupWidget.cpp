@@ -1,8 +1,10 @@
 #include "GroupWidget.h"
 #include "ui_groupwidget.h"
 #include "../ItemListItemDelegate.h"
+#include "../../core/SqlErrorException.h"
 #include "NavigationBarWidget.h"
 #include <QDebug>
+#include <QMessageBox>
 
 GroupWidget::GroupWidget(QWidget *parent) :
     QWidget(parent),
@@ -10,16 +12,19 @@ GroupWidget::GroupWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->newItemInputDialog = new QInputDialog(this);
+
     this->groupDetailWidget = new GroupDetailWidget(this);
     ui->stackedWidget->addWidget(this->groupDetailWidget);
     this->itemDetailWidget = new ItemDetailWidget(this);
     ui->stackedWidget->addWidget(this->itemDetailWidget);
     ui->stackedWidget->setCurrentWidget(this->groupDetailWidget);
 
-    this->listWidget = new ItemListWidget(this);
+    this->listWidget = new ItemListWidget(ui->leftWidget);
+    ui->leftVLayout->addWidget(this->listWidget);
 
     this->mainSplitter = new QSplitter(this);
-    this->mainSplitter->addWidget(this->listWidget);
+    this->mainSplitter->addWidget(ui->leftWidget);
     this->mainSplitter->addWidget(ui->stackedWidget);
     this->mainSplitter->setStretchFactor(0, 1);
     this->mainSplitter->setStretchFactor(1, 3);
@@ -29,7 +34,10 @@ GroupWidget::GroupWidget(QWidget *parent) :
     connect(this->groupDetailWidget, &GroupDetailWidget::itemModified, this, &GroupWidget::current_item_modified);
     connect(this->listWidget, &ItemListWidget::doubleClicked, this, &GroupWidget::item_double_clicked);
 
+    connect(ui->addToolButton, &QToolButton::clicked, this, &GroupWidget::new_group_button_clicked);
+
     this->loadItems(this->getRootGroups());
+    this->currPathList.append(NavigationBarWidget::ROOT);
 }
 
 GroupWidget::~GroupWidget()
@@ -66,6 +74,7 @@ void GroupWidget::item_double_clicked(const QString &itemID) {
         auto subItemList = this->getSubItemsForGroup(itemID);
         emit enterItem(itemID, this->itemMap[itemID].getItemGroup().getTitle());
         this->loadItems(subItemList);
+        this->currPathList.append(itemID);
     }
 }
 
@@ -98,10 +107,58 @@ QList<todo::ItemAndGroupWrapper> GroupWidget::getRootGroups() {
      return wrapperList;
 }
 
-void GroupWidget::jump_to(const QString &itemID) {
-    if (itemID != NavigationBarWidget::ROOT) {
-        this->loadItems(this->getSubItemsForGroup(itemID));
+void GroupWidget::jump_to(const QList<QString> &pathList) {
+    QString clickedID = pathList.last();
+    if (clickedID != NavigationBarWidget::ROOT) {
+        this->loadItems(this->getSubItemsForGroup(clickedID));
     } else {
         this->loadItems(this->getRootGroups());
+    }
+    this->currPathList = pathList;  // restore the full path
+}
+
+void GroupWidget::dealWithNewItem(const todo::ItemAndGroupWrapper &newWrapper) {
+    // 1. save it to database
+    try {
+        if (newWrapper.isGroup()) {
+            this->dataCenter.insertItemGroup(newWrapper.getItemGroup());
+        } else {
+            this->dataCenter.insertItemDetail(newWrapper.getItemDetail());
+        }
+    } catch (const todo::SqlErrorException &e) {
+        qDebug() << "Save item in GroupWidget failed";
+        return;
+    }
+
+    // 2. save it to current map
+    this->itemMap.insert(newWrapper.getID(), newWrapper);
+
+    // 3. load it to list
+    this->listWidget->addItemWrapper(newWrapper);
+}
+
+void GroupWidget::new_group_button_clicked() {
+    this->newItemInputDialog->setTextValue(tr(""));
+    int ok = this->newItemInputDialog->exec();
+    if (ok) {
+        QString title = this->newItemInputDialog->textValue();
+        if (title.size() == 0) {
+            QMessageBox::information(this, tr("Invalid input !"), tr("Can't leave it empty !!!"));
+            return;
+        } else {
+            todo::ItemGroup itemGroup;
+            itemGroup.setTitle(title);
+            if (this->currPathList.last() != NavigationBarWidget::ROOT) {
+                itemGroup.setType(todo::ItemGroupType::SUB_PROJECT);
+                todo::ItemGroupRelation relation;
+                relation.setItemID(itemGroup.getId());
+                relation.setDirectGroupID(this->currPathList.last());
+                relation.setRootGroupID(this->currPathList[1]);
+                this->dataCenter.insertItemGroupRelation(relation);
+            } else {
+                itemGroup.setType(todo::ItemGroupType::PROJECT);
+            }
+            this->dealWithNewItem(itemGroup);
+        }
     }
 }
