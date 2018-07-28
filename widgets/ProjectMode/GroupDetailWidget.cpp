@@ -16,6 +16,10 @@ GroupDetailWidget::GroupDetailWidget(QWidget *parent) :
     // save or cancel
     connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &GroupDetailWidget::buttonBox_clicked);
     this->connectModifiedSignal();
+
+    // set icons
+    ui->deleteToolButton->setIcon(QIcon::fromTheme("editdelete"));
+    ui->editToolButton->setIcon(QIcon::fromTheme("edit"));
 }
 
 GroupDetailWidget::~GroupDetailWidget()
@@ -24,6 +28,9 @@ GroupDetailWidget::~GroupDetailWidget()
 }
 
 void GroupDetailWidget::loadItemGroup(const todo::ItemGroup &itemGroup) {
+    this->rawItemGroup = itemGroup;  // backup
+    this->changeToViewMode();  // set to view mode first, or will emit itemModified() signal
+
     ui->titleLineEdit->setText(itemGroup.getTitle());
     ui->descriptionTextEdit->setText(itemGroup.getDescription());
     ui->milestoneCheckBox->setChecked(itemGroup.isMileStone());
@@ -34,8 +41,6 @@ void GroupDetailWidget::loadItemGroup(const todo::ItemGroup &itemGroup) {
     ui->timeLabel->setText(timeLabelStrTemp.arg(itemGroup.getCreatedTime().toString("yyyy-MM-dd  hh:mm:ss"))
                                            .arg(itemGroup.getLastUpdatedTime().toString("yyyy-MM-dd  hh:mm:ss"))
     );
-
-    this->rawItemGroup = itemGroup;  // backup
 }
 
 todo::ItemGroup GroupDetailWidget::collectData() const {

@@ -17,6 +17,7 @@ class ProjectModeWidget : public QWidget
 public:
     explicit ProjectModeWidget(QWidget *parent = 0);
     ~ProjectModeWidget();
+    void refresh_current_items();
 signals:
     void databaseModified();
 private:

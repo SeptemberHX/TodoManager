@@ -51,7 +51,7 @@
        <widget class="QWidget" name="operationWidget" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="spacing">
-          <number>3</number>
+          <number>0</number>
          </property>
          <property name="leftMargin">
           <number>0</number>
@@ -66,6 +66,13 @@
           <number>0</number>
          </property>
          <item>
+          <widget class="QToolButton" name="refreshToolButton">
+           <property name="text">
+            <string>Fefresh</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -79,16 +86,25 @@
           </spacer>
          </item>
          <item>
-          <widget class="QToolButton" name="addItemGroupToolButton">
+          <widget class="QToolButton" name="addToolButton">
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
            <property name="text">
-            <string>+</string>
+            <string>New</string>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::MenuButtonPopup</enum>
+           </property>
+           <property name="arrowType">
+            <enum>Qt::NoArrow</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="addItemDetailToolButton">
+          <widget class="QToolButton" name="sortToolButton">
            <property name="text">
-            <string>I</string>
+            <string>S</string>
            </property>
           </widget>
          </item>

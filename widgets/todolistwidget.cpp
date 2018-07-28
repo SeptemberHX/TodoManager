@@ -61,6 +61,15 @@ TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
 
     connect(&this->dataCenter, &todo::DataCenter::databaseModified, this, &TodoListWidget::database_modified);
 
+    // set icons
+    ui->tagSorterToolButton->setIcon(QIcon::fromTheme("sort-presence"));
+    ui->preDayToolBtn->setIcon(QIcon::fromTheme("previous"));
+    ui->nextDayToolBtn->setIcon(QIcon::fromTheme("next"));
+    ui->todayToolBtn->setIcon(QIcon::fromTheme("go-today"));
+    ui->addToolBtn->setIcon(QIcon::fromTheme("list-add"));
+    ui->inboxAddToolBtn->setIcon(QIcon::fromTheme("list-add"));
+    ui->inboxConditionToolBtn->setIcon(QIcon::fromTheme("sort-presence"));
+
     switch (this->viewMode) {
         case TodoListWidgetMode::DAILY:
             this->changeToDailyMode();

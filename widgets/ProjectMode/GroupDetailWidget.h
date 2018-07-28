@@ -19,13 +19,6 @@ public:
     ~GroupDetailWidget();
     void loadItemGroup(const todo::ItemGroup &itemGroup);
     bool isEditing();
-signals:
-    void itemModified(const todo::ItemAndGroupWrapper &itemWrapper);
-    void deleteButtonClicked();
-    void saveActionTriggered(const todo::ItemAndGroupWrapper &itemWrapper);
-private:
-    Ui::GroupDetailWidget *ui;
-    todo::ItemGroup rawItemGroup;  // backup for the original itemGroup
 
     /**
      * Only collect current group's details.
@@ -33,6 +26,13 @@ private:
      * @return
      */
     todo::ItemGroup collectData() const;
+signals:
+    void itemModified(const todo::ItemAndGroupWrapper &itemWrapper);
+    void deleteButtonClicked();
+    void saveActionTriggered(const todo::ItemAndGroupWrapper &itemWrapper);
+private:
+    Ui::GroupDetailWidget *ui;
+    todo::ItemGroup rawItemGroup;  // backup for the original itemGroup
 
     // ui change between view and edit mode
     void changeReadOnly(bool readOnly);

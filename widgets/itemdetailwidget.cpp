@@ -55,6 +55,11 @@ ItemDetailWidget::ItemDetailWidget(QWidget *parent) :
     // delete the task
     connect(ui->deleteToolButton, &QToolButton::clicked, this, &ItemDetailWidget::deleteButton_clicked);
 
+    // set icons
+    ui->editToolButton->setIcon(QIcon::fromTheme("edit"));
+    ui->deleteToolButton->setIcon(QIcon::fromTheme("editdelete"));
+    ui->finishToolButton->setIcon(QIcon::fromTheme("checkmark"));
+
     this->changeToViewMode();
 
     // default is disabled. Will change to enabled when loading item.

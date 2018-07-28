@@ -222,7 +222,7 @@ void MainWindow::database_modified() {
     }
 
     if (this->currentMode != this->projectMode) {
-        // todo: refresh projectModeWidget
+        this->projectModeWidget->refresh_current_items();
     }
 }
 

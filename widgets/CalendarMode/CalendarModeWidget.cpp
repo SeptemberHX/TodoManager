@@ -39,6 +39,14 @@ CalendarModeWidget::CalendarModeWidget(QWidget *parent) :
     connect(this->monthWidget, &CalendarMonthWidget::targetDayClicked, this, &CalendarModeWidget::targetDay_clicked);
     connect(this->weekWidget, &CalendarWeekWidget::targetDayClicked, this, &CalendarModeWidget::week_targetDay_clicked);
 
+    // set icons
+    ui->weekToolButton->setIcon(QIcon::fromTheme("view-calendar-week"));
+    ui->monthToolButton->setIcon(QIcon::fromTheme("view-calendar-month"));
+    ui->prevToolButton->setIcon(QIcon::fromTheme("previous"));
+    ui->prevWeekButton->setIcon(QIcon::fromTheme("previous"));
+    ui->nextToolButton->setIcon(QIcon::fromTheme("next"));
+    ui->nextWeekButton->setIcon(QIcon::fromTheme("next"));
+
     ui->yearSpinBox->setValue(QDate::currentDate().year());
     ui->monthSpinBox->setValue(QDate::currentDate().month());
     ui->monthToolButton->click();

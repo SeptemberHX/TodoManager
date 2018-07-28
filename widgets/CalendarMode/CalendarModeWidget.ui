@@ -134,6 +134,15 @@
          </item>
          <item>
           <widget class="QSpinBox" name="yearSpinBox">
+           <property name="wrapping">
+            <bool>false</bool>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
+           </property>
+           <property name="showGroupSeparator" stdset="0">
+            <bool>false</bool>
+           </property>
            <property name="maximum">
             <number>9999</number>
            </property>
@@ -141,6 +150,9 @@
          </item>
          <item>
           <widget class="QSpinBox" name="monthSpinBox">
+           <property name="frame">
+            <bool>true</bool>
+           </property>
            <property name="minimum">
             <number>1</number>
            </property>
@@ -245,7 +257,7 @@
    </item>
    <item>
     <widget class="QStackedWidget" name="mainStackedWidget">
-     <widget class="QWidget" name="stackedWidget_2Page1" native="true">
+     <widget class="QWidget" name="stackedWidget_2Page1">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="spacing">
         <number>3</number>

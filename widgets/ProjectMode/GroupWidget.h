@@ -2,6 +2,7 @@
 #define GROUPWIDGET_H
 
 #include <QWidget>
+#include <QMenu>
 #include <QString>
 #include <QSplitter>
 #include <QInputDialog>
@@ -23,6 +24,7 @@ class GroupWidget : public QWidget
 public:
     explicit GroupWidget(QWidget *parent = 0);
     ~GroupWidget();
+    void refresh_current_items();
 
 public slots:
     void jump_to(const QList<QString> &pathList);
@@ -40,13 +42,16 @@ private:
     todo::DataCenter dataCenter;
     QInputDialog *newItemInputDialog;
     QList<QString> currPathList;
+    QMenu *addNewPopupMenu;
 
     QMap<QString, todo::ItemAndGroupWrapper> itemMap;
 
+    void initUI();
     void loadItems(const QList<todo::ItemAndGroupWrapper> &itemList);
     QList<todo::ItemAndGroupWrapper> getSubItemsForGroup(const QString &groupID);
     QList<todo::ItemAndGroupWrapper> getRootGroups();
     void dealWithNewItem(const todo::ItemAndGroupWrapper &newWrapper);
+
 private slots:
     void selected_item_changed(const QString &itemID);
     void current_item_modified(const todo::ItemAndGroupWrapper &wrapper);
