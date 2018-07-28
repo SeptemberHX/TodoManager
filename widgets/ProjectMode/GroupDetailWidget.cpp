@@ -31,8 +31,8 @@ void GroupDetailWidget::loadItemGroup(const todo::ItemGroup &itemGroup) {
     ui->toDateEdit->setDate(itemGroup.getToDate());
 
     QString timeLabelStrTemp("CreatedTime:\n%1\nLastUpdatedTime:\n%2");
-    ui->timeLabel->setText(timeLabelStrTemp.arg(itemGroup.getCreatedTime().toString("yyyy-MM-dd"))
-                                           .arg(itemGroup.getLastUpdatedTime().toString("yyyy-MM-dd"))
+    ui->timeLabel->setText(timeLabelStrTemp.arg(itemGroup.getCreatedTime().toString("yyyy-MM-dd  hh:mm:ss"))
+                                           .arg(itemGroup.getLastUpdatedTime().toString("yyyy-MM-dd  hh:mm:ss"))
     );
 
     this->rawItemGroup = itemGroup;  // backup
