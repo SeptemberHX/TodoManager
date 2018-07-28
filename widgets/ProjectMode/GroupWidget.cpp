@@ -36,6 +36,11 @@ GroupWidget::GroupWidget(QWidget *parent) :
 
     connect(ui->addItemGroupToolButton, &QToolButton::clicked, this, &GroupWidget::new_group_button_clicked);
     connect(ui->addItemDetailToolButton, &QToolButton::clicked, this, &GroupWidget::new_detail_button_clicked);
+    connect(this->groupDetailWidget, &GroupDetailWidget::deleteButtonClicked, this, &GroupWidget::delete_group_button_clicked);
+
+    connect(&this->dataCenter, &todo::DataCenter::databaseModified, this, &GroupWidget::database_modified);
+    connect(this->groupDetailWidget, &GroupDetailWidget::saveActionTriggered, this, &GroupWidget::save_action_triggered);
+    connect(this->itemDetailWidget, &ItemDetailWidget::saveButtonClicked, this, &GroupWidget::save_action_triggered);
 
     this->loadItems(this->getRootGroups());
     this->currPathList.append(NavigationBarWidget::ROOT);
@@ -117,11 +122,13 @@ void GroupWidget::dealWithNewItem(const todo::ItemAndGroupWrapper &newWrapper) {
     }
 
     // 2. save the relation
-    todo::ItemGroupRelation relation;
-    relation.setItemID(newWrapper.getID());
-    relation.setDirectGroupID(this->currPathList.last());
-    relation.setRootGroupID(this->currPathList[1]);
-    this->dataCenter.insertItemGroupRelation(relation);
+    if (this->currPathList.size() > 1) {  // skip root group
+        todo::ItemGroupRelation relation;
+        relation.setItemID(newWrapper.getID());
+        relation.setDirectGroupID(this->currPathList.last());
+        relation.setRootGroupID(this->currPathList[1]);
+        this->dataCenter.insertItemGroupRelation(relation);
+    }
 
     // 3. save it to current map
     this->itemMap.insert(newWrapper.getID(), newWrapper);
@@ -163,5 +170,32 @@ void GroupWidget::new_detail_button_clicked() {
             todo::ItemDetail newItemDetail(title);
             this->dealWithNewItem(newItemDetail);
         }
+    }
+}
+
+void GroupWidget::delete_group_button_clicked() {
+    QString itemID = this->listWidget->currentItemID();
+    this->dataCenter.deleteGroupCompletely(itemID);
+    this->listWidget->removeItemWrapperByID(itemID);
+    this->itemMap.remove(itemID);
+}
+
+void GroupWidget::database_modified() {
+    emit databaseModified();
+}
+
+void GroupWidget::save_action_triggered(const todo::ItemAndGroupWrapper &wrapper) {
+    if (wrapper.isGroup()) {
+        auto group = wrapper.getItemGroup();
+        group.setLastUpdatedTime(QDateTime::currentDateTime());
+        this->dataCenter.updateItemGroupByID(group.getId(), group);
+        this->itemMap[group.getId()] = group;
+        this->listWidget->refresh_item_info(group);
+    } else {
+        auto detail = wrapper.getItemDetail();
+        detail.setLastUpdatedTime(QDateTime::currentDateTime());
+        this->dataCenter.updateItemDetailByID(detail.getId(), detail);
+        this->itemMap[detail.getId()] = detail;
+        this->listWidget->refresh_item_info(detail);
     }
 }

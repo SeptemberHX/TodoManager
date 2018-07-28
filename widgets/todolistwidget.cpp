@@ -59,7 +59,7 @@ TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
     connect(this->detailWidget, &ItemDetailWidget::deleteButtonClicked, this, &TodoListWidget::deleteBtn_clicked);
     // end
 
-    connect(&this->dataCenter, &todo::DataCenter::itemDetailModified, this, &TodoListWidget::database_modified);
+    connect(&this->dataCenter, &todo::DataCenter::databaseModified, this, &TodoListWidget::database_modified);
 
     switch (this->viewMode) {
         case TodoListWidgetMode::DAILY:
@@ -209,9 +209,9 @@ void TodoListWidget::markDone_clicked(bool flag) {
 void TodoListWidget::deleteBtn_clicked() {
     if (QMessageBox::warning(this, tr("Attention !!"), tr("You are trying to delete it. Sure to delete it ?"),
                                  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes) {
-        this->dataCenter.deleteItemDetailByID(this->currentItem.getId());
+        this->dataCenter.deleteItemDetailByIDCompletely(this->currentItem.getId());
         this->currItemDetailMap.remove(this->currentItem.getId());
-        this->listWidget->removeItemDetailByID(this->currentItem.getId());
+        this->listWidget->removeItemWrapperByID(this->currentItem.getId());
         this->currentItemEdited = false;
         this->updateStatusBarInfo();
     }

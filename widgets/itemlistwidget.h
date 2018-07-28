@@ -28,7 +28,7 @@ public:
      */
     void addItemWrapper(const todo::ItemAndGroupWrapper &wrapper);
     void loadItemDetails(const QList<todo::ItemDetail> &items);  // Attention: will clear pre items first.
-    void removeItemDetailByID(const QString& itemID);
+    void removeItemWrapperByID(const QString& itemID);
 
     void loadItemWrappers(const QList<todo::ItemAndGroupWrapper> &itemWrappers);
 
@@ -57,6 +57,8 @@ public:
      * @param itemID
      */
     void setCurrentItemByID(const QString &itemID);
+
+    QString currentItemID() const;
 
 public slots:
     /**
@@ -113,7 +115,7 @@ private:
     void addItemWrapper_(const todo::ItemAndGroupWrapper &itemWrapper);
 
     todo::ItemAndGroupWrapper getItemPairByRow(int row);
-    todo::ItemAndGroupWrapper getCurrSelectedItemPair();
+    todo::ItemAndGroupWrapper getCurrSelectedItemPair() const;
 
     Ui::ItemListWidget *ui;
     QStandardItemModel *itemModel;

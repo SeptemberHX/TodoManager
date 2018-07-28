@@ -74,6 +74,8 @@ public:
 
     void deleteItemGroupByID(const QString &groupID) override;
 
+    void deleteItemGroupByIDs(const QList<QString> &groupIDList) override;
+
     void insertItemGroup(const ItemGroup &itemGroup) override;
 
     QList<ItemGroup> selectItemGroupByIDs(const QList<QString> &groupIDs) override;
@@ -84,6 +86,8 @@ public:
 
     void
     deleteItemGroupRelationByDirectParentIDAndItemID(const QString &directParentID, const QString &itemID) override;
+
+    void deleteItemGroupRelationByRootID(const QString &rootID) override;
 
     void insertItemGroupRelation(const ItemGroupRelation &relation) override;
 

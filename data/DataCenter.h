@@ -20,6 +20,9 @@ namespace todo {
  * DataCenter handles all data operations.
  * Other modules can only get data from DataCenter regardless of it's implementation.
  * DataCenter will use dao/DaoFactory to do next job.
+ *
+ * DO NOT call function which will emit databaseModified signal in a function which will emit too.
+ * Just avoid using DataCenter::func() in DataCenter::func(). Please call DaoFactory instead.
  */
 class DataCenter : public QObject {
     Q_OBJECT
@@ -29,7 +32,7 @@ public:
     // ---------------- todo_item.item_detail Starts ----------------
     QList<ItemDetail> selectItemDetailByDate(const QDate &targetDate);
     void updateItemDetailByID(const QString &itemID, const ItemDetail &itemDetail);
-    void deleteItemDetailByID(const QString &itemID);
+    void deleteItemDetailByIDCompletely(const QString &itemID);
     void insertItemDetail(const ItemDetail &itemDetail);
     void updateDoneByID(const QString &itemID, bool flag);
     QList<ItemDetail> selectItemDetailByDate(const QDate &fromDate, const QDate &toDate);
@@ -75,11 +78,18 @@ public:
 
     QList<todo::ItemAndGroupWrapper> selectItemByDirectGroupID(const QString &groupID);
 
+    // delete group completely, including all sub group and items belongs to it
+    void deleteGroupCompletely(const QString &groupID);
+
 signals:
-    void itemDetailModified();
+    void databaseModified();
 
 private:
     void fillTagInfo(QList<ItemDetail> &itemDetails);
+
+    // for recursive or avoiding emit signal repeatly
+    void deleteGroupCompletely_(const QString &groupID);
+    void deleteItemDetailByIDCompletely_(const QString &itemID);
 };
 
 }

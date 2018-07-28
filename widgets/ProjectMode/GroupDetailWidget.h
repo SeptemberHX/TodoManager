@@ -2,6 +2,7 @@
 #define GROUPDETAILWIDGET_H
 
 #include <QWidget>
+#include <QAbstractButton>
 #include "../../core/ItemGroup.h"
 #include "../../core/ItemAndGroupWrapper.h"
 
@@ -17,8 +18,11 @@ public:
     explicit GroupDetailWidget(QWidget *parent = 0);
     ~GroupDetailWidget();
     void loadItemGroup(const todo::ItemGroup &itemGroup);
+    bool isEditing();
 signals:
     void itemModified(const todo::ItemAndGroupWrapper &itemWrapper);
+    void deleteButtonClicked();
+    void saveActionTriggered(const todo::ItemAndGroupWrapper &itemWrapper);
 private:
     Ui::GroupDetailWidget *ui;
     todo::ItemGroup rawItemGroup;  // backup for the original itemGroup
@@ -31,13 +35,16 @@ private:
     todo::ItemGroup collectData() const;
 
     // ui change between view and edit mode
-    void changeReadOnly(bool readOnly) const;
+    void changeReadOnly(bool readOnly);
+    bool readOnlyFlag;
 
     void connectModifiedSignal();
 private slots:
     void item_modified();
     void changeToViewMode();
     void changeToEditMode();
+    void delete_button_clicked();
+    void buttonBox_clicked(QAbstractButton *btn);
 };
 
 #endif // GROUPDETAILWIDGET_H

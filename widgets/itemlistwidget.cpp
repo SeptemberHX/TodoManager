@@ -90,7 +90,7 @@ void ItemListWidget::loadItemDetails(const QList<todo::ItemDetail> &items) {
     this->loadItemWrappers(wrapperList);
 }
 
-void ItemListWidget::removeItemDetailByID(const QString &itemID) {
+void ItemListWidget::removeItemWrapperByID(const QString &itemID) {
     todo::ItemAndGroupWrapper prevPair = this->getCurrSelectedItemPair();
     for (int i = 0; i < this->itemModel->rowCount(); ++i) {
         if (this->getItemPairByRow(i).getID() == itemID) {
@@ -138,7 +138,7 @@ void ItemListWidget::refresh_or_remove_item_info(const todo::ItemAndGroupWrapper
     if (this->checkItem(wrapper)) {
         this->refresh_item_info_and_sort(wrapper);
     } else {
-        this->removeItemDetailByID(wrapper.getID());
+        this->removeItemWrapperByID(wrapper.getID());
     }
 }
 
@@ -199,7 +199,7 @@ todo::ItemAndGroupWrapper ItemListWidget::getItemPairByRow(int row) {
     return this->itemModel->item(row)->data(Qt::UserRole + 1).value<todo::ItemAndGroupWrapper>();
 }
 
-todo::ItemAndGroupWrapper ItemListWidget::getCurrSelectedItemPair() {
+todo::ItemAndGroupWrapper ItemListWidget::getCurrSelectedItemPair() const {
     return this->listView->currentIndex().data(Qt::UserRole + 1).value<todo::ItemAndGroupWrapper>();
 }
 
@@ -229,4 +229,8 @@ void ItemListWidget::addItemWrapper_(const todo::ItemAndGroupWrapper &itemWrappe
 
 void ItemListWidget::item_double_clicked(const QModelIndex &current) {
     emit doubleClicked(current.data(Qt::UserRole + 1).value<todo::ItemAndGroupWrapper>().getID());
+}
+
+QString ItemListWidget::currentItemID() const {
+    return this->getCurrSelectedItemPair().getID();
 }

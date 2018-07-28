@@ -653,6 +653,25 @@ void todo::SQLDao::deleteItemGroupByID(const QString &groupID) {
     }
 }
 
+void todo::SQLDao::deleteItemGroupByIDs(const QList<QString> &groupIDList) {
+    QSqlQuery query(this->db);
+    QStringList itemIDList;
+    for (auto const &groupId : groupIDList) {
+        itemIDList.append(QString(" id = \"%1\"").arg(groupId));
+    }
+    QString itemIDListStr = itemIDList.join(" or ");
+    if (itemIDListStr.isEmpty()) {
+        return;
+    }
+
+    QString queryStr("DELETE FROM item_groups WHERE ");
+    queryStr += itemIDListStr;
+
+    if (!query.exec(queryStr)) {
+        throw SqlErrorException();
+    }
+}
+
 void todo::SQLDao::insertItemGroup(const ItemGroup &itemGroup) {
     QSqlQuery query(this->db);
     query.prepare("INSERT INTO item_groups"
@@ -741,6 +760,16 @@ todo::SQLDao::deleteItemGroupRelationByDirectParentIDAndItemID(const QString &di
                   " WHERE directGroupID = :directGroupID AND itemID = :itemID");
     query.bindValue(":directGroupID", directParentID);
     query.bindValue(":itemID", itemID);
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
+}
+
+void todo::SQLDao::deleteItemGroupRelationByRootID(const QString &rootID) {
+    QSqlQuery query(this->db);
+    query.prepare("DELETE FROM item_group_relations"
+                  " WHERE rootGroupID = :rootGroupID");
+    query.bindValue(":rootGroupID", rootID);
     if (!query.exec()) {
         throw SqlErrorException();
     }

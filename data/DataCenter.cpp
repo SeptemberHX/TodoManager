@@ -37,14 +37,13 @@ void todo::DataCenter::updateItemDetailByID(const QString &itemID, const todo::I
         ++i;
     }
 
-    emit(this->itemDetailModified());
+    emit(this->databaseModified());
 }
 
-void todo::DataCenter::deleteItemDetailByID(const QString &itemID) {
-    DaoFactory::getInstance()->getSQLDao()->deleteItemDetailByID(itemID);
-    DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemID(itemID);
+void todo::DataCenter::deleteItemDetailByIDCompletely(const QString &itemID) {
+    this->deleteItemDetailByIDCompletely_(itemID);
 
-    emit(this->itemDetailModified());
+    emit(this->databaseModified());
 }
 
 void todo::DataCenter::insertItemDetail(const todo::ItemDetail &itemDetail) {
@@ -55,13 +54,13 @@ void todo::DataCenter::insertItemDetail(const todo::ItemDetail &itemDetail) {
         ++i;
     }
 
-    emit(this->itemDetailModified());
+    emit(this->databaseModified());
 }
 
 void todo::DataCenter::updateDoneByID(const QString &itemID, bool flag) {
     DaoFactory::getInstance()->getSQLDao()->updateDoneByID(itemID, flag);
 
-    emit(this->itemDetailModified());
+    emit(this->databaseModified());
 }
 
 QList<todo::ItemTag> todo::DataCenter::selectItemTagById(const QString &tagId) {
@@ -74,6 +73,7 @@ void todo::DataCenter::updateItemTagById(const QString &tagId, const todo::ItemT
 
 void todo::DataCenter::deleteItemTagById(const QString &tagId) {
     DaoFactory::getInstance()->getSQLDao()->deleteItemTagById(tagId);
+    emit databaseModified();
 }
 
 void todo::DataCenter::insertItemTag(const todo::ItemTag &tag) {
@@ -143,6 +143,7 @@ void todo::DataCenter::updateItemGroupByID(const QString &groupID, const todo::I
 
 void todo::DataCenter::deleteItemGroupByID(const QString &groupID) {
     DaoFactory::getInstance()->getSQLDao()->deleteItemGroupByID(groupID);
+    emit databaseModified();
 }
 
 QList<todo::ItemGroup> todo::DataCenter::selectItemGroupByIDs(const QList<QString> &groupIDs) {
@@ -160,6 +161,7 @@ QList<todo::ItemGroupRelation> todo::DataCenter::selectItemGroupRelationByRootID
 void todo::DataCenter::deleteItemGroupRelationByDirectParentIDAndItemID(const QString &directParentID,
                                                                         const QString &itemID) {
     DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByDirectParentIDAndItemID(directParentID, itemID);
+    emit databaseModified();
 }
 
 void todo::DataCenter::insertItemGroupRelation(const todo::ItemGroupRelation &relation) {
@@ -192,4 +194,37 @@ QList<todo::ItemAndGroupWrapper> todo::DataCenter::selectItemByDirectGroupID(con
 
 QList<todo::ItemGroup> todo::DataCenter::selectItemGroupByType(const todo::ItemGroupType &type) {
     return DaoFactory::getInstance()->getSQLDao()->selectItemGroupByType(type);
+}
+
+void todo::DataCenter::deleteGroupCompletely(const QString &groupID) {
+    this->deleteGroupCompletely_(groupID);
+
+    // emit signal
+    emit databaseModified();
+}
+
+void todo::DataCenter::deleteGroupCompletely_(const QString &groupID) {
+    auto relationList = DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByParentID(groupID);
+
+    // delete the relation
+    // delete child details and child groups
+    QList<QString> itemDetailIDs, groupIDs;
+    foreach (auto const &relation, relationList) {
+        if (todo::ItemUtils::checkIfItemGroup(relation.getItemID())) {
+            this->deleteGroupCompletely_(relation.getItemID());  // recursive call
+        } else if (todo::ItemUtils::checkIfItemDetail(relation.getItemID())) {
+            this->deleteItemDetailByIDCompletely(relation.getItemID());
+        }
+        DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByDirectParentIDAndItemID(
+                relation.getDirectGroupID(), relation.getItemID()
+        );
+    }
+
+    // delete itself
+    this->deleteItemGroupByID(groupID);
+}
+
+void todo::DataCenter::deleteItemDetailByIDCompletely_(const QString &itemID) {
+    DaoFactory::getInstance()->getSQLDao()->deleteItemDetailByID(itemID);
+    DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemID(itemID);
 }

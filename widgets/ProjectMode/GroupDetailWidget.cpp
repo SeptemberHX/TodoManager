@@ -1,6 +1,7 @@
 #include "GroupDetailWidget.h"
 #include "ui_GroupDetailWidget.h"
 #include <QString>
+#include <QPushButton>
 
 GroupDetailWidget::GroupDetailWidget(QWidget *parent) :
     QWidget(parent),
@@ -10,6 +11,10 @@ GroupDetailWidget::GroupDetailWidget(QWidget *parent) :
     this->changeToViewMode();
 
     connect(ui->editToolButton, &QToolButton::clicked, this, &GroupDetailWidget::changeToEditMode);
+    connect(ui->deleteToolButton, &QToolButton::clicked, this, &GroupDetailWidget::delete_button_clicked);
+
+    // save or cancel
+    connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &GroupDetailWidget::buttonBox_clicked);
     this->connectModifiedSignal();
 }
 
@@ -51,7 +56,9 @@ todo::ItemGroup GroupDetailWidget::collectData() const {
 }
 
 void GroupDetailWidget::item_modified() {
-    emit itemModified(todo::ItemAndGroupWrapper(this->collectData()));
+    if (!this->readOnlyFlag) {
+        emit itemModified(todo::ItemAndGroupWrapper(this->collectData()));
+    }
 }
 
 void GroupDetailWidget::changeToViewMode() {
@@ -62,7 +69,7 @@ void GroupDetailWidget::changeToEditMode() {
     this->changeReadOnly(false);
 }
 
-void GroupDetailWidget::changeReadOnly(bool readOnly) const {
+void GroupDetailWidget::changeReadOnly(bool readOnly) {
     ui->buttonBox->setVisible(!readOnly);
     ui->operationWidget->setVisible(readOnly);
     ui->titleLineEdit->setReadOnly(readOnly);
@@ -73,6 +80,8 @@ void GroupDetailWidget::changeReadOnly(bool readOnly) const {
     // special trick for checkbox
     ui->milestoneCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, readOnly);
     ui->milestoneCheckBox->setFocusPolicy(readOnly ? Qt::NoFocus : Qt::StrongFocus);
+
+    this->readOnlyFlag = readOnly;
 }
 
 void GroupDetailWidget::connectModifiedSignal() {
@@ -81,4 +90,26 @@ void GroupDetailWidget::connectModifiedSignal() {
     connect(ui->milestoneCheckBox, &QCheckBox::stateChanged, this, &GroupDetailWidget::item_modified);
     connect(ui->fromDateEdit, &QDateEdit::dateChanged, this, &GroupDetailWidget::item_modified);
     connect(ui->toDateEdit, &QDateEdit::dateChanged, this, &GroupDetailWidget::item_modified);
+}
+
+void GroupDetailWidget::delete_button_clicked() {
+    emit deleteButtonClicked();
+}
+
+bool GroupDetailWidget::isEditing() {
+    return !this->readOnlyFlag;
+}
+
+void GroupDetailWidget::buttonBox_clicked(QAbstractButton *btn) {
+    if (dynamic_cast<QPushButton*>(btn) == ui->buttonBox->button(QDialogButtonBox::Save)) {
+        if (ui->titleLineEdit->text().size() > 0) {
+            emit saveActionTriggered(this->collectData());
+        } else {
+            return;
+        }
+    } else {
+        this->loadItemGroup(this->rawItemGroup);
+    }
+
+    this->changeToViewMode();
 }

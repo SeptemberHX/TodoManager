@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->inboxViewWidget, &TodoListWidget::databaseModified, this, &MainWindow::database_modified);
     connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &MainWindow::database_modified);
     connect(this->tagModeWidget, &TagModeWidget::databaseModified, this, &MainWindow::database_modified);
+    connect(this->projectModeWidget, &ProjectModeWidget::databaseModified, this, &MainWindow::database_modified);
 
     connect(this->viewButtonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, &MainWindow::modeBtn_clicked);
     this->currentMode = -1;  // initialization

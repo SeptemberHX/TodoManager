@@ -17,7 +17,8 @@ class ProjectModeWidget : public QWidget
 public:
     explicit ProjectModeWidget(QWidget *parent = 0);
     ~ProjectModeWidget();
-
+signals:
+    void databaseModified();
 private:
     Ui::ProjectModeWidget *ui;
     QVBoxLayout *mainVBoxLayout;
@@ -26,6 +27,7 @@ private:
 
 private slots:
     void enter_item(const QString &itemID, const QString &name);
+    void database_modified();
 };
 
 #endif // PROJECTMODEWIDGET_H

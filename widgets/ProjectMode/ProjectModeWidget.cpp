@@ -18,6 +18,7 @@ ProjectModeWidget::ProjectModeWidget(QWidget *parent) :
 
     connect(this->groupWidget, &GroupWidget::enterItem, this, &ProjectModeWidget::enter_item);
     connect(this->navigationBarWidget, &NavigationBarWidget::jumpTo, this->groupWidget, &GroupWidget::jump_to);
+    connect(this->groupWidget, &GroupWidget::databaseModified, this, &ProjectModeWidget::database_modified);
 }
 
 ProjectModeWidget::~ProjectModeWidget()
@@ -27,4 +28,8 @@ ProjectModeWidget::~ProjectModeWidget()
 
 void ProjectModeWidget::enter_item(const QString &itemID, const QString &name) {
     this->navigationBarWidget->append(itemID, name);
+}
+
+void ProjectModeWidget::database_modified() {
+    emit databaseModified();
 }
