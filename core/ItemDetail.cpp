@@ -17,6 +17,9 @@ todo::ItemDetail::ItemDetail(QString title) {
     this->done = false;
     this->id = todo::ItemUtils::generateItemDetailUniqueID();
     this->priority = 3;
+    this->targetDate = QDate::currentDate();
+    this->createdTime = QDateTime::currentDateTime();
+    this->lastUpdatedTime = this->createdTime;
 }
 
 void todo::ItemDetail::addTag(const todo::ItemTag &tag) {

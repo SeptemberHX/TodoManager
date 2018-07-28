@@ -34,7 +34,8 @@ GroupWidget::GroupWidget(QWidget *parent) :
     connect(this->groupDetailWidget, &GroupDetailWidget::itemModified, this, &GroupWidget::current_item_modified);
     connect(this->listWidget, &ItemListWidget::doubleClicked, this, &GroupWidget::item_double_clicked);
 
-    connect(ui->addToolButton, &QToolButton::clicked, this, &GroupWidget::new_group_button_clicked);
+    connect(ui->addItemGroupToolButton, &QToolButton::clicked, this, &GroupWidget::new_group_button_clicked);
+    connect(ui->addItemDetailToolButton, &QToolButton::clicked, this, &GroupWidget::new_detail_button_clicked);
 
     this->loadItems(this->getRootGroups());
     this->currPathList.append(NavigationBarWidget::ROOT);
@@ -83,22 +84,6 @@ QList<todo::ItemAndGroupWrapper> GroupWidget::getSubItemsForGroup(const QString 
 }
 
 QList<todo::ItemAndGroupWrapper> GroupWidget::getRootGroups() {
-    // For test
-//    todo::ItemGroup testGroup;
-//    testGroup.setTitle("这是一个测试，一个非常非常长的一个测试。");
-//    testGroup.setMileStone(true);
-//    testGroup.setDescription("这是一个很长的测试字符串。你说什么，我听不见。\n散人干不死\n哈哈哈");
-//    QList<todo::ItemAndGroupWrapper> wrappers{todo::ItemAndGroupWrapper(testGroup)};
-//
-//    todo::ItemDetail testDetail;
-//    testDetail.setTitle("测试task");
-//    testDetail.setMode(todo::ItemMode::SIMPLE);
-//    testDetail.setPriority(2);
-//    testDetail.setDescription("赶紧睡觉！");
-//    wrappers.append(todo::ItemAndGroupWrapper(testDetail));
-//
-//    return wrappers;
-
      auto groupList = this->dataCenter.selectItemGroupByType(todo::ItemGroupType::PROJECT);
      QList<todo::ItemAndGroupWrapper> wrapperList;
      foreach (auto const &group, groupList) {
@@ -113,6 +98,7 @@ void GroupWidget::jump_to(const QList<QString> &pathList) {
         this->loadItems(this->getSubItemsForGroup(clickedID));
     } else {
         this->loadItems(this->getRootGroups());
+
     }
     this->currPathList = pathList;  // restore the full path
 }
@@ -130,10 +116,17 @@ void GroupWidget::dealWithNewItem(const todo::ItemAndGroupWrapper &newWrapper) {
         return;
     }
 
-    // 2. save it to current map
+    // 2. save the relation
+    todo::ItemGroupRelation relation;
+    relation.setItemID(newWrapper.getID());
+    relation.setDirectGroupID(this->currPathList.last());
+    relation.setRootGroupID(this->currPathList[1]);
+    this->dataCenter.insertItemGroupRelation(relation);
+
+    // 3. save it to current map
     this->itemMap.insert(newWrapper.getID(), newWrapper);
 
-    // 3. load it to list
+    // 4. load it to list
     this->listWidget->addItemWrapper(newWrapper);
 }
 
@@ -150,15 +143,25 @@ void GroupWidget::new_group_button_clicked() {
             itemGroup.setTitle(title);
             if (this->currPathList.last() != NavigationBarWidget::ROOT) {
                 itemGroup.setType(todo::ItemGroupType::SUB_PROJECT);
-                todo::ItemGroupRelation relation;
-                relation.setItemID(itemGroup.getId());
-                relation.setDirectGroupID(this->currPathList.last());
-                relation.setRootGroupID(this->currPathList[1]);
-                this->dataCenter.insertItemGroupRelation(relation);
             } else {
                 itemGroup.setType(todo::ItemGroupType::PROJECT);
             }
             this->dealWithNewItem(itemGroup);
+        }
+    }
+}
+
+void GroupWidget::new_detail_button_clicked() {
+    this->newItemInputDialog->setTextValue(tr(""));
+    int ok = this->newItemInputDialog->exec();
+    if (ok) {
+        QString title = this->newItemInputDialog->textValue();
+        if (title.size() == 0) {
+            QMessageBox::information(this, tr("Invalid input !"), tr("Can't leave it empty !!!"));
+            return;
+        } else {
+            todo::ItemDetail newItemDetail(title);
+            this->dealWithNewItem(newItemDetail);
         }
     }
 }

@@ -79,9 +79,16 @@
           </spacer>
          </item>
          <item>
-          <widget class="QToolButton" name="addToolButton">
+          <widget class="QToolButton" name="addItemGroupToolButton">
            <property name="text">
             <string>+</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="addItemDetailToolButton">
+           <property name="text">
+            <string>I</string>
            </property>
           </widget>
          </item>

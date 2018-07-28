@@ -51,6 +51,7 @@ private slots:
     void current_item_modified(const todo::ItemAndGroupWrapper &wrapper);
     void item_double_clicked(const QString &itemID);
     void new_group_button_clicked();
+    void new_detail_button_clicked();
 };
 
 #endif // GROUPWIDGET_H
