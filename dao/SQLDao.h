@@ -7,7 +7,8 @@
 
 #include <QSqlDatabase>
 #include "AbstractDao.h"
-#include "../core/ItemDetail.h"
+#include "../core/ItemDetailDao.h"
+#include "../core/ItemGroupDao.h"
 
 namespace todo {
 
@@ -18,19 +19,19 @@ public:
     SQLDao(int type);
 
     // ItemDetail
-    QList<ItemDetail> selectItemDetailByDate(const QDate &targetDate) override;
+    QList<ItemDetailDao> selectItemDetailByDate(const QDate &targetDate) override;
 
-    void updateItemDetailByID(const QString &itemID, const ItemDetail &itemDetail) override;
+    void updateItemDetailByID(const QString &itemID, const ItemDetailDao &itemDetailDao) override;
 
     void deleteItemDetailByID(const QString &itemID) override;
 
-    void insertItemDetail(const ItemDetail &itemDetail) override;
+    void insertItemDetail(const ItemDetailDao &itemDetailDao) override;
 
     void updateDoneByID(const QString &itemID, bool flag) override;
 
-    QList<ItemDetail> selectItemDetailByDate(const QDate &fromDate, const QDate &toDate) override;
+    QList<ItemDetailDao> selectItemDetailByDate(const QDate &fromDate, const QDate &toDate) override;
 
-    QList<ItemDetail> selectItemDetailByIDs(const QList<QString> &itemIDs) override;
+    QList<ItemDetailDao> selectItemDetailByIDs(const QList<QString> &itemIDs) override;
     // End
 
     // ItemTag
@@ -66,19 +67,19 @@ public:
     // End
 
     // ItemGroup
-    QList<ItemGroup> selectItemGroupByID(const QString &groupID) override;
+    QList<ItemGroupDao> selectItemGroupByID(const QString &groupID) override;
 
-    QList<ItemGroup> selectItemGroupByType(const todo::ItemGroupType &type) override;
+    QList<ItemGroupDao> selectItemGroupByType(const todo::ItemGroupType &type) override;
 
-    void updateItemGroupByID(const QString &groupID, const ItemGroup &itemGroup) override;
+    void updateItemGroupByID(const QString &groupID, const ItemGroupDao &itemGroupDao) override;
 
     void deleteItemGroupByID(const QString &groupID) override;
 
     void deleteItemGroupByIDs(const QList<QString> &groupIDList) override;
 
-    void insertItemGroup(const ItemGroup &itemGroup) override;
+    void insertItemGroup(const ItemGroupDao &itemGroupDao) override;
 
-    QList<ItemGroup> selectItemGroupByIDs(const QList<QString> &groupIDs) override;
+    QList<ItemGroupDao> selectItemGroupByIDs(const QList<QString> &groupIDs) override;
     // End
 
     // ItemGroupRelation

@@ -12,8 +12,8 @@
 #include "../config/TodoConfig.h"
 
 
-QList<todo::ItemDetail> todo::SQLDao::selectItemDetailByDate(const QDate &targetDate) {
-    QList<ItemDetail> resultList;
+QList<todo::ItemDetailDao> todo::SQLDao::selectItemDetailByDate(const QDate &targetDate) {
+    QList<ItemDetailDao> resultList;
     QSqlQuery query(this->db);
     query.prepare("SELECT id, title, priority, description, parentID, startTime, endTime, done, targetDate, `type`, freq, freqType,"
                   " createdTime, lastUpdatedTime"
@@ -24,7 +24,7 @@ QList<todo::ItemDetail> todo::SQLDao::selectItemDetailByDate(const QDate &target
         throw SqlErrorException();
     } else {
         while (query.next()) {
-            ItemDetail detail;
+            ItemDetailDao detail;
             detail.setId(query.value("id").toString());
             detail.setTitle(query.value("title").toString());
             detail.setPriority(query.value("priority").toInt());
@@ -44,27 +44,27 @@ QList<todo::ItemDetail> todo::SQLDao::selectItemDetailByDate(const QDate &target
     return resultList;
 }
 
-void todo::SQLDao::updateItemDetailByID(const QString &itemID, const todo::ItemDetail &itemDetail) {
+void todo::SQLDao::updateItemDetailByID(const QString &itemID, const todo::ItemDetailDao &itemDetailDao) {
     QSqlQuery query(this->db);
     query.prepare("UPDATE todo_items"
                   " SET title=:title, priority=:priority, description=:description, parentID=:parentID,"
                   "     startTime=:startTime, endTime=:endTime, done=:done, targetDate=:targetDate,"
                   "     `type`=:type, freq=:freq, freqType=:freqType, createdTime=:createdTime, lastUpdatedTime=:lastUpdatedTime"
                   " WHERE id=:id;");
-    query.bindValue(":id", itemDetail.getId());
-    query.bindValue(":title", itemDetail.getTitle());
-    query.bindValue(":priority", itemDetail.getPriority());
-    query.bindValue(":description", itemDetail.getDescription());
+    query.bindValue(":id", itemDetailDao.getId());
+    query.bindValue(":title", itemDetailDao.getTitle());
+    query.bindValue(":priority", itemDetailDao.getPriority());
+    query.bindValue(":description", itemDetailDao.getDescription());
     query.bindValue(":parentID", QVariant::Int);
-    query.bindValue(":startTime", itemDetail.getFromTime());
-    query.bindValue(":endTime", itemDetail.getToTime());
-    query.bindValue(":done", itemDetail.isDone());
-    query.bindValue(":targetDate", itemDetail.getTargetDate());
-    query.bindValue(":type", itemDetail.getMode());
+    query.bindValue(":startTime", itemDetailDao.getFromTime());
+    query.bindValue(":endTime", itemDetailDao.getToTime());
+    query.bindValue(":done", itemDetailDao.isDone());
+    query.bindValue(":targetDate", itemDetailDao.getTargetDate());
+    query.bindValue(":type", itemDetailDao.getMode());
     query.bindValue(":freq", QVariant::Int);
     query.bindValue(":freqType", QVariant::Int);
-    query.bindValue(":createdTime", itemDetail.getCreatedTime());
-    query.bindValue(":lastUpdatedTime", itemDetail.getLastUpdatedTime());
+    query.bindValue(":createdTime", itemDetailDao.getCreatedTime());
+    query.bindValue(":lastUpdatedTime", itemDetailDao.getLastUpdatedTime());
     // todo: parentID, freq, freqType in UPDATE
 
     if (!query.exec()) {
@@ -83,25 +83,25 @@ void todo::SQLDao::deleteItemDetailByID(const QString &itemID) {
     }
 }
 
-void todo::SQLDao::insertItemDetail(const todo::ItemDetail &itemDetail) {
+void todo::SQLDao::insertItemDetail(const todo::ItemDetailDao &itemDetailDao) {
     QSqlQuery query(this->db);
     query.prepare("INSERT INTO todo_items"
                   " (id, title, priority, description, parentID, startTime, endTime, done, targetDate, `type`, freq, freqType, createdTime, lastUpdatedTime)"
                   " VALUES(:id, :title, :priority, :description, :parentID, :startTime, :endTime, :done, :targetDate, :type, :freq, :freqType, :createdTime, :lastUpdatedTime);");
-    query.bindValue(":id", itemDetail.getId());
-    query.bindValue(":title", itemDetail.getTitle());
-    query.bindValue(":priority", itemDetail.getPriority());
-    query.bindValue(":description", itemDetail.getDescription());
+    query.bindValue(":id", itemDetailDao.getId());
+    query.bindValue(":title", itemDetailDao.getTitle());
+    query.bindValue(":priority", itemDetailDao.getPriority());
+    query.bindValue(":description", itemDetailDao.getDescription());
     query.bindValue(":parentID", QVariant::Int);
-    query.bindValue(":startTime", itemDetail.getFromTime());
-    query.bindValue(":endTime", itemDetail.getToTime());
-    query.bindValue(":done", itemDetail.isDone());
-    query.bindValue(":targetDate", itemDetail.getTargetDate());
-    query.bindValue(":type", itemDetail.getMode());
+    query.bindValue(":startTime", itemDetailDao.getFromTime());
+    query.bindValue(":endTime", itemDetailDao.getToTime());
+    query.bindValue(":done", itemDetailDao.isDone());
+    query.bindValue(":targetDate", itemDetailDao.getTargetDate());
+    query.bindValue(":type", itemDetailDao.getMode());
     query.bindValue(":freq", QVariant::Int);
     query.bindValue(":freqType", QVariant::Int);
-    query.bindValue(":createdTime", itemDetail.getCreatedTime());
-    query.bindValue(":lastUpdatedTime", itemDetail.getLastUpdatedTime());
+    query.bindValue(":createdTime", itemDetailDao.getCreatedTime());
+    query.bindValue(":lastUpdatedTime", itemDetailDao.getLastUpdatedTime());
     // todo: parentID, freq, freqType in INSERT
     if (!query.exec()) {
         throw SqlErrorException();
@@ -492,8 +492,8 @@ QList<todo::ItemDetail> todo::SQLDao::selectNextNotifiedItemDetail() {
     return result;
 }
 
-QList<todo::ItemDetail> todo::SQLDao::selectItemDetailByDate(const QDate &fromDate, const QDate &toDate) {
-    QList<ItemDetail> resultList;
+QList<todo::ItemDetailDao> todo::SQLDao::selectItemDetailByDate(const QDate &fromDate, const QDate &toDate) {
+    QList<ItemDetailDao> resultList;
     QSqlQuery query(this->db);
     query.prepare("SELECT id, title, priority, description, parentID, startTime, endTime, done, targetDate, `type`, freq, freqType,"
                   " createdTime, lastUpdatedTime"
@@ -505,7 +505,7 @@ QList<todo::ItemDetail> todo::SQLDao::selectItemDetailByDate(const QDate &fromDa
         throw SqlErrorException();
     } else {
         while (query.next()) {
-            ItemDetail detail;
+            ItemDetailDao detail;
             detail.setId(query.value("id").toString());
             detail.setTitle(query.value("title").toString());
             detail.setPriority(query.value("priority").toInt());
@@ -525,8 +525,8 @@ QList<todo::ItemDetail> todo::SQLDao::selectItemDetailByDate(const QDate &fromDa
     return resultList;
 }
 
-QList<todo::ItemDetail> todo::SQLDao::selectItemDetailByIDs(const QList<QString> &itemIDs) {
-    QList<ItemDetail> resultList;
+QList<todo::ItemDetailDao> todo::SQLDao::selectItemDetailByIDs(const QList<QString> &itemIDs) {
+    QList<ItemDetailDao> resultList;
     QSqlQuery query(this->db);
     QStringList itemIDList;
     for (auto const &itemID : itemIDs) {
@@ -546,7 +546,7 @@ QList<todo::ItemDetail> todo::SQLDao::selectItemDetailByIDs(const QList<QString>
         throw SqlErrorException();
     } else {
         while (query.next()) {
-            ItemDetail detail;
+            ItemDetailDao detail;
             detail.setId(query.value("id").toString());
             detail.setTitle(query.value("title").toString());
             detail.setPriority(query.value("priority").toInt());
@@ -566,8 +566,8 @@ QList<todo::ItemDetail> todo::SQLDao::selectItemDetailByIDs(const QList<QString>
     return resultList;
 }
 
-QList<todo::ItemGroup> todo::SQLDao::selectItemGroupByID(const QString &groupID) {
-    QList<ItemGroup> resultList;
+QList<todo::ItemGroupDao> todo::SQLDao::selectItemGroupByID(const QString &groupID) {
+    QList<ItemGroupDao> resultList;
     QSqlQuery query(this->db);
     query.prepare("SELECT id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime"
                   " FROM item_groups"
@@ -577,7 +577,7 @@ QList<todo::ItemGroup> todo::SQLDao::selectItemGroupByID(const QString &groupID)
         throw SqlErrorException();
     } else {
         while (query.next()) {
-            todo::ItemGroup itemGroup;
+            todo::ItemGroupDao itemGroup;
             itemGroup.setId(query.value("id").toString());
             itemGroup.setTitle(query.value("title").toString());
             itemGroup.setDescription(query.value("description").toString());
@@ -593,8 +593,8 @@ QList<todo::ItemGroup> todo::SQLDao::selectItemGroupByID(const QString &groupID)
     return resultList;
 }
 
-QList<todo::ItemGroup> todo::SQLDao::selectItemGroupByType(const todo::ItemGroupType &type) {
-    QList<ItemGroup> resultList;
+QList<todo::ItemGroupDao> todo::SQLDao::selectItemGroupByType(const todo::ItemGroupType &type) {
+    QList<ItemGroupDao> resultList;
     QSqlQuery query(this->db);
     query.prepare("SELECT id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime"
                   " FROM item_groups"
@@ -604,7 +604,7 @@ QList<todo::ItemGroup> todo::SQLDao::selectItemGroupByType(const todo::ItemGroup
         throw SqlErrorException();
     } else {
         while (query.next()) {
-            todo::ItemGroup itemGroup;
+            todo::ItemGroupDao itemGroup;
             itemGroup.setId(query.value("id").toString());
             itemGroup.setTitle(query.value("title").toString());
             itemGroup.setDescription(query.value("description").toString());
@@ -620,7 +620,7 @@ QList<todo::ItemGroup> todo::SQLDao::selectItemGroupByType(const todo::ItemGroup
     return resultList;
 }
 
-void todo::SQLDao::updateItemGroupByID(const QString &groupID, const ItemGroup &itemGroup) {
+void todo::SQLDao::updateItemGroupByID(const QString &groupID, const ItemGroupDao &itemGroupDao) {
     QSqlQuery query(this->db);
     query.prepare("UPDATE item_groups"
                   " SET title=:title, description=:description, fromDate=:fromDate, toDate=:toDate,"
@@ -628,14 +628,14 @@ void todo::SQLDao::updateItemGroupByID(const QString &groupID, const ItemGroup &
                   "     createdTime=:createdTime, lastUpdatedTime=:lastUpdatedTime"
                   " WHERE id=:id");
     query.bindValue(":id", groupID);
-    query.bindValue(":title", itemGroup.getTitle());
-    query.bindValue(":description", itemGroup.getDescription());
-    query.bindValue(":fromDate", itemGroup.getFromDate());
-    query.bindValue(":toDate", itemGroup.getToDate());
-    query.bindValue(":type", itemGroup.getType());
-    query.bindValue(":milestone", itemGroup.isMileStone());
-    query.bindValue(":createdTime", itemGroup.getCreatedTime());
-    query.bindValue(":lastUpdatedTime", itemGroup.getLastUpdatedTime());
+    query.bindValue(":title", itemGroupDao.getTitle());
+    query.bindValue(":description", itemGroupDao.getDescription());
+    query.bindValue(":fromDate", itemGroupDao.getFromDate());
+    query.bindValue(":toDate", itemGroupDao.getToDate());
+    query.bindValue(":type", itemGroupDao.getType());
+    query.bindValue(":milestone", itemGroupDao.isMileStone());
+    query.bindValue(":createdTime", itemGroupDao.getCreatedTime());
+    query.bindValue(":lastUpdatedTime", itemGroupDao.getLastUpdatedTime());
 
     if (!query.exec()) {
         throw SqlErrorException();
@@ -672,21 +672,21 @@ void todo::SQLDao::deleteItemGroupByIDs(const QList<QString> &groupIDList) {
     }
 }
 
-void todo::SQLDao::insertItemGroup(const ItemGroup &itemGroup) {
+void todo::SQLDao::insertItemGroup(const ItemGroupDao &itemGroupDao) {
     QSqlQuery query(this->db);
     query.prepare("INSERT INTO item_groups"
                   " (id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime)"
                   " VALUES(:id, :title, :description, :fromDate, :toDate, :type, :milestone,"
                   "        :createTime, :lastUpdatedTime)");
-    query.bindValue(":id", itemGroup.getId());
-    query.bindValue(":title", itemGroup.getTitle());
-    query.bindValue(":description", itemGroup.getDescription());
-    query.bindValue(":fromDate", itemGroup.getFromDate());
-    query.bindValue(":toDate", itemGroup.getToDate());
-    query.bindValue(":type", itemGroup.getType());
-    query.bindValue(":milestone", itemGroup.isMileStone());
-    query.bindValue(":createdTime", itemGroup.getCreatedTime());
-    query.bindValue(":lastUpdatedTime", itemGroup.getLastUpdatedTime());
+    query.bindValue(":id", itemGroupDao.getId());
+    query.bindValue(":title", itemGroupDao.getTitle());
+    query.bindValue(":description", itemGroupDao.getDescription());
+    query.bindValue(":fromDate", itemGroupDao.getFromDate());
+    query.bindValue(":toDate", itemGroupDao.getToDate());
+    query.bindValue(":type", itemGroupDao.getType());
+    query.bindValue(":milestone", itemGroupDao.isMileStone());
+    query.bindValue(":createdTime", itemGroupDao.getCreatedTime());
+    query.bindValue(":lastUpdatedTime", itemGroupDao.getLastUpdatedTime());
 
     if (!query.exec()) {
         qDebug() << "insertItemGroup: exception happens";
@@ -694,8 +694,8 @@ void todo::SQLDao::insertItemGroup(const ItemGroup &itemGroup) {
     }
 }
 
-QList<todo::ItemGroup> todo::SQLDao::selectItemGroupByIDs(const QList<QString> &groupIDs) {
-    QList<ItemGroup> resultList;
+QList<todo::ItemGroupDao> todo::SQLDao::selectItemGroupByIDs(const QList<QString> &groupIDs) {
+    QList<ItemGroupDao> resultList;
     QSqlQuery query(this->db);
     QStringList itemIDList;
     for (auto const &groupId : groupIDs) {
@@ -714,7 +714,7 @@ QList<todo::ItemGroup> todo::SQLDao::selectItemGroupByIDs(const QList<QString> &
         throw SqlErrorException();
     } else {
         while (query.next()) {
-            todo::ItemGroup itemGroup;
+            todo::ItemGroupDao itemGroup;
             itemGroup.setId(query.value("id").toString());
             itemGroup.setTitle(query.value("title").toString());
             itemGroup.setDescription(query.value("description").toString());

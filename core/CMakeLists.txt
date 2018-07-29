@@ -17,7 +17,7 @@ set(core_files
         ItemAndGroupWrapper.h
         ItemGroupOverview.cpp
         ItemGroupOverview.h
-)
+        ItemDetailDao.cpp ItemDetailDao.h ItemGroupDao.cpp ItemGroupDao.h)
 
 add_library(core ${core_files})
 target_link_libraries(core Qt5::Core Qt5::Gui)

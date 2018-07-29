@@ -5,24 +5,12 @@
 #ifndef TODOMANAGER_ITEMDETAIL_H
 #define TODOMANAGER_ITEMDETAIL_H
 
-#include <QSet>
-#include <QString>
-#include <QTime>
-#include <QDate>
-#include <QDateTime>
 #include <QMetaType>
 #include <ostream>
 #include "ItemTag.h"
+#include "ItemDetailDao.h"
 
 namespace todo {
-
-    enum ItemMode {
-        SIMPLE = 1,
-        SCHEDULE = 2,
-        RECURSION = 3,
-        PLAIN = 4
-    };
-
     /**
      * Record details about one item
      */
@@ -30,6 +18,9 @@ namespace todo {
     public:
         ItemDetail();
         explicit ItemDetail(QString title);
+        explicit ItemDetail(const ItemDetailDao &itemDetailDao);
+        ItemDetailDao toDao() const;
+
         ~ItemDetail() = default;
 
         void addTag(const ItemTag &tag);
@@ -95,22 +86,8 @@ namespace todo {
 
 
     private:
-        QString title;
-        QString description;
-
-        QTime fromTime;
-        QTime toTime;
-
-        QDate targetDate;
         QList<ItemTag> tags;
-        ItemMode mode;
-
-        int priority;
-        QDateTime createdTime;
-        QDateTime lastUpdatedTime;
-
-        bool done;
-        QString id;
+        ItemDetailDao itemDetailDao;
     };
 
 }

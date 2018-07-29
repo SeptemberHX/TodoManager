@@ -94,7 +94,7 @@ void GroupWidget::dealWithNewItem(const todo::ItemAndGroupWrapper &newWrapper) {
     // 1. save it to database
     try {
         if (newWrapper.isGroup()) {
-            this->dataCenter.insertItemGroup(newWrapper.getItemGroup());
+            this->dataCenter.insertItemGroup(newWrapper.getItemGroup().toDao());
         } else {
             this->dataCenter.insertItemDetail(newWrapper.getItemDetail());
         }
@@ -175,7 +175,7 @@ void GroupWidget::save_action_triggered(const todo::ItemAndGroupWrapper &wrapper
     if (wrapper.isGroup()) {
         auto group = wrapper.getItemGroup();
         group.setLastUpdatedTime(QDateTime::currentDateTime());
-        this->dataCenter.updateItemGroupByID(group.getId(), group);
+        this->dataCenter.updateItemGroupByID(group.getId(), group.toDao());
         this->itemMap[group.getId()] = group;
         this->listWidget->refresh_item_info(group);
     } else {

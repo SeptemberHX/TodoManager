@@ -5,17 +5,10 @@
 #ifndef TODOMANAGER_ITEMGROUP_H
 #define TODOMANAGER_ITEMGROUP_H
 
-#include <QString>
-#include <QDateTime>
-#include <QList>
+#include "ItemGroupDao.h"
 #include "ItemDetail.h"
 
 namespace todo {
-
-enum ItemGroupType {
-    PROJECT,  // top project
-    SUB_PROJECT  // child project. For sql operation simplify
-};
 
 /**
  * Group items together like a Project or SubProject, etc.
@@ -23,6 +16,8 @@ enum ItemGroupType {
 class ItemGroup {
 public:
     ItemGroup();
+    explicit ItemGroup(const ItemGroupDao &itemGroupDao);
+    ItemGroupDao toDao() const;
 
     const QString &getTitle() const;
 
@@ -75,18 +70,8 @@ public:
     bool operator==(const ItemGroup &otherGroup) const;
 
 private:
-    // persistence in sql
-    QString title;                  // 1
-    QString id;                     // 2
-    QString description;            // 3
-    ItemGroupType type;             // 4
-    bool mileStone;                 // 5
-    QDateTime createdTime;          // 6
-    QDateTime lastUpdatedTime;      // 7
-    QDate fromDate;                 // 8
-    QDate toDate;                   // 9
-
-    // store in ItemGroupRelation
+    ItemGroupDao itemGroupDao;
+    // only one level
     QList<ItemGroup> subGroupList;
     QList<ItemDetail> itemDetailList;
 };

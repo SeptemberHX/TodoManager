@@ -6,59 +6,59 @@
 #include "../utils/ItemUtils.h"
 
 const QString &todo::ItemGroup::getTitle() const {
-    return title;
+    return this->itemGroupDao.getTitle();
 }
 
 void todo::ItemGroup::setTitle(const QString &title) {
-    ItemGroup::title = title;
+    this->itemGroupDao.setTitle(title);
 }
 
 const QString &todo::ItemGroup::getId() const {
-    return id;
+    return this->itemGroupDao.getId();
 }
 
 void todo::ItemGroup::setId(const QString &id) {
-    ItemGroup::id = id;
+    this->itemGroupDao.setId(id);
 }
 
 const QString &todo::ItemGroup::getDescription() const {
-    return description;
+    return this->itemGroupDao.getDescription();
 }
 
 void todo::ItemGroup::setDescription(const QString &description) {
-    ItemGroup::description = description;
+    this->itemGroupDao.setDescription(description);
 }
 
 todo::ItemGroupType todo::ItemGroup::getType() const {
-    return type;
+    return this->itemGroupDao.getType();
 }
 
 void todo::ItemGroup::setType(todo::ItemGroupType type) {
-    ItemGroup::type = type;
+    this->itemGroupDao.setType(type);
 }
 
 bool todo::ItemGroup::isMileStone() const {
-    return mileStone;
+    return this->itemGroupDao.isMileStone();
 }
 
 void todo::ItemGroup::setMileStone(bool mileStone) {
-    ItemGroup::mileStone = mileStone;
+    this->itemGroupDao.setMileStone(mileStone);
 }
 
 const QDateTime &todo::ItemGroup::getCreatedTime() const {
-    return createdTime;
+    return this->itemGroupDao.getCreatedTime();
 }
 
 void todo::ItemGroup::setCreatedTime(const QDateTime &createdTime) {
-    ItemGroup::createdTime = createdTime;
+    this->itemGroupDao.setCreatedTime(createdTime);
 }
 
 const QDateTime &todo::ItemGroup::getLastUpdatedTime() const {
-    return lastUpdatedTime;
+    return this->itemGroupDao.getLastUpdatedTime();
 }
 
 void todo::ItemGroup::setLastUpdatedTime(const QDateTime &lastUpdatedTime) {
-    ItemGroup::lastUpdatedTime = lastUpdatedTime;
+    this->itemGroupDao.setLastUpdatedTime(lastUpdatedTime);
 }
 
 const QList<todo::ItemGroup> &todo::ItemGroup::getSubGroupList() const {
@@ -78,14 +78,13 @@ void todo::ItemGroup::setItemDetailList(const QList<todo::ItemDetail> &itemDetai
 }
 
 todo::ItemGroup::ItemGroup() {
-    this->id = todo::ItemUtils::generateItemGroupUniqueID();
-    this->createdTime = QDateTime::currentDateTime();
-    this->lastUpdatedTime = this->createdTime;
-
-    this->fromDate = QDate::currentDate();
-    this->toDate = this->fromDate;
-    this->mileStone = false;
-    this->type = todo::ItemGroupType::SUB_PROJECT;
+    this->itemGroupDao.setId(todo::ItemUtils::generateItemGroupUniqueID());
+    this->itemGroupDao.setCreatedTime(QDateTime::currentDateTime());
+    this->itemGroupDao.setLastUpdatedTime(this->getCreatedTime());
+    this->itemGroupDao.setFromDate(QDate::currentDate());
+    this->itemGroupDao.setToDate(QDate::currentDate());
+    this->itemGroupDao.setMileStone(false);
+    this->itemGroupDao.setType(todo::ItemGroupType::SUB_PROJECT);
 }
 
 void todo::ItemGroup::addItemDetail(const todo::ItemDetail &itemDetail) {
@@ -97,21 +96,29 @@ void todo::ItemGroup::addItemGroup(const todo::ItemGroup &itemGroup) {
 }
 
 const QDate &todo::ItemGroup::getFromDate() const {
-    return fromDate;
+    return this->itemGroupDao.getFromDate();
 }
 
 void todo::ItemGroup::setFromDate(const QDate &fromDate) {
-    ItemGroup::fromDate = fromDate;
+    this->itemGroupDao.setFromDate(fromDate);
 }
 
 const QDate &todo::ItemGroup::getToDate() const {
-    return toDate;
+    return this->itemGroupDao.getToDate();
 }
 
 void todo::ItemGroup::setToDate(const QDate &toDate) {
-    ItemGroup::toDate = toDate;
+    this->itemGroupDao.setToDate(toDate);
 }
 
 bool todo::ItemGroup::operator==(const todo::ItemGroup &otherGroup) const {
     return this->getId() == otherGroup.getId();
+}
+
+todo::ItemGroup::ItemGroup(const todo::ItemGroupDao &itemGroupDao) {
+    this->itemGroupDao = itemGroupDao;
+}
+
+todo::ItemGroupDao todo::ItemGroup::toDao() const {
+    return this->itemGroupDao;
 }

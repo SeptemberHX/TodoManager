@@ -21,13 +21,12 @@ bool compareFunc(const todo::ItemDetailAndTag &t1, const todo::ItemDetailAndTag 
 }
 
 QList<todo::ItemDetail> todo::DataCenter::selectItemDetailByDate(const QDate &targetDate) {
-    QList<ItemDetail> results = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByDate(targetDate);
-    this->fillTagInfo(results);
-    return results;
+    QList<ItemDetailDao> results = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByDate(targetDate);
+    return this->fillTagInfo(results);
 }
 
 void todo::DataCenter::updateItemDetailByID(const QString &itemID, const todo::ItemDetail &itemDetail) {
-    DaoFactory::getInstance()->getSQLDao()->updateItemDetailByID(itemID, itemDetail);
+    DaoFactory::getInstance()->getSQLDao()->updateItemDetailByID(itemID, itemDetail.toDao());
 
     // For Now
     DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemID(itemDetail.getId());
@@ -47,7 +46,7 @@ void todo::DataCenter::deleteItemDetailByIDCompletely(const QString &itemID) {
 }
 
 void todo::DataCenter::insertItemDetail(const todo::ItemDetail &itemDetail) {
-    DaoFactory::getInstance()->getSQLDao()->insertItemDetail(itemDetail);
+    DaoFactory::getInstance()->getSQLDao()->insertItemDetail(itemDetail.toDao());
     int i = 1;
     for (auto const &tag : itemDetail.getTags()) {
         DaoFactory::getInstance()->getSQLDao()->insertItemAndTagMatch(ItemDetailAndTag(itemDetail.getId(), tag.getId(), i));
@@ -84,10 +83,12 @@ QList<todo::ItemTag> todo::DataCenter::selectAllItemTag() {
     return DaoFactory::getInstance()->getSQLDao()->selectAllItemTag();
 }
 
-void todo::DataCenter::fillTagInfo(QList<todo::ItemDetail> &itemDetails) {
+QList<todo::ItemDetail> todo::DataCenter::fillTagInfo(const QList<todo::ItemDetailDao> &itemDetailDaos) {
     QList<QString> itemIDs;
-    for (auto const &item : itemDetails) {
-        itemIDs.append(item.getId());
+    QList<ItemDetail> resultList;
+    for (auto const &itemDao : itemDetailDaos) {
+        itemIDs.append(itemDao.getId());
+        resultList.append(ItemDetail(itemDao));
     }
 
     QList<ItemTag> itemTags = this->selectAllItemTag();
@@ -100,12 +101,13 @@ void todo::DataCenter::fillTagInfo(QList<todo::ItemDetail> &itemDetails) {
 
     std::sort(matches.begin(), matches.end(), compareFunc);
     for (auto const &match : matches) {
-        for (auto &item : itemDetails) {
+        for (auto &item : resultList) {
             if (item.getId() == match.getItemID()) {
                 item.addTag(itemTagMap[match.getTagID()]);
             }
         }
     }
+    return resultList;
 }
 
 QList<todo::ItemDetail> todo::DataCenter::selectNextNotifiedItemDetail() {
@@ -118,8 +120,7 @@ todo::DataCenter::DataCenter(QObject *parent) : QObject(parent) {
 
 QList<todo::ItemDetail> todo::DataCenter::selectItemDetailByDate(const QDate &fromDate, const QDate &toDate) {
     auto results = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByDate(fromDate, toDate);
-    this->fillTagInfo(results);
-    return results;
+    return this->fillTagInfo(results);
 }
 
 QList<todo::ItemDetail> todo::DataCenter::selectItemDetailsByTag(const todo::ItemTag &itemTag) {
@@ -128,17 +129,17 @@ QList<todo::ItemDetail> todo::DataCenter::selectItemDetailsByTag(const todo::Ite
     for (auto const &itemAndTagMatch : itemAndTagMatchList) {
         itemDetailIds.append(itemAndTagMatch.getItemID());
     }
-    QList<ItemDetail> itemDetails = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByIDs(itemDetailIds);
-    this->fillTagInfo(itemDetails);
-    return itemDetails;
+    auto itemDaos = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByIDs(itemDetailIds);
+    return this->fillTagInfo(itemDaos);
 }
 
 QList<todo::ItemGroup> todo::DataCenter::selectItemGroupByID(const QString &groupID) {
-    return DaoFactory::getInstance()->getSQLDao()->selectItemGroupByID(groupID);
+    auto itemGroupDaoList = DaoFactory::getInstance()->getSQLDao()->selectItemGroupByID(groupID);
+    return this->fillItemGroupInfo(itemGroupDaoList);
 }
 
-void todo::DataCenter::updateItemGroupByID(const QString &groupID, const todo::ItemGroup &itemGroup) {
-    DaoFactory::getInstance()->getSQLDao()->updateItemGroupByID(groupID, itemGroup);
+void todo::DataCenter::updateItemGroupByID(const QString &groupID, const todo::ItemGroupDao &itemGroupDao) {
+    DaoFactory::getInstance()->getSQLDao()->updateItemGroupByID(groupID, itemGroupDao);
 }
 
 void todo::DataCenter::deleteItemGroupByID(const QString &groupID) {
@@ -147,11 +148,12 @@ void todo::DataCenter::deleteItemGroupByID(const QString &groupID) {
 }
 
 QList<todo::ItemGroup> todo::DataCenter::selectItemGroupByIDs(const QList<QString> &groupIDs) {
-    return DaoFactory::getInstance()->getSQLDao()->selectItemGroupByIDs(groupIDs);
+    auto itemGroupDaoList = DaoFactory::getInstance()->getSQLDao()->selectItemGroupByIDs(groupIDs);
+    return this->fillItemGroupInfo(itemGroupDaoList);
 }
 
-void todo::DataCenter::insertItemGroup(const todo::ItemGroup &itemGroup) {
-    DaoFactory::getInstance()->getSQLDao()->insertItemGroup(itemGroup);
+void todo::DataCenter::insertItemGroup(const todo::ItemGroupDao &itemGroupDao) {
+    DaoFactory::getInstance()->getSQLDao()->insertItemGroup(itemGroupDao);
 }
 
 QList<todo::ItemGroupRelation> todo::DataCenter::selectItemGroupRelationByRootID(const QString &rootID) {
@@ -180,8 +182,11 @@ QList<todo::ItemAndGroupWrapper> todo::DataCenter::selectItemByDirectGroupID(con
         }
     }
 
-    auto itemDetailList = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByIDs(itemDetailIDs);
-    auto itemGroupList = DaoFactory::getInstance()->getSQLDao()->selectItemGroupByIDs(itemGroupIDs);
+    auto itemDetailDaoList = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByIDs(itemDetailIDs);
+    auto itemGroupDaoList = DaoFactory::getInstance()->getSQLDao()->selectItemGroupByIDs(itemGroupIDs);
+
+    auto itemDetailList = this->fillTagInfo(itemDetailDaoList);
+    auto itemGroupList = this->fillItemGroupInfo(itemGroupDaoList);
     QList<todo::ItemAndGroupWrapper> wrapperList;
     foreach (auto const &itemDetail, itemDetailList) {
         wrapperList.append(itemDetail);
@@ -193,7 +198,8 @@ QList<todo::ItemAndGroupWrapper> todo::DataCenter::selectItemByDirectGroupID(con
 }
 
 QList<todo::ItemGroup> todo::DataCenter::selectItemGroupByType(const todo::ItemGroupType &type) {
-    return DaoFactory::getInstance()->getSQLDao()->selectItemGroupByType(type);
+    auto itemGroupDaoList = DaoFactory::getInstance()->getSQLDao()->selectItemGroupByType(type);
+    return this->fillItemGroupInfo(itemGroupDaoList);
 }
 
 void todo::DataCenter::deleteGroupCompletely(const QString &groupID) {
@@ -227,4 +233,16 @@ void todo::DataCenter::deleteGroupCompletely_(const QString &groupID) {
 void todo::DataCenter::deleteItemDetailByIDCompletely_(const QString &itemID) {
     DaoFactory::getInstance()->getSQLDao()->deleteItemDetailByID(itemID);
     DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemID(itemID);
+}
+
+QList<todo::ItemGroup> todo::DataCenter::fillItemGroupInfo(const QList<todo::ItemGroupDao> &itemGroupDaos) {
+    QList<todo::ItemGroup> resultList;
+
+    foreach (auto const &itemGroupDao, itemGroupDaos) {
+        // todo: fill the empty info in item group
+        ItemGroup group(itemGroupDao);
+        resultList.append(group);
+    }
+
+    return resultList;
 }

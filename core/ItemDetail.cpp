@@ -12,14 +12,18 @@ todo::ItemDetail::ItemDetail() : ItemDetail("") {
 
 
 todo::ItemDetail::ItemDetail(QString title) {
-    this->title = title;
-    this->mode = ItemMode::SIMPLE;
-    this->done = false;
-    this->id = todo::ItemUtils::generateItemDetailUniqueID();
-    this->priority = 3;
-    this->targetDate = QDate::currentDate();
-    this->createdTime = QDateTime::currentDateTime();
-    this->lastUpdatedTime = this->createdTime;
+    this->itemDetailDao.setTitle(title);
+    this->itemDetailDao.setMode(ItemMode::SIMPLE);
+    this->itemDetailDao.setDone(false);
+    this->itemDetailDao.setId(todo::ItemUtils::generateItemDetailUniqueID());
+    this->itemDetailDao.setPriority(3);
+    this->itemDetailDao.setTargetDate(QDate::currentDate());
+    this->itemDetailDao.setCreatedTime(QDateTime::currentDateTime());
+    this->itemDetailDao.setLastUpdatedTime(this->getCreatedTime());
+}
+
+todo::ItemDetail::ItemDetail(const todo::ItemDetailDao &itemDetailDao) {
+    this->itemDetailDao = itemDetailDao;
 }
 
 void todo::ItemDetail::addTag(const todo::ItemTag &tag) {
@@ -31,51 +35,51 @@ void todo::ItemDetail::removeTag(const todo::ItemTag &tag) {
 }
 
 const QString &todo::ItemDetail::getTitle() const {
-    return title;
+    return this->itemDetailDao.getTitle();
 }
 
 void todo::ItemDetail::setTitle(const QString &title) {
-    ItemDetail::title = title;
+    this->itemDetailDao.setTitle(title);
 }
 
 const QString &todo::ItemDetail::getDescription() const {
-    return description;
+    return this->itemDetailDao.getDescription();
 }
 
 void todo::ItemDetail::setDescription(const QString &description) {
-    ItemDetail::description = description;
+    this->itemDetailDao.setDescription(description);
 }
 
 const QTime &todo::ItemDetail::getFromTime() const {
-    return fromTime;
+    return this->itemDetailDao.getFromTime();
 }
 
 void todo::ItemDetail::setFromTime(const QTime &fromTime) {
-    ItemDetail::fromTime = fromTime;
+    this->itemDetailDao.setFromTime(fromTime);
 }
 
 const QTime &todo::ItemDetail::getToTime() const {
-    return toTime;
+    return this->itemDetailDao.getToTime();
 }
 
 void todo::ItemDetail::setToTime(const QTime &toTime) {
-    ItemDetail::toTime = toTime;
+    this->itemDetailDao.setToTime(toTime);
 }
 
 const QDate &todo::ItemDetail::getTargetDate() const {
-    return targetDate;
+    return this->itemDetailDao.getTargetDate();
 }
 
 void todo::ItemDetail::setTargetDate(const QDate &targetDate) {
-    ItemDetail::targetDate = targetDate;
+    this->itemDetailDao.setTargetDate(targetDate);
 }
 
 todo::ItemMode todo::ItemDetail::getMode() const {
-    return mode;
+    return this->itemDetailDao.getMode();
 }
 
 void todo::ItemDetail::setMode(todo::ItemMode mode) {
-    ItemDetail::mode = mode;
+    this->itemDetailDao.setMode(mode);
 }
 
 const QList<todo::ItemTag> &todo::ItemDetail::getTags() const {
@@ -87,43 +91,43 @@ void todo::ItemDetail::setTags(const QList<todo::ItemTag> &tags) {
 }
 
 int todo::ItemDetail::getPriority() const {
-    return priority;
+    return this->itemDetailDao.getPriority();
 }
 
 void todo::ItemDetail::setPriority(int priority) {
-    ItemDetail::priority = priority;
+    this->itemDetailDao.setPriority(priority);
 }
 
 const QDateTime &todo::ItemDetail::getCreatedTime() const {
-    return createdTime;
+    return this->itemDetailDao.getCreatedTime();
 }
 
 void todo::ItemDetail::setCreatedTime(const QDateTime &createdTime) {
-    ItemDetail::createdTime = createdTime;
+    this->itemDetailDao.setCreatedTime(createdTime);
 }
 
 const QDateTime &todo::ItemDetail::getLastUpdatedTime() const {
-    return lastUpdatedTime;
+    return this->itemDetailDao.getLastUpdatedTime();
 }
 
 void todo::ItemDetail::setLastUpdatedTime(const QDateTime &lastUpdatedTime) {
-    ItemDetail::lastUpdatedTime = lastUpdatedTime;
+    this->itemDetailDao.setLastUpdatedTime(lastUpdatedTime);
 }
 
 bool todo::ItemDetail::isDone() const {
-    return done;
+    return this->itemDetailDao.isDone();
 }
 
 void todo::ItemDetail::setDone(bool done) {
-    ItemDetail::done = done;
+    this->itemDetailDao.setDone(done);
 }
 
 const QString &todo::ItemDetail::getId() const {
-    return id;
+    return this->itemDetailDao.getId();
 }
 
 void todo::ItemDetail::setId(const QString &id) {
-    ItemDetail::id = id;
+    this->itemDetailDao.setId(id);
 }
 
 std::ostream & todo::operator<<(std::ostream &os, const todo::ItemDetail &detail) {
@@ -137,21 +141,14 @@ QDataStream &todo::operator<<(QDataStream &os, const todo::ItemDetail &detail) {
 }
 
 QString todo::ItemDetail::toString() const {
-    QString tagStr;
-    for (auto &tag : this->getTags()) {
-        if (tagStr.size() > 0) {
-            tagStr.append('|');
-        }
-        tagStr += tag.getName();
-    }
-
-    QString result("id: %1 title: %2 description: %3 fromTime: %4 toTime: %5 targetDate: %6 tag: %7 priority: %8 mode %9");
-    result = result.arg(this->title).arg(this->description).arg(this->fromTime.toString("hh-mm")).arg(this->toTime.toString("hh:mm"));
-    result = result.arg(tagStr).arg(this->priority).arg(this->mode);
-    return result;
+    return this->getId();
 }
 
 QDataStream &todo::operator>>(QDataStream &os, todo::ItemDetail &detail) {
     // TODO: support drag and drop to reorder
     return os;
+}
+
+todo::ItemDetailDao todo::ItemDetail::toDao() const {
+    return this->itemDetailDao;
 }

@@ -8,10 +8,11 @@
 #include <QDate>
 #include <QList>
 #include <QString>
-#include "../core/ItemDetail.h"
+#include "../core/ItemDetailDao.h"
 #include "../core/ItemTag.h"
 #include "../core/ItemDetailAndTag.h"
 #include "../core/ItemGroup.h"
+#include "../core/ItemGroupDao.h"
 #include "../core/ItemGroupRelation.h"
 
 namespace todo {
@@ -19,13 +20,13 @@ class AbstractDao {
 public:
     AbstractDao() = default;
     // ItemDetail
-    virtual QList<ItemDetail> selectItemDetailByDate(const QDate &targetDate) = 0;
-    virtual void updateItemDetailByID(const QString &itemID, const ItemDetail &itemDetail) = 0;
+    virtual QList<ItemDetailDao> selectItemDetailByDate(const QDate &targetDate) = 0;
+    virtual void updateItemDetailByID(const QString &itemID, const ItemDetailDao &itemDetailDao) = 0;
     virtual void deleteItemDetailByID(const QString &itemID) = 0;
-    virtual void insertItemDetail(const ItemDetail &itemDetail) = 0;
+    virtual void insertItemDetail(const ItemDetailDao &itemDetailDao) = 0;
     virtual void updateDoneByID(const QString &itemID, bool flag) = 0;
-    virtual QList<ItemDetail> selectItemDetailByDate(const QDate &fromDate, const QDate &toDate) = 0;
-    virtual QList<ItemDetail> selectItemDetailByIDs(const QList<QString> &itemIDs) = 0;
+    virtual QList<ItemDetailDao> selectItemDetailByDate(const QDate &fromDate, const QDate &toDate) = 0;
+    virtual QList<ItemDetailDao> selectItemDetailByIDs(const QList<QString> &itemIDs) = 0;
     // End
 
     // ItemTag
@@ -51,13 +52,13 @@ public:
     // End
 
     // ItemGroup
-    virtual QList<ItemGroup> selectItemGroupByID(const QString &groupID) = 0;
-    virtual QList<ItemGroup> selectItemGroupByType(const todo::ItemGroupType &type) = 0;
-    virtual void updateItemGroupByID(const QString &groupID, const ItemGroup &itemGroup) = 0;
+    virtual QList<ItemGroupDao> selectItemGroupByID(const QString &groupID) = 0;
+    virtual QList<ItemGroupDao> selectItemGroupByType(const todo::ItemGroupType &type) = 0;
+    virtual void updateItemGroupByID(const QString &groupID, const ItemGroupDao &itemGroupDao) = 0;
     virtual void deleteItemGroupByID(const QString &groupID) = 0;
     virtual void deleteItemGroupByIDs(const QList<QString> &groupIDList) = 0;
-    virtual void insertItemGroup(const ItemGroup &itemGroup) = 0;
-    virtual QList<ItemGroup> selectItemGroupByIDs(const QList<QString> &groupIDs) = 0;
+    virtual void insertItemGroup(const ItemGroupDao &itemGroupDao) = 0;
+    virtual QList<ItemGroupDao> selectItemGroupByIDs(const QList<QString> &groupIDs) = 0;
     // End
 
     // ItemGroupRelation

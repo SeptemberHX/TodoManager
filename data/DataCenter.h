@@ -9,6 +9,7 @@
 #include <QString>
 #include <QList>
 #include <QObject>
+#include "../core/ItemDetailDao.h"
 #include "../core/ItemDetail.h"
 #include "../dao/DaoFactory.h"
 #include "../core/ItemDetailAndTag.h"
@@ -59,11 +60,11 @@ public:
 
     QList<ItemGroup> selectItemGroupByType(const todo::ItemGroupType &type);
 
-    void updateItemGroupByID(const QString &groupID, const ItemGroup &itemGroup);
+    void updateItemGroupByID(const QString &groupID, const ItemGroupDao &itemGroupDao);
 
     void deleteItemGroupByID(const QString &groupID);
 
-    void insertItemGroup(const ItemGroup &itemGroup);
+    void insertItemGroup(const ItemGroupDao &itemGroupDao);
 
     QList<ItemGroup> selectItemGroupByIDs(const QList<QString> &groupIDs);
     // ---------------- ends ---------------------
@@ -85,7 +86,8 @@ signals:
     void databaseModified();
 
 private:
-    void fillTagInfo(QList<ItemDetail> &itemDetails);
+    QList<ItemDetail> fillTagInfo(const QList<ItemDetailDao> &itemDetailDaos);
+    QList<ItemGroup> fillItemGroupInfo(const QList<ItemGroupDao> &itemGroupDaos);
 
     // for recursive or avoiding emit signal repeatly
     void deleteGroupCompletely_(const QString &groupID);
