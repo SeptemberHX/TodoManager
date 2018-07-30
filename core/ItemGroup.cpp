@@ -122,3 +122,11 @@ todo::ItemGroup::ItemGroup(const todo::ItemGroupDao &itemGroupDao) {
 todo::ItemGroupDao todo::ItemGroup::toDao() const {
     return this->itemGroupDao;
 }
+
+const QColor &todo::ItemGroup::getColor() const {
+    return this->itemGroupDao.getColor();
+}
+
+void todo::ItemGroup::setColor(const QColor &color) {
+    this->itemGroupDao.setColor(color);
+}

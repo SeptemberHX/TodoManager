@@ -232,8 +232,19 @@ void GroupWidget::initUI() {
     connect(this->groupDetailWidget, &GroupDetailWidget::saveActionTriggered, this, &GroupWidget::save_action_triggered);
     connect(this->itemDetailWidget, &ItemDetailWidget::saveButtonClicked, this, &GroupWidget::save_action_triggered);
 
+    connect(this->itemDetailWidget, &ItemDetailWidget::markDoneClicked, this, &GroupWidget::markDone_clicked);
+
     // set icons
     ui->refreshToolButton->setIcon(QIcon::fromTheme("view-refresh"));
     ui->sortToolButton->setIcon(QIcon::fromTheme("sort-presence"));
     ui->addToolButton->setIcon(QIcon::fromTheme("list-add"));
+}
+
+void GroupWidget::markDone_clicked(bool flag) {
+    QString itemID = this->listWidget->currentItemID();
+    this->dataCenter.updateDoneByID(itemID, flag);
+    auto oldOne = this->itemMap[itemID].getItemDetail();
+    oldOne.setDone(flag);
+    this->itemMap[itemID] = oldOne;
+    this->listWidget->refresh_item_info(this->itemMap[itemID]);
 }

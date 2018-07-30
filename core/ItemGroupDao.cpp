@@ -2,6 +2,7 @@
 // Created by septemberhx on 7/29/18.
 //
 
+#include <QtGui/QColor>
 #include "ItemGroupDao.h"
 
 const QString &todo::ItemGroupDao::getTitle() const {
@@ -74,4 +75,12 @@ const QDate &todo::ItemGroupDao::getToDate() const {
 
 void todo::ItemGroupDao::setToDate(const QDate &toDate) {
     ItemGroupDao::toDate = toDate;
+}
+
+const QColor &todo::ItemGroupDao::getColor() const {
+    return color;
+}
+
+void todo::ItemGroupDao::setColor(const QColor &color) {
+    ItemGroupDao::color = color;
 }

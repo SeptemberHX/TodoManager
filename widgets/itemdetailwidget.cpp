@@ -183,6 +183,8 @@ todo::ItemDetail ItemDetailWidget::collectItemDetail() {
         result.setId(this->currItemPtr->getId());
         result.setCreatedTime(this->currItemPtr->getCreatedTime());
         result.setDone(this->currItemPtr->isDone());
+        result.setRootGroup(this->currItemPtr->getRootGroup());
+        result.setDirectGroup(this->currItemPtr->getDirectGroup());
     }
 
     return result;

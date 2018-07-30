@@ -152,3 +152,27 @@ QDataStream &todo::operator>>(QDataStream &os, todo::ItemDetail &detail) {
 todo::ItemDetailDao todo::ItemDetail::toDao() const {
     return this->itemDetailDao;
 }
+
+const todo::ItemGroupDao &todo::ItemDetail::getRootGroup() const {
+    return rootGroup;
+}
+
+void todo::ItemDetail::setRootGroup(const todo::ItemGroupDao &rootGroup) {
+    ItemDetail::rootGroup = rootGroup;
+}
+
+const todo::ItemGroupDao &todo::ItemDetail::getDirectGroup() const {
+    return directGroup;
+}
+
+void todo::ItemDetail::setDirectGroup(const todo::ItemGroupDao &directGroup) {
+    ItemDetail::directGroup = directGroup;
+}
+
+bool todo::ItemDetail::hasRootGroup() const {
+    return ItemUtils::checkIfItemGroup(this->rootGroup.getId());
+}
+
+const QColor &todo::ItemDetail::projectColor() const {
+    return this->rootGroup.getColor();
+}

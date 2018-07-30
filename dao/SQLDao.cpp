@@ -187,6 +187,7 @@ void todo::SQLDao::createTables() {
                       "     milestone BOOLEAN NOT NULL,"
                       "     createdTime DATETIME,"
                       "     lastUpdatedTime DATETIME,"
+                      "     color VARCHAR(7),"
                       "     PRIMARY KEY (id)"
                       ");");
     sqlScripts.append("CREATE TABLE if not exists item_group_relations("
@@ -569,7 +570,7 @@ QList<todo::ItemDetailDao> todo::SQLDao::selectItemDetailByIDs(const QList<QStri
 QList<todo::ItemGroupDao> todo::SQLDao::selectItemGroupByID(const QString &groupID) {
     QList<ItemGroupDao> resultList;
     QSqlQuery query(this->db);
-    query.prepare("SELECT id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime"
+    query.prepare("SELECT id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime, color"
                   " FROM item_groups"
                   " WHERE id = :id");
     query.bindValue(":id", groupID);
@@ -587,6 +588,7 @@ QList<todo::ItemGroupDao> todo::SQLDao::selectItemGroupByID(const QString &group
             itemGroup.setMileStone(query.value("milestone").toBool());
             itemGroup.setCreatedTime(query.value("createdTime").toDateTime());
             itemGroup.setLastUpdatedTime(query.value("lastUpdatedTime").toDateTime());
+            itemGroup.setColor(query.value("color").toString());
             resultList.append(itemGroup);
         }
     }
@@ -596,7 +598,7 @@ QList<todo::ItemGroupDao> todo::SQLDao::selectItemGroupByID(const QString &group
 QList<todo::ItemGroupDao> todo::SQLDao::selectItemGroupByType(const todo::ItemGroupType &type) {
     QList<ItemGroupDao> resultList;
     QSqlQuery query(this->db);
-    query.prepare("SELECT id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime"
+    query.prepare("SELECT id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime, color"
                   " FROM item_groups"
                   " WHERE `type` = :type");
     query.bindValue(":type", type);
@@ -614,6 +616,7 @@ QList<todo::ItemGroupDao> todo::SQLDao::selectItemGroupByType(const todo::ItemGr
             itemGroup.setMileStone(query.value("milestone").toBool());
             itemGroup.setCreatedTime(query.value("createdTime").toDateTime());
             itemGroup.setLastUpdatedTime(query.value("lastUpdatedTime").toDateTime());
+            itemGroup.setColor(query.value("color").toString());
             resultList.append(itemGroup);
         }
     }
@@ -625,7 +628,7 @@ void todo::SQLDao::updateItemGroupByID(const QString &groupID, const ItemGroupDa
     query.prepare("UPDATE item_groups"
                   " SET title=:title, description=:description, fromDate=:fromDate, toDate=:toDate,"
                   "     `type`=:type, milestone=:milestone,"
-                  "     createdTime=:createdTime, lastUpdatedTime=:lastUpdatedTime"
+                  "     createdTime=:createdTime, lastUpdatedTime=:lastUpdatedTime, color=:color"
                   " WHERE id=:id");
     query.bindValue(":id", groupID);
     query.bindValue(":title", itemGroupDao.getTitle());
@@ -636,6 +639,7 @@ void todo::SQLDao::updateItemGroupByID(const QString &groupID, const ItemGroupDa
     query.bindValue(":milestone", itemGroupDao.isMileStone());
     query.bindValue(":createdTime", itemGroupDao.getCreatedTime());
     query.bindValue(":lastUpdatedTime", itemGroupDao.getLastUpdatedTime());
+    query.bindValue(":color", itemGroupDao.getColor().name());
 
     if (!query.exec()) {
         throw SqlErrorException();
@@ -675,8 +679,8 @@ void todo::SQLDao::deleteItemGroupByIDs(const QList<QString> &groupIDList) {
 void todo::SQLDao::insertItemGroup(const ItemGroupDao &itemGroupDao) {
     QSqlQuery query(this->db);
     query.prepare("INSERT INTO item_groups"
-                  " (id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime)"
-                  " VALUES(:id, :title, :description, :fromDate, :toDate, :type, :milestone,"
+                  " (id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime, color)"
+                  " VALUES(:id, :title, :description, :fromDate, :toDate, :type, :milestone, :color"
                   "        :createTime, :lastUpdatedTime)");
     query.bindValue(":id", itemGroupDao.getId());
     query.bindValue(":title", itemGroupDao.getTitle());
@@ -687,6 +691,7 @@ void todo::SQLDao::insertItemGroup(const ItemGroupDao &itemGroupDao) {
     query.bindValue(":milestone", itemGroupDao.isMileStone());
     query.bindValue(":createdTime", itemGroupDao.getCreatedTime());
     query.bindValue(":lastUpdatedTime", itemGroupDao.getLastUpdatedTime());
+    query.bindValue(":color", itemGroupDao.getColor().name());
 
     if (!query.exec()) {
         qDebug() << "insertItemGroup: exception happens";
@@ -706,7 +711,7 @@ QList<todo::ItemGroupDao> todo::SQLDao::selectItemGroupByIDs(const QList<QString
         return resultList;
     }
 
-    QString queryStr("SELECT id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime"
+    QString queryStr("SELECT id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime, color"
               " FROM item_groups"
               " WHERE ");
     queryStr += itemIDListStr;
@@ -724,6 +729,7 @@ QList<todo::ItemGroupDao> todo::SQLDao::selectItemGroupByIDs(const QList<QString
             itemGroup.setMileStone(query.value("milestone").toBool());
             itemGroup.setCreatedTime(query.value("createdTime").toDateTime());
             itemGroup.setLastUpdatedTime(query.value("lastUpdatedTime").toDateTime());
+            itemGroup.setColor(query.value("color").toString());
             resultList.append(itemGroup);
         }
     }
@@ -798,6 +804,29 @@ QList<todo::ItemGroupRelation> todo::SQLDao::selectItemGroupRelationByParentID(c
                   " FROM item_group_relations"
                   " WHERE directGroupID = :directGroupID");
     query.bindValue(":directGroupID", parentID);
+
+    if (!query.exec()) {
+        throw SqlErrorException();
+    } else {
+        while (query.next()) {
+            ItemGroupRelation relation;
+            relation.setRootGroupID(query.value("rootGroupID").toString());
+            relation.setDirectGroupID(query.value("directGroupID").toString());
+            relation.setItemID(query.value("itemID").toString());
+            resultList.append(relation);
+        }
+    }
+
+    return resultList;
+}
+
+QList<todo::ItemGroupRelation> todo::SQLDao::selectItemGroupRelationByItemID(const QString &itemID) {
+    QList<ItemGroupRelation> resultList;
+    QSqlQuery query(this->db);
+    query.prepare("SELECT rootGroupID, directGroupID, itemID"
+                  " FROM item_group_relations"
+                  " WHERE itemID = :itemID");
+    query.bindValue(":itemID", itemID);
 
     if (!query.exec()) {
         throw SqlErrorException();

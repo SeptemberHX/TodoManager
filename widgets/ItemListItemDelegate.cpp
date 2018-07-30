@@ -46,28 +46,26 @@ QSize ItemListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
 
 void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, QPainter *painter,
                                            const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    // draw tag color
+    // draw project color
     painter->setRenderHint(QPainter::Antialiasing, true);
     QPainterPath painterPath;
-    auto const &itemTags = itemDetail.getTags();
-    if (!itemTags.empty()) {
-        auto firstTag = itemTags[0];
-        auto tagColorRect = QRect(option.rect.topLeft() + QPoint(0, arcLength), option.rect.bottomLeft()
+    if (itemDetail.hasRootGroup()) {
+        auto projectColorRect = QRect(option.rect.topLeft() + QPoint(0, arcLength * 4), option.rect.bottomLeft()
                                                                                 + QPoint(arcLength, -arcLength));
-        auto arcRectF = QRectF(tagColorRect.topLeft() + QPoint(-arcLength, 0), tagColorRect.topRight()
+        auto arcRectF = QRectF(projectColorRect.topLeft() + QPoint(-arcLength, 0), projectColorRect.topRight()
                                                                                + QPoint(0, arcLength * 2));
         painterPath.moveTo(arcRectF.center());
         painterPath.arcTo(arcRectF, 0, 90);
         painterPath.closeSubpath();
-        painterPath.lineTo(tagColorRect.topLeft());
-        painterPath.lineTo(tagColorRect.bottomLeft() + QPoint(0, -arcLength));
-        auto arcRectF2 = QRectF(tagColorRect.bottomLeft() + QPoint(-arcLength, -arcLength * 2),
-                                tagColorRect.bottomRight());
+        painterPath.lineTo(projectColorRect.topLeft());
+        painterPath.lineTo(projectColorRect.bottomLeft() + QPoint(0, -arcLength));
+        auto arcRectF2 = QRectF(projectColorRect.bottomLeft() + QPoint(-arcLength, -arcLength * 2),
+                                projectColorRect.bottomRight());
         painterPath.arcTo(arcRectF2, -90, 90);
 
-        painterPath.lineTo(tagColorRect.topRight() + QPoint(0, 10));
+        painterPath.lineTo(projectColorRect.topRight() + QPoint(0, 10));
         painterPath.closeSubpath();
-        painter->fillPath(painterPath, QBrush(firstTag.getColor()));
+        painter->fillPath(painterPath, QBrush(itemDetail.projectColor()));
     }
 
     // draw title
@@ -120,7 +118,7 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     int fixedWidth = painter->fontMetrics().width("...");
 
     painter->setFont(QFont("Arias", 8));
-    for (auto tag : itemDetail.getTags()) {
+    for (auto const &tag : itemDetail.getTags()) {
         int tagNameWidth = painter->fontMetrics().width(tag.getName());
         int curTagWidth = tagNameWidth + tagMargins.left() + tagMargins.right();
         QRect curTagRect(availableRect.topLeft(), availableRect.bottomLeft() + QPoint(curTagWidth, 0));

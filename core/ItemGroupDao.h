@@ -8,6 +8,7 @@
 #include <QString>
 #include <QDate>
 #include <QDateTime>
+#include <QColor>
 
 namespace todo {
 
@@ -55,6 +56,10 @@ public:
 
     void setToDate(const QDate &toDate);
 
+    const QColor &getColor() const;
+
+    void setColor(const QColor &color);
+
 private:
     QString title;                  // 1
     QString id;                     // 2
@@ -65,6 +70,7 @@ private:
     QDateTime lastUpdatedTime;      // 7
     QDate fromDate;                 // 8
     QDate toDate;                   // 9
+    QColor color;                   // 10
 };
 
 }

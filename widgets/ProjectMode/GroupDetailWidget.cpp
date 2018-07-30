@@ -2,6 +2,7 @@
 #include "ui_GroupDetailWidget.h"
 #include <QString>
 #include <QPushButton>
+#include <QColorDialog>
 
 GroupDetailWidget::GroupDetailWidget(QWidget *parent) :
     QWidget(parent),
@@ -12,6 +13,7 @@ GroupDetailWidget::GroupDetailWidget(QWidget *parent) :
 
     connect(ui->editToolButton, &QToolButton::clicked, this, &GroupDetailWidget::changeToEditMode);
     connect(ui->deleteToolButton, &QToolButton::clicked, this, &GroupDetailWidget::delete_button_clicked);
+    connect(ui->colorToolButton, &QToolButton::clicked, this, &GroupDetailWidget::color_button_clicked);
 
     // save or cancel
     connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &GroupDetailWidget::buttonBox_clicked);
@@ -37,6 +39,13 @@ void GroupDetailWidget::loadItemGroup(const todo::ItemGroup &itemGroup) {
     ui->fromDateEdit->setDate(itemGroup.getFromDate());
     ui->toDateEdit->setDate(itemGroup.getToDate());
 
+    if (itemGroup.getType() == todo::ItemGroupType::PROJECT) {
+        ui->colorToolButton->show();
+        ui->colorToolButton->setStyleSheet(QString("background:%1").arg(itemGroup.getColor().name()));
+    } else {
+        ui->colorToolButton->hide();
+    }
+    this->currentColor = itemGroup.getColor();
     QString timeLabelStrTemp("CreatedTime:\n%1\nLastUpdatedTime:\n%2");
     ui->timeLabel->setText(timeLabelStrTemp.arg(itemGroup.getCreatedTime().toString("yyyy-MM-dd  hh:mm:ss"))
                                            .arg(itemGroup.getLastUpdatedTime().toString("yyyy-MM-dd  hh:mm:ss"))
@@ -56,6 +65,7 @@ todo::ItemGroup GroupDetailWidget::collectData() const {
     newItemGroup.setLastUpdatedTime(this->rawItemGroup.getLastUpdatedTime());   // 7
     newItemGroup.setId(this->rawItemGroup.getId());                             // 8
     newItemGroup.setType(this->rawItemGroup.getType());                         // 9
+    newItemGroup.setColor(this->currentColor);                                  // 10
 
     return newItemGroup;
 }
@@ -81,6 +91,7 @@ void GroupDetailWidget::changeReadOnly(bool readOnly) {
     ui->descriptionTextEdit->setReadOnly(readOnly);
     ui->fromDateEdit->setReadOnly(readOnly);
     ui->toDateEdit->setReadOnly(readOnly);
+    ui->colorToolButton->setEnabled(!readOnly);
 
     // special trick for checkbox
     ui->milestoneCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, readOnly);
@@ -117,4 +128,13 @@ void GroupDetailWidget::buttonBox_clicked(QAbstractButton *btn) {
     }
 
     this->changeToViewMode();
+}
+
+void GroupDetailWidget::color_button_clicked() {
+    auto newColor = QColorDialog::getColor(this->currentColor);
+    if (newColor != this->currentColor) {
+        this->currentColor = newColor;
+        ui->colorToolButton->setStyleSheet(QString("background:%1").arg(newColor.name()));
+        this->item_modified();
+    }
 }

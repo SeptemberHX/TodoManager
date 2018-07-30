@@ -93,6 +93,8 @@ public:
     void insertItemGroupRelation(const ItemGroupRelation &relation) override;
 
     QList<ItemGroupRelation> selectItemGroupRelationByParentID(const QString &parentID) override;
+
+    QList<ItemGroupRelation> selectItemGroupRelationByItemID(const QString &itemID) override;
     // End
 
     void init() override;

@@ -61,6 +61,7 @@ private slots:
     void delete_group_button_clicked();
     void database_modified();
     void save_action_triggered(const todo::ItemAndGroupWrapper &wrapper);
+    void markDone_clicked(bool flag);
 };
 
 #endif // GROUPWIDGET_H

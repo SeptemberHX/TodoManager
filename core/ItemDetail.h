@@ -9,6 +9,7 @@
 #include <ostream>
 #include "ItemTag.h"
 #include "ItemDetailDao.h"
+#include "ItemGroupDao.h"
 
 namespace todo {
     /**
@@ -74,6 +75,19 @@ namespace todo {
         const QString &getId() const;
 
         void setId(const QString &id);
+
+        const ItemGroupDao &getRootGroup() const;
+
+        void setRootGroup(const ItemGroupDao &rootGroup);
+
+        const ItemGroupDao &getDirectGroup() const;
+
+        void setDirectGroup(const ItemGroupDao &directGroup);
+
+        bool hasRootGroup() const;
+
+        const QColor &projectColor() const;
+
         // ------ End
 
         QString toString() const;
@@ -88,6 +102,8 @@ namespace todo {
     private:
         QList<ItemTag> tags;
         ItemDetailDao itemDetailDao;
+        ItemGroupDao rootGroup;
+        ItemGroupDao directGroup;
     };
 
 }

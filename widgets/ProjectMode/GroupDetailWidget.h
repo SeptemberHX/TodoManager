@@ -33,6 +33,7 @@ signals:
 private:
     Ui::GroupDetailWidget *ui;
     todo::ItemGroup rawItemGroup;  // backup for the original itemGroup
+    QColor currentColor;
 
     // ui change between view and edit mode
     void changeReadOnly(bool readOnly);
@@ -45,6 +46,7 @@ private slots:
     void changeToEditMode();
     void delete_button_clicked();
     void buttonBox_clicked(QAbstractButton *btn);
+    void color_button_clicked();
 };
 
 #endif // GROUPDETAILWIDGET_H

@@ -87,6 +87,7 @@ signals:
 
 private:
     QList<ItemDetail> fillTagInfo(const QList<ItemDetailDao> &itemDetailDaos);
+    QList<ItemDetail> fillItemDetailInfo(const QList<ItemDetailDao> &itemDetailDaos);
     QList<ItemGroup> fillItemGroupInfo(const QList<ItemGroupDao> &itemGroupDaos);
 
     // for recursive or avoiding emit signal repeatly

@@ -63,6 +63,10 @@ public:
 
     void setToDate(const QDate &toDate);
 
+    const QColor &getColor() const;
+
+    void setColor(const QColor &color);
+
     void addItemDetail(const ItemDetail &itemDetail);
 
     void addItemGroup(const ItemGroup &itemGroup);
