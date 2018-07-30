@@ -28,6 +28,7 @@ public:
     };
 
     void setReadOnly(bool isReadOnly);
+    bool isEditing() const;
 
 signals:
     void ui_item_edited(const todo::ItemDetail &newItemDetail);  // info shown on list changed

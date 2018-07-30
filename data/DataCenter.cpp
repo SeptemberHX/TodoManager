@@ -240,8 +240,16 @@ QList<todo::ItemGroup> todo::DataCenter::fillItemGroupInfo(const QList<todo::Ite
     QList<todo::ItemGroup> resultList;
 
     foreach (auto const &itemGroupDao, itemGroupDaos) {
-        // todo: fill the empty info in item group
         ItemGroup group(itemGroupDao);
+
+        auto relations = DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByItemID(group.getId());
+        if (relations.size() > 0) {
+            auto rootGroup = DaoFactory::getInstance()->getSQLDao()->selectItemGroupByID(relations[0].getRootGroupID());
+            auto directGroup = DaoFactory::getInstance()->getSQLDao()->selectItemGroupByID(relations[0].getDirectGroupID());
+            group.setRootGroup(rootGroup[0]);
+            group.setDirectGroup(directGroup[0]);
+        }
+
         resultList.append(group);
     }
 

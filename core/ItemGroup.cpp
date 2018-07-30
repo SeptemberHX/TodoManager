@@ -85,6 +85,7 @@ todo::ItemGroup::ItemGroup() {
     this->itemGroupDao.setToDate(QDate::currentDate());
     this->itemGroupDao.setMileStone(false);
     this->itemGroupDao.setType(todo::ItemGroupType::SUB_PROJECT);
+    this->itemGroupDao.setColor(Qt::white);
 }
 
 void todo::ItemGroup::addItemDetail(const todo::ItemDetail &itemDetail) {
@@ -129,4 +130,20 @@ const QColor &todo::ItemGroup::getColor() const {
 
 void todo::ItemGroup::setColor(const QColor &color) {
     this->itemGroupDao.setColor(color);
+}
+
+const todo::ItemGroupDao &todo::ItemGroup::getDirectGroup() const {
+    return directGroup;
+}
+
+void todo::ItemGroup::setDirectGroup(const todo::ItemGroupDao &directGroup) {
+    ItemGroup::directGroup = directGroup;
+}
+
+const todo::ItemGroupDao &todo::ItemGroup::getRootGroup() const {
+    return rootGroup;
+}
+
+void todo::ItemGroup::setRootGroup(const todo::ItemGroupDao &rootGroup) {
+    ItemGroup::rootGroup = rootGroup;
 }

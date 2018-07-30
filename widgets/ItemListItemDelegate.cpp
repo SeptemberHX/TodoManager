@@ -216,6 +216,31 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
                                           const QStyleOptionViewItem &option, const QModelIndex &index) const {
     painter->setRenderHint(QPainter::Antialiasing, true);
 
+    // draw project color
+    QPainterPath painterPath;
+    {
+        auto projectColorRect = QRect(option.rect.topLeft() + QPoint(0, arcLength * 4), option.rect.bottomLeft()
+                                                                                + QPoint(arcLength, -arcLength));
+        auto arcRectF = QRectF(projectColorRect.topLeft() + QPoint(-arcLength, 0), projectColorRect.topRight()
+                                                                               + QPoint(0, arcLength * 2));
+        painterPath.moveTo(arcRectF.center());
+        painterPath.arcTo(arcRectF, 0, 90);
+        painterPath.closeSubpath();
+        painterPath.lineTo(projectColorRect.topLeft());
+        painterPath.lineTo(projectColorRect.bottomLeft() + QPoint(0, -arcLength));
+        auto arcRectF2 = QRectF(projectColorRect.bottomLeft() + QPoint(-arcLength, -arcLength * 2),
+                                projectColorRect.bottomRight());
+        painterPath.arcTo(arcRectF2, -90, 90);
+
+        painterPath.lineTo(projectColorRect.topRight() + QPoint(0, 10));
+        painterPath.closeSubpath();
+        if (itemGroup.getType() == todo::ItemGroupType::PROJECT) {
+            painter->fillPath(painterPath, QBrush(itemGroup.getColor()));
+        } else {
+            painter->fillPath(painterPath, itemGroup.getRootGroup().getColor());
+        }
+    }
+
     // draw task percent
     QSize percentSize(60, 20);
     QMargins percentMargin(5, 10, 5, 5);

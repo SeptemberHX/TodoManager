@@ -680,8 +680,8 @@ void todo::SQLDao::insertItemGroup(const ItemGroupDao &itemGroupDao) {
     QSqlQuery query(this->db);
     query.prepare("INSERT INTO item_groups"
                   " (id, title, description, fromDate, toDate, `type`, milestone, createdTime, lastUpdatedTime, color)"
-                  " VALUES(:id, :title, :description, :fromDate, :toDate, :type, :milestone, :color"
-                  "        :createTime, :lastUpdatedTime)");
+                  " VALUES(:id, :title, :description, :fromDate, :toDate, :type, :milestone,"
+                  "        :createTime, :lastUpdatedTime, :color)");
     query.bindValue(":id", itemGroupDao.getId());
     query.bindValue(":title", itemGroupDao.getTitle());
     query.bindValue(":description", itemGroupDao.getDescription());

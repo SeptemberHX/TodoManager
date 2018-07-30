@@ -62,6 +62,7 @@ private slots:
     void database_modified();
     void save_action_triggered(const todo::ItemAndGroupWrapper &wrapper);
     void markDone_clicked(bool flag);
+    void refresh_button_clicked();
 };
 
 #endif // GROUPWIDGET_H

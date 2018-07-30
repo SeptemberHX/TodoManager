@@ -25,7 +25,7 @@ GroupWidget::~GroupWidget()
 }
 
 void GroupWidget::selected_item_changed(const QString &itemID) {
-    if (this->groupDetailWidget->isEditing()) {
+    if (this->groupDetailWidget->isEditing() || this->itemDetailWidget->isEditing()) {
         if (QMessageBox::warning(this, tr("Attention !!"), tr("Your work not saved !. Save it ?"),
                              QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes) {
             this->save_action_triggered(this->groupDetailWidget->collectData());
@@ -233,6 +233,7 @@ void GroupWidget::initUI() {
     connect(this->itemDetailWidget, &ItemDetailWidget::saveButtonClicked, this, &GroupWidget::save_action_triggered);
 
     connect(this->itemDetailWidget, &ItemDetailWidget::markDoneClicked, this, &GroupWidget::markDone_clicked);
+    connect(ui->refreshToolButton, &QToolButton::clicked, this, &GroupWidget::refresh_button_clicked);
 
     // set icons
     ui->refreshToolButton->setIcon(QIcon::fromTheme("view-refresh"));
@@ -247,4 +248,10 @@ void GroupWidget::markDone_clicked(bool flag) {
     oldOne.setDone(flag);
     this->itemMap[itemID] = oldOne;
     this->listWidget->refresh_item_info(this->itemMap[itemID]);
+}
+
+void GroupWidget::refresh_button_clicked() {
+    if (this->groupDetailWidget->isEditing() || this->itemDetailWidget->isEditing()) return;
+
+    this->refresh_current_items();
 }

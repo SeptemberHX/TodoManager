@@ -282,3 +282,7 @@ void ItemDetailWidget::markDoneBtn_clicked() {
 void ItemDetailWidget::deleteButton_clicked() {
     emit(deleteButtonClicked());
 }
+
+bool ItemDetailWidget::isEditing() const {
+    return this->editMode == ItemDetailWidgetMode::EDIT;
+}
