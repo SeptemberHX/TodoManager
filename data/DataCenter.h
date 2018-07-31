@@ -9,6 +9,7 @@
 #include <QString>
 #include <QList>
 #include <QObject>
+#include "GlobalCache.h"
 #include "../core/ItemDetailDao.h"
 #include "../core/ItemDetail.h"
 #include "../dao/DaoFactory.h"

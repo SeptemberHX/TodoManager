@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<todo::ItemDetail>();
     qRegisterMetaTypeStreamOperators<todo::ItemTag>();
     qRegisterMetaTypeStreamOperators<todo::ItemAndGroupWrapper>();
+    qSetMessagePattern("%{file}:%{line}, %{function}: %{message}");
 
     MainWindow w;
     w.show();

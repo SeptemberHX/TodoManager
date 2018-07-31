@@ -6,6 +6,7 @@
 #define TODOMANAGER_ITEMUTILS_H
 
 #include <QString>
+#include "../core/ItemDetail.h"
 
 namespace todo {
 
@@ -19,6 +20,10 @@ public:
 
     static bool checkIfItemDetail(const QString &itemID);
     static bool checkIfItemGroup(const QString &itemGroup);
+
+    static ItemDetail generateNewItemDetail(const QString &title,
+            const QString &rootItemID="", const QString &directItemID="");
+
 };
 
 }

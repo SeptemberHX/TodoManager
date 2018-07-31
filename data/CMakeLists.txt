@@ -9,7 +9,7 @@ set(SOURCES
 
 set(HEADERS
     DataCenter.h
-)
+        GlobalCache.cpp GlobalCache.h)
 
 set(CMAKE_AUTOMOC ON)
 

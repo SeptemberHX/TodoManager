@@ -24,3 +24,8 @@ bool todo::ItemUtils::checkIfItemGroup(const QString &itemGroup) {
     return itemGroup.startsWith(ItemUtils::PREFIX_ITEMGROUP);
 }
 
+todo::ItemDetail
+todo::ItemUtils::generateNewItemDetail(const QString &title, const QString &rootItemID, const QString &directItemID) {
+    todo::ItemDetail newItemDetail(title);
+}
+
