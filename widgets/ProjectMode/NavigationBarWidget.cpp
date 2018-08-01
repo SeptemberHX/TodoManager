@@ -12,10 +12,7 @@ NavigationBarWidget::NavigationBarWidget(QWidget *parent) :
     ui(new Ui::NavigationBarWidget)
 {
     ui->setupUi(this);
-
-    this->widgetPtrList.append(ui->rootToolButton);
-    this->buttonObjectName2ID.insert(ui->rootToolButton->objectName(), NavigationBarWidget::ROOT);
-    connect(ui->rootToolButton, &QToolButton::clicked, this, &NavigationBarWidget::toolButton_clicked);
+    this->appendRoot();
 }
 
 NavigationBarWidget::~NavigationBarWidget()
@@ -71,4 +68,20 @@ QList<QString> NavigationBarWidget::getPathIDList() {
         }
     }
     return pathList;
+}
+
+void NavigationBarWidget::clear() {
+    foreach (auto wPtr, this->widgetPtrList) {
+        if (wPtr->objectName() == NavigationBarWidget::ROOT) continue;
+        this->buttonObjectName2ID.remove(wPtr->objectName());
+        delete wPtr;
+    }
+    this->widgetPtrList = {this->widgetPtrList[0]};
+}
+
+void NavigationBarWidget::appendRoot() {
+    ui->rootToolButton->setObjectName(NavigationBarWidget::ROOT);
+    this->widgetPtrList.append(ui->rootToolButton);
+    this->buttonObjectName2ID.insert(ui->rootToolButton->objectName(), NavigationBarWidget::ROOT);
+    connect(ui->rootToolButton, &QToolButton::clicked, this, &NavigationBarWidget::toolButton_clicked);
 }

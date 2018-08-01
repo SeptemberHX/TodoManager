@@ -4,6 +4,7 @@
 #include "../../core/SqlErrorException.h"
 #include "NavigationBarWidget.h"
 #include "../../utils/ItemUtils.h"
+#include "../../utils/ItemGroupUtils.h"
 #include <QDebug>
 #include <QAction>
 #include <QMessageBox>
@@ -81,6 +82,7 @@ QList<todo::ItemAndGroupWrapper> GroupWidget::getRootGroups() {
 
 void GroupWidget::jump_to(const QList<QString> &pathList) {
     QString clickedID = pathList.last();
+    qDebug() << clickedID;
     if (clickedID != NavigationBarWidget::ROOT) {
         this->loadItems(this->getSubItemsForGroup(clickedID));
         this->addNewPopupMenu->setEnabled(true);

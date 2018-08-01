@@ -273,3 +273,7 @@ QList<todo::ItemDetail> todo::DataCenter::fillItemDetailInfo(const QList<todo::I
 
     return resultList;
 }
+
+QList<todo::ItemGroupRelation> todo::DataCenter::selectItemGroupRelationByItemID(const QString &itemID) {
+    return DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByItemID(itemID);
+}

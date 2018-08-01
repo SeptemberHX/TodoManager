@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include "GroupWidget.h"
 #include "NavigationBarWidget.h"
+#include "../../data/DataCenter.h"
 
 namespace Ui {
 class ProjectModeWidget;
@@ -18,9 +19,15 @@ public:
     explicit ProjectModeWidget(QWidget *parent = 0);
     ~ProjectModeWidget();
     void refresh_current_items();
+
+public slots:
+    void jump_to(const QString &itemID);
+
 signals:
     void databaseModified();
+
 private:
+    todo::DataCenter dataCenter;
     Ui::ProjectModeWidget *ui;
     QVBoxLayout *mainVBoxLayout;
     GroupWidget *groupWidget;

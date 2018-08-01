@@ -130,6 +130,7 @@ private:
 signals:
     void changeStatusBarText(const QString &newStr);
     void databaseModified();  // for notification
+    void jumpToGroup(const QString &groupID);
 
 private slots:
     void todayBtn_clicked();
@@ -154,6 +155,8 @@ private slots:
     void deleteBtn_clicked();
 
     void inboxFilter_changed(const InboxViewFilterCondition &newCondition);
+
+    void jump_to_specific_group(const QString &groupID);
 };
 
 #endif // TODOLISTWIDGET_H

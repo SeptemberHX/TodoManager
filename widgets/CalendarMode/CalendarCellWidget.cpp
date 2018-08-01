@@ -8,6 +8,7 @@
 #include <QToolTip>
 #include <QDebug>
 #include "../../utils/DrawUtils.h"
+#include "../../utils/ItemUtils.h"
 
 CalendarCellWidget::CalendarCellWidget(QWidget *parent) :
     QWidget(parent),
@@ -68,13 +69,27 @@ void CalendarCellWidget::paintEvent(QPaintEvent *event) {
     todo::DrawUtils::drawRectWithCircle(painter, percentFont, Qt::darkGray, percentText, percentRect, QColor("#55ffff"), percent);
 
     // draw task
-    QMargins taskMargin(15, 5, 15, 5);
+    QMargins colorMargin(15, 5, 0, 5);
+    QRect projectColorRect(QPoint(event->rect().left() + colorMargin.left(), dayNumRect.bottom() + dayNumMargin.bottom()),
+                           QSize(12, 24));
+    QMargins taskMargin(5, 5, 15, 5);
     int taskSpacing = 3;
-    QRect lastTaskRect(QPoint(taskMargin.left(), dayNumRect.bottom() + dayNumMargin.bottom()),
-                       QSize(event->rect().width() - taskMargin.left() - taskMargin.right(), 24));
+    QRect lastTaskRect(QPoint(taskMargin.left() + projectColorRect.right() + colorMargin.right(), dayNumRect.bottom() + dayNumMargin.bottom()),
+                       QSize(event->rect().width() - taskMargin.left() - taskMargin.right()
+                                         - colorMargin.left() - colorMargin.right() - projectColorRect.width(),
+                             24)
+                      );
     this->itemDetailID2Rect.clear();
-    foreach (auto itemDetail, this->itemDetailList) {
+    foreach (auto const &itemDetail, this->itemDetailList) {
         if (lastTaskRect.bottom() + taskMargin.bottom() <= event->rect().bottom()) {
+            QColor projectColor = todo::ItemUtils::getRootGroupColor(itemDetail);
+            QRect projectColorRectDraw(projectColorRect.center() + QPoint(-6, -6), QSize(12 ,12));
+            QPainterPath path;
+            path.moveTo(projectColorRectDraw.center());
+            path.arcTo(projectColorRectDraw, 0, 360);
+            path.closeSubpath();
+            painter.fillPath(path, projectColor);
+
             QColor itemColor(Qt::gray);
             if (!itemDetail.getTags().isEmpty()) {
                 itemColor = itemDetail.getTags()[0].getColor();
@@ -83,6 +98,7 @@ void CalendarCellWidget::paintEvent(QPaintEvent *event) {
                                                 itemDetail.getTitle(), lastTaskRect, itemColor, 1);
             this->itemDetailID2Rect.insert(itemDetail.getId(), lastTaskRect);
             lastTaskRect.moveTop(lastTaskRect.bottom() + taskSpacing);
+            projectColorRect.moveTop(projectColorRect.bottom() + taskSpacing);
         } else {
             break;
         }

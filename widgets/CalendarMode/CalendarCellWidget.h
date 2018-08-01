@@ -6,6 +6,7 @@
 #include <QList>
 #include <QMap>
 #include "../../core/ItemDetail.h"
+#include "../../data/DataCenter.h"
 
 namespace Ui {
 class CalendarCellWidget;

@@ -59,6 +59,10 @@ TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
     connect(this->detailWidget, &ItemDetailWidget::deleteButtonClicked, this, &TodoListWidget::deleteBtn_clicked);
     // end
 
+    // jump to group
+    connect(this->detailWidget, &ItemDetailWidget::jumpTo, this, &TodoListWidget::jump_to_specific_group);
+    // end
+
     connect(&this->dataCenter, &todo::DataCenter::databaseModified, this, &TodoListWidget::database_modified);
 
     // set icons
@@ -339,6 +343,10 @@ void TodoListWidget::loadTargetDateData(const QDate &targetDate) {
 
 void TodoListWidget::jump_to_specific_day(const QDate &targetDay) {
     ui->filterDateEdit->setDate(targetDay);
+}
+
+void TodoListWidget::jump_to_specific_group(const QString &groupID) {
+    emit jumpToGroup(groupID);
 }
 
 // --------- InboxViewFilterCondition --------

@@ -59,6 +59,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // jump
     connect(this->calendarModeWidget, &CalendarModeWidget::itemClicked, this, &MainWindow::item_clicked);
     connect(this->calendarModeWidget, &CalendarModeWidget::targetDayClicked, this, &MainWindow::targetDay_clicked);
+    connect(this->inboxViewWidget, &TodoListWidget::jumpToGroup, this, &MainWindow::jump_to_specific_group);
+    connect(this->todoListWidget, &TodoListWidget::jumpToGroup, this, &MainWindow::jump_to_specific_group);
+    connect(this->tagModeWidget, &TagModeWidget::jumpToGroup, this, &MainWindow::jump_to_specific_group);
     // end
 
     // notification timer
@@ -234,4 +237,9 @@ void MainWindow::item_clicked(const todo::ItemDetail &item) {
 void MainWindow::targetDay_clicked(const QDate &targetDay) {
     ui->dailyModePushButton->click();
     this->todoListWidget->jump_to_specific_day(targetDay);
+}
+
+void MainWindow::jump_to_specific_group(const QString &groupID) {
+    ui->projectPushButton->click();
+    this->projectModeWidget->jump_to(groupID);
 }

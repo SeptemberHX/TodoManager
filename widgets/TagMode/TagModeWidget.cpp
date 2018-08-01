@@ -32,6 +32,7 @@ TagModeWidget::TagModeWidget(QWidget *parent) :
 
     connect(ui->listView, &QListView::clicked, this, &TagModeWidget::list_selected_item_changed);
     connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &TagModeWidget::database_modified);
+    connect(this->todoListWidget, &TodoListWidget::jumpToGroup, this, &TagModeWidget::jump_to_group);
 }
 
 TagModeWidget::~TagModeWidget()
@@ -81,4 +82,8 @@ void TagModeWidget::loadTagList() {
     auto itemTagList = this->dataCenter.selectAllItemTag();
     std::sort(itemTagList.begin(), itemTagList.end(), compareItemTagWithName);
     this->setItemTags(itemTagList);
+}
+
+void TagModeWidget::jump_to_group(const QString &groupID) {
+    emit jumpToGroup(groupID);
 }

@@ -9,6 +9,7 @@
 #include "../core/ItemDetail.h"
 #include "../core/ItemGroupRelation.h"
 #include "../core/ItemGroupOverview.h"
+#include "../data/DataCenter.h"
 #include <QList>
 #include <QMap>
 #include <QString>
@@ -24,7 +25,16 @@ public:
 
     static ItemGroupOverview getGroupOverview(const ItemGroup &itemGroup);
 
+    /**
+     * Get the path to subGroup from rootGroup
+     * @param subGroupID
+     * @return: first element will be rootGroupID, and given subGroupID will at the last.
+     */
+    static QList<QString> getGroupPath(const QString &subGroupID);
+
 private:
+    static DataCenter dataCenter;
+
     static void buildGroup_(ItemGroup *rootGroupPtr,
                             const QMap<QString, ItemGroup> &groupMap,
                             const QMap<QString, ItemDetail> &detailMap,

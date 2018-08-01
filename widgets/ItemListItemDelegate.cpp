@@ -218,7 +218,7 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
     painter->setRenderHint(QPainter::Antialiasing, true);
 
     // draw background
-    painter->fillRect(option.rect, QColor("#E9EBFE"));
+    painter->fillRect(option.rect, QColor("#EAEAEF"));
 
     // draw item bottom line
     QPoint lineStartPos = option.rect.bottomLeft() + QPoint(20, 0);

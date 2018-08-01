@@ -1,5 +1,6 @@
 #include "ProjectModeWidget.h"
 #include "ui_ProjectModeWidget.h"
+#include "../../utils/ItemGroupUtils.h"
 
 ProjectModeWidget::ProjectModeWidget(QWidget *parent) :
     QWidget(parent),
@@ -17,7 +18,7 @@ ProjectModeWidget::ProjectModeWidget(QWidget *parent) :
     this->setLayout(this->mainVBoxLayout);
 
     connect(this->groupWidget, &GroupWidget::enterItem, this, &ProjectModeWidget::enter_item);
-    connect(this->navigationBarWidget, &NavigationBarWidget::jumpTo, this->groupWidget, &GroupWidget::jump_to);
+    connect(this->navigationBarWidget, &NavigationBarWidget::jumpTo, this->groupWidget, QOverload<const QList<QString>&>::of(&GroupWidget::jump_to));
     connect(this->groupWidget, &GroupWidget::databaseModified, this, &ProjectModeWidget::database_modified);
 }
 
@@ -36,4 +37,15 @@ void ProjectModeWidget::database_modified() {
 
 void ProjectModeWidget::refresh_current_items() {
     this->groupWidget->refresh_current_items();
+}
+
+void ProjectModeWidget::jump_to(const QString &itemID) {
+    auto fullPathList = todo::ItemGroupUtils::getGroupPath(itemID);
+    auto const &itemGroups = this->dataCenter.selectItemGroupByIDs(fullPathList);
+    this->navigationBarWidget->clear();
+    foreach (auto const &itemGroup, itemGroups) {
+        this->navigationBarWidget->append(itemGroup.getId(), itemGroup.getTitle());
+    }
+    fullPathList.push_front(NavigationBarWidget::ROOT);
+    this->groupWidget->jump_to(fullPathList);
 }

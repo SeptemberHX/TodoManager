@@ -26,10 +26,12 @@ public:
 
 signals:
     void databaseModified();
+    void jumpToGroup(const QString &groupID);
 
 private slots:
     void list_selected_item_changed();
     void database_modified();
+    void jump_to_group(const QString &groupID);
 
 private:
     Ui::TagModeWidget *ui;

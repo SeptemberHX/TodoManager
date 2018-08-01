@@ -55,6 +55,10 @@ ItemDetailWidget::ItemDetailWidget(QWidget *parent) :
     // delete the task
     connect(ui->deleteToolButton, &QToolButton::clicked, this, &ItemDetailWidget::deleteButton_clicked);
 
+    // jump to project
+    connect(ui->rootProjectLabel, &QLabel::linkActivated, this, &ItemDetailWidget::try_jump_to);
+    connect(ui->directProjectLabel, &QLabel::linkActivated, this, &ItemDetailWidget::try_jump_to);
+
     // set icons
     ui->editToolButton->setIcon(QIcon::fromTheme("edit"));
     ui->deleteToolButton->setIcon(QIcon::fromTheme("editdelete"));
@@ -142,6 +146,7 @@ void ItemDetailWidget::setReadOnly(bool isReadOnly) {
     ui->scheduleTimeGroupBox->setDisabled(isReadOnly);
 
     ui->descriptionTextEdit->setReadOnly(isReadOnly);
+    ui->projectInfoWidget->setVisible(isReadOnly);
 }
 
 void ItemDetailWidget::editBtn_clicked() {
@@ -252,6 +257,16 @@ void ItemDetailWidget::reloadCurrItemDetail() {
                                    this->currItemPtr->getLastUpdatedTime().toString("yyyy/MM/dd hh:mm:ss")
                                    );
     ui->itemDetailInfoLabel->setText(info);
+
+    if (this->currItemPtr->hasRootGroup()) {
+        auto rootGroup = this->dataCenter.selectItemGroupByID(this->currItemPtr->getRootGroupID());
+        auto directGroup = this->dataCenter.selectItemGroupByID(this->currItemPtr->getDirectGroupID());
+        ui->rootProjectLabel->setText(QString("<a href = %1>%2</a>").arg(rootGroup[0].getId()).arg(rootGroup[0].getTitle()));
+        ui->directProjectLabel->setText(QString("<a href = %1>%2</a>").arg(directGroup[0].getId()).arg(directGroup[0].getTitle()));
+        ui->projectInfoWidget->show();
+    } else {
+        ui->projectInfoWidget->hide();
+    }
 }
 
 void ItemDetailWidget::saveBtn_clicked() {
@@ -285,4 +300,8 @@ void ItemDetailWidget::deleteButton_clicked() {
 
 bool ItemDetailWidget::isEditing() const {
     return this->editMode == ItemDetailWidgetMode::EDIT;
+}
+
+void ItemDetailWidget::try_jump_to(const QString &itemID) {
+    emit jumpTo(itemID);
 }

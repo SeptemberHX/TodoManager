@@ -7,6 +7,8 @@
 #include <QList>
 #include <QDebug>
 
+todo::DataCenter todo::ItemGroupUtils::dataCenter;
+
 QList<todo::ItemGroup>
 todo::ItemGroupUtils::buildGroup(const QList<todo::ItemGroup> &itemGroupList, const QList<todo::ItemDetail> &itemList,
                                  const QList<todo::ItemGroupRelation> &relationList) {
@@ -94,4 +96,24 @@ todo::ItemGroupOverview todo::ItemGroupUtils::getGroupOverview(const todo::ItemG
     overview.setTotalItemDoneCount(totalItemDoneCount);
 
     return overview;
+}
+
+QList<QString> todo::ItemGroupUtils::getGroupPath(const QString &subGroupID) {
+    auto relations = ItemGroupUtils::dataCenter.selectItemGroupRelationByItemID(subGroupID);
+    if (relations.empty()) {
+        return {subGroupID};
+    }
+
+    auto fullRelations = ItemGroupUtils::dataCenter.selectItemGroupRelationByRootID(relations[0].getRootGroupID());
+    QMap<QString, ItemGroupRelation> id2RelationMap;
+    foreach (auto const &relation, fullRelations) {
+        id2RelationMap.insert(relation.getItemID(), relation);  // only work when item belongs to ONE GROUP
+    }
+    QList<QString> resultPathList;
+    resultPathList.append(subGroupID);
+    while (id2RelationMap.contains(resultPathList.first())) {
+        resultPathList.push_front(id2RelationMap[resultPathList.first()].getDirectGroupID());
+    }
+
+    return resultPathList;
 }

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QButtonGroup>
+#include "../data/DataCenter.h"
 #include "../core/ItemDetail.h"
 #include "../core/ItemTag.h"
 #include "tagwidget.h"
@@ -35,11 +36,14 @@ signals:
     void saveButtonClicked(const todo::ItemDetail &newItemDetail);
     void markDoneClicked(bool isDone);
     void deleteButtonClicked();
+    void jumpTo(const QString &itemID);
 
 public slots:
     void modeButtonToggled();
 
 private:
+    todo::DataCenter dataCenter;
+
     void changeToSimpleMode();
     void changeToScheduleMode();
     void changeToRecursionMode();
@@ -70,6 +74,7 @@ private slots:
     void buttonBox_clicked(QAbstractButton *btn);
     void markDoneBtn_clicked();
     void deleteButton_clicked();
+    void try_jump_to(const QString &itemID);
 };
 
 #endif // ITEMDETAILWIDGET_H

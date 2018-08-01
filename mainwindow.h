@@ -68,6 +68,7 @@ private slots:
     void trayIcon_clicked();
     void modeBtn_clicked(QAbstractButton *button);
     void database_modified();
+    void jump_to_specific_group(const QString &groupID);
 
 public slots:
     void update_notification_timer();
