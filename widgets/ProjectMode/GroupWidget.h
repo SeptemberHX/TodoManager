@@ -51,6 +51,9 @@ private:
     QList<todo::ItemAndGroupWrapper> getSubItemsForGroup(const QString &groupID);
     QList<todo::ItemAndGroupWrapper> getRootGroups();
     void dealWithNewItem(const todo::ItemAndGroupWrapper &newWrapper);
+    QString getCurrentRootGroupID() const;
+    QString getCurrentDirectGroupID() const;
+    bool isRootLevel() const;
 
 private slots:
     void selected_item_changed(const QString &itemID);

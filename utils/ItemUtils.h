@@ -7,23 +7,22 @@
 
 #include <QString>
 #include "../core/ItemDetail.h"
+#include "../core/ItemAndGroupWrapper.h"
+#include "../data/DataCenter.h"
 
 namespace todo {
 
 class ItemUtils {
 public:
-    static const QString PREFIX_ITEMDETAIL;
-    static const QString PREFIX_ITEMGROUP;
 
-    static QString generateItemDetailUniqueID();
-    static QString generateItemGroupUniqueID();
 
-    static bool checkIfItemDetail(const QString &itemID);
-    static bool checkIfItemGroup(const QString &itemGroup);
+    static QColor getRootGroupColor(const ItemAndGroupWrapper &wrapper);
 
     static ItemDetail generateNewItemDetail(const QString &title,
             const QString &rootItemID="", const QString &directItemID="");
 
+private:
+    static DataCenter dataCenter;
 };
 
 }

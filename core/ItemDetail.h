@@ -76,17 +76,15 @@ namespace todo {
 
         void setId(const QString &id);
 
-        const ItemGroupDao &getRootGroup() const;
-
-        void setRootGroup(const ItemGroupDao &rootGroup);
-
-        const ItemGroupDao &getDirectGroup() const;
-
-        void setDirectGroup(const ItemGroupDao &directGroup);
-
         bool hasRootGroup() const;
 
-        const QColor &projectColor() const;
+        const QString &getRootGroupID() const;
+
+        void setRootGroupID(const QString &rootGroupID);
+
+        const QString &getDirectGroupID() const;
+
+        void setDirectGroupID(const QString &directGroupID);
 
         // ------ End
 
@@ -102,8 +100,8 @@ namespace todo {
     private:
         QList<ItemTag> tags;
         ItemDetailDao itemDetailDao;
-        ItemGroupDao rootGroup;
-        ItemGroupDao directGroup;
+        QString rootGroupID;
+        QString directGroupID;
     };
 
 }

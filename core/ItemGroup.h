@@ -73,20 +73,20 @@ public:
 
     bool operator==(const ItemGroup &otherGroup) const;
 
-    const ItemGroupDao &getDirectGroup() const;
-
-    void setDirectGroup(const ItemGroupDao &directGroup);
-
-    const ItemGroupDao &getRootGroup() const;
-
-    void setRootGroup(const ItemGroupDao &rootGroup);
-
     bool hasRootGroup() const;
+
+    const QString &getDirectGroupID() const;
+
+    void setDirectGroupID(const QString &directGroupID);
+
+    const QString &getRootGroupID() const;
+
+    void setRootGroupID(const QString &rootGroupID);
 
 private:
     ItemGroupDao itemGroupDao;
-    ItemGroupDao directGroup;
-    ItemGroupDao rootGroup;
+    QString directGroupID;
+    QString rootGroupID;
     // only one level
     QList<ItemGroup> subGroupList;
     QList<ItemDetail> itemDetailList;

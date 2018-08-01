@@ -842,3 +842,13 @@ QList<todo::ItemGroupRelation> todo::SQLDao::selectItemGroupRelationByItemID(con
 
     return resultList;
 }
+
+void todo::SQLDao::deleteItemGroupRelationByItemID(const QString &itemID) {
+    QSqlQuery query(this->db);
+    query.prepare("DELETE FROM item_group_relations"
+                  " WHERE itemID = :itemID");
+    query.bindValue(":itemID", itemID);
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
+}

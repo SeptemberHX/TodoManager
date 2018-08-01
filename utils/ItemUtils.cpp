@@ -5,27 +5,24 @@
 #include "ItemUtils.h"
 #include <QUuid>
 
-const QString todo::ItemUtils::PREFIX_ITEMDETAIL = "todo";
-const QString todo::ItemUtils::PREFIX_ITEMGROUP = "group";
-
-QString todo::ItemUtils::generateItemDetailUniqueID() {
-    return QString("%1_%2").arg(ItemUtils::PREFIX_ITEMDETAIL).arg(QUuid::createUuid().toString().remove('{').remove('}'));
-}
-
-QString todo::ItemUtils::generateItemGroupUniqueID() {
-    return QString("%1_%2").arg(ItemUtils::PREFIX_ITEMGROUP).arg(QUuid::createUuid().toString().remove('{').remove('}'));
-}
-
-bool todo::ItemUtils::checkIfItemDetail(const QString &itemID) {
-    return itemID.startsWith(ItemUtils::PREFIX_ITEMDETAIL);
-}
-
-bool todo::ItemUtils::checkIfItemGroup(const QString &itemGroup) {
-    return itemGroup.startsWith(ItemUtils::PREFIX_ITEMGROUP);
-}
+todo::DataCenter todo::ItemUtils::dataCenter;
 
 todo::ItemDetail
 todo::ItemUtils::generateNewItemDetail(const QString &title, const QString &rootItemID, const QString &directItemID) {
     todo::ItemDetail newItemDetail(title);
+    newItemDetail.setRootGroupID(rootItemID);
+    newItemDetail.setDirectGroupID(directItemID);
+    newItemDetail.setCreatedTime(QDateTime::currentDateTime());
+    newItemDetail.setLastUpdatedTime(QDateTime::currentDateTime());
+    newItemDetail.setDone(false);
+    newItemDetail.setMode(ItemMode::SIMPLE);
+    return newItemDetail;
 }
 
+QColor todo::ItemUtils::getRootGroupColor(const todo::ItemAndGroupWrapper &wrapper) {
+    if (wrapper.hasRootGroup()) {
+        return ItemUtils::dataCenter.selectItemGroupByID(wrapper.getRootGroupID())[0].getColor();
+    } else {
+        return Qt::transparent;
+    }
+}

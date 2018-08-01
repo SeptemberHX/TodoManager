@@ -13,6 +13,14 @@ namespace todo {
 
 class StringUtils {
 public:
+    static const QString PREFIX_ITEMDETAIL;
+    static const QString PREFIX_ITEMGROUP;
+
+    static QString generateItemDetailUniqueID();
+    static QString generateItemGroupUniqueID();
+
+    static bool checkIfItemDetail(const QString &itemID);
+    static bool checkIfItemGroup(const QString &itemGroup);
     static bool compareString(const QString &str1, const QString &str2);
     static bool ifStringStartWithChinese(const QString &str);
     static QString elideText(const QString &str, const QFontMetrics &fontMetrics, int maxWidth);

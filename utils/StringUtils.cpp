@@ -4,6 +4,7 @@
 
 #include <QLocale>
 #include <QCollator>
+#include <QUuid>
 #include "StringUtils.h"
 
 bool todo::StringUtils::compareString(const QString &str1, const QString &str2) {
@@ -34,4 +35,23 @@ QString todo::StringUtils::elideText(const QString &str, const QFontMetrics &fon
         return fontMetrics.elidedText(newStr, Qt::ElideRight, maxWidth);
     }
     return newStr;
+}
+
+const QString todo::StringUtils::PREFIX_ITEMDETAIL = "todo";
+const QString todo::StringUtils::PREFIX_ITEMGROUP = "group";
+
+QString todo::StringUtils::generateItemDetailUniqueID() {
+    return QString("%1_%2").arg(StringUtils::PREFIX_ITEMDETAIL).arg(QUuid::createUuid().toString().remove('{').remove('}'));
+}
+
+QString todo::StringUtils::generateItemGroupUniqueID() {
+    return QString("%1_%2").arg(StringUtils::PREFIX_ITEMGROUP).arg(QUuid::createUuid().toString().remove('{').remove('}'));
+}
+
+bool todo::StringUtils::checkIfItemDetail(const QString &itemID) {
+    return itemID.startsWith(StringUtils::PREFIX_ITEMDETAIL);
+}
+
+bool todo::StringUtils::checkIfItemGroup(const QString &itemGroup) {
+    return itemGroup.startsWith(StringUtils::PREFIX_ITEMGROUP);
 }

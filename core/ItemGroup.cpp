@@ -3,7 +3,7 @@
 //
 
 #include "ItemGroup.h"
-#include "../utils/ItemUtils.h"
+#include "../utils/StringUtils.h"
 
 const QString &todo::ItemGroup::getTitle() const {
     return this->itemGroupDao.getTitle();
@@ -78,7 +78,7 @@ void todo::ItemGroup::setItemDetailList(const QList<todo::ItemDetail> &itemDetai
 }
 
 todo::ItemGroup::ItemGroup() {
-    this->itemGroupDao.setId(todo::ItemUtils::generateItemGroupUniqueID());
+    this->itemGroupDao.setId(todo::StringUtils::generateItemGroupUniqueID());
     this->itemGroupDao.setCreatedTime(QDateTime::currentDateTime());
     this->itemGroupDao.setLastUpdatedTime(this->getCreatedTime());
     this->itemGroupDao.setFromDate(QDate::currentDate());
@@ -132,18 +132,22 @@ void todo::ItemGroup::setColor(const QColor &color) {
     this->itemGroupDao.setColor(color);
 }
 
-const todo::ItemGroupDao &todo::ItemGroup::getDirectGroup() const {
-    return directGroup;
+bool todo::ItemGroup::hasRootGroup() const {
+    return StringUtils::checkIfItemGroup(this->rootGroupID);
 }
 
-void todo::ItemGroup::setDirectGroup(const todo::ItemGroupDao &directGroup) {
-    ItemGroup::directGroup = directGroup;
+const QString &todo::ItemGroup::getDirectGroupID() const {
+    return directGroupID;
 }
 
-const todo::ItemGroupDao &todo::ItemGroup::getRootGroup() const {
-    return rootGroup;
+void todo::ItemGroup::setDirectGroupID(const QString &directGroupID) {
+    ItemGroup::directGroupID = directGroupID;
 }
 
-void todo::ItemGroup::setRootGroup(const todo::ItemGroupDao &rootGroup) {
-    ItemGroup::rootGroup = rootGroup;
+const QString &todo::ItemGroup::getRootGroupID() const {
+    return rootGroupID;
+}
+
+void todo::ItemGroup::setRootGroupID(const QString &rootGroupID) {
+    ItemGroup::rootGroupID = rootGroupID;
 }

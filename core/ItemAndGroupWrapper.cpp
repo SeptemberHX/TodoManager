@@ -58,3 +58,17 @@ const QString &todo::ItemAndGroupWrapper::getID() const {
 bool todo::ItemAndGroupWrapper::isDetail() const {
     return !this->isGroup();
 }
+
+QString todo::ItemAndGroupWrapper::getRootGroupID() const {
+    if (this->isGroup()) return this->itemGroup.getRootGroupID();
+    else return this->itemDetail.getRootGroupID();
+}
+
+bool todo::ItemAndGroupWrapper::hasRootGroup() const {
+    if (this->isGroup()) return this->itemGroup.hasRootGroup();
+    else return this->itemDetail.hasRootGroup();
+}
+
+QString todo::ItemAndGroupWrapper::getDirectGroupID() const {
+    if (this->isGroup()) return this->itemGroup.getDirectGroupID();
+    else return this->itemDetail.getDirectGroupID();}

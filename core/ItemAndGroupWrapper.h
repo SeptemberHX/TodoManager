@@ -37,6 +37,12 @@ public:
 
     const QString &getID() const;
 
+    QString getRootGroupID() const;
+
+    QString getDirectGroupID() const;
+
+    bool hasRootGroup() const;
+
     friend std::ostream &operator<<(std::ostream &os, const ItemAndGroupWrapper &itemAndGroupPair);
 
     friend QDataStream&operator<<(QDataStream &os, const ItemAndGroupWrapper &itemAndGroupPair);

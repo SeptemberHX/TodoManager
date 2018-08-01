@@ -29,7 +29,7 @@ namespace todo {
 class DataCenter : public QObject {
     Q_OBJECT
 public:
-    DataCenter(QObject *parent = nullptr);
+    DataCenter(QObject *parent = 0);
 
     // ---------------- todo_item.item_detail Starts ----------------
     QList<ItemDetail> selectItemDetailByDate(const QDate &targetDate);

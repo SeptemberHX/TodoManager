@@ -3,6 +3,7 @@
 #include "../ItemListItemDelegate.h"
 #include "../../core/SqlErrorException.h"
 #include "NavigationBarWidget.h"
+#include "../../utils/ItemUtils.h"
 #include <QDebug>
 #include <QAction>
 #include <QMessageBox>
@@ -104,11 +105,11 @@ void GroupWidget::dealWithNewItem(const todo::ItemAndGroupWrapper &newWrapper) {
     }
 
     // 2. save the relation
-    if (this->currPathList.size() > 1) {  // skip root group
+    if (newWrapper.hasRootGroup()) {
         todo::ItemGroupRelation relation;
         relation.setItemID(newWrapper.getID());
-        relation.setDirectGroupID(this->currPathList.last());
-        relation.setRootGroupID(this->currPathList[1]);
+        relation.setDirectGroupID(newWrapper.getDirectGroupID());
+        relation.setRootGroupID(newWrapper.getRootGroupID());
         this->dataCenter.insertItemGroupRelation(relation);
     }
 
@@ -131,7 +132,9 @@ void GroupWidget::new_group_button_clicked() {
         } else {
             todo::ItemGroup itemGroup;
             itemGroup.setTitle(title);
-            if (this->currPathList.last() != NavigationBarWidget::ROOT) {
+            if (!this->isRootLevel()) {
+                itemGroup.setRootGroupID(this->getCurrentRootGroupID());
+                itemGroup.setDirectGroupID(this->getCurrentDirectGroupID());
                 itemGroup.setType(todo::ItemGroupType::SUB_PROJECT);
             } else {
                 itemGroup.setType(todo::ItemGroupType::PROJECT);
@@ -151,8 +154,9 @@ void GroupWidget::new_detail_button_clicked() {
             QMessageBox::information(this, tr("Invalid input !"), tr("Can't leave it empty !!!"));
             return;
         } else {
-            todo::ItemDetail newItemDetail(title);
-            this->dealWithNewItem(newItemDetail);
+            this->dealWithNewItem(todo::ItemUtils::generateNewItemDetail(title,
+                    this->getCurrentRootGroupID(), this->getCurrentDirectGroupID())
+            );
         }
     }
 }
@@ -254,4 +258,17 @@ void GroupWidget::refresh_button_clicked() {
     if (this->groupDetailWidget->isEditing() || this->itemDetailWidget->isEditing()) return;
 
     this->refresh_current_items();
+}
+
+QString GroupWidget::getCurrentRootGroupID() const {
+    if (!this->isRootLevel()) return this->currPathList[1];
+    else return "";
+}
+
+QString GroupWidget::getCurrentDirectGroupID() const {
+    return this->currPathList.last();
+}
+
+bool GroupWidget::isRootLevel() const {
+    return this->currPathList.size() <= 1;
 }

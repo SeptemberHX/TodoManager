@@ -10,6 +10,7 @@
 #include "../config/TodoConfig.h"
 #include "../utils/StringUtils.h"
 #include "../utils/DrawUtils.h"
+#include "../utils/ItemUtils.h"
 
 ItemListItemDelegate::ItemListItemDelegate(QObject *parent)
     : QStyledItemDelegate(parent) {
@@ -19,15 +20,6 @@ ItemListItemDelegate::ItemListItemDelegate(QObject *parent)
 void
 ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     painter->save();
-
-    // draw background
-    painter->fillRect(option.rect, Qt::white);
-
-    // draw item bottom line
-    QPoint lineStartPos = option.rect.bottomLeft() + QPoint(20, 0);
-    QPoint lineEndPos = option.rect.bottomRight() + QPoint(-20, 0);
-    painter->setPen(QPen(Qt::lightGray, 1));
-    painter->drawLine(QLine(lineStartPos, lineEndPos));
 
     todo::ItemAndGroupWrapper itemAndGroupPair = index.data(Qt::UserRole + 1).value<todo::ItemAndGroupWrapper>();
 
@@ -46,6 +38,15 @@ QSize ItemListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
 
 void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, QPainter *painter,
                                            const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    // draw background
+    painter->fillRect(option.rect, Qt::white);
+
+    // draw item bottom line
+    QPoint lineStartPos = option.rect.bottomLeft() + QPoint(20, 0);
+    QPoint lineEndPos = option.rect.bottomRight() + QPoint(-20, 0);
+    painter->setPen(QPen(Qt::lightGray, 1));
+    painter->drawLine(QLine(lineStartPos, lineEndPos));
+
     // draw project color
     painter->setRenderHint(QPainter::Antialiasing, true);
     QPainterPath painterPath;
@@ -65,7 +66,7 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
 
         painterPath.lineTo(projectColorRect.topRight() + QPoint(0, 10));
         painterPath.closeSubpath();
-        painter->fillPath(painterPath, QBrush(itemDetail.projectColor()));
+        painter->fillPath(painterPath, QBrush(todo::ItemUtils::getRootGroupColor(itemDetail)));
     }
 
     // draw title
@@ -216,6 +217,15 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
                                           const QStyleOptionViewItem &option, const QModelIndex &index) const {
     painter->setRenderHint(QPainter::Antialiasing, true);
 
+    // draw background
+    painter->fillRect(option.rect, QColor("#E9EBFE"));
+
+    // draw item bottom line
+    QPoint lineStartPos = option.rect.bottomLeft() + QPoint(20, 0);
+    QPoint lineEndPos = option.rect.bottomRight() + QPoint(-20, 0);
+    painter->setPen(QPen(Qt::lightGray, 1));
+    painter->drawLine(QLine(lineStartPos, lineEndPos));
+
     // draw project color
     QPainterPath painterPath;
     {
@@ -237,7 +247,7 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
         if (itemGroup.getType() == todo::ItemGroupType::PROJECT) {
             painter->fillPath(painterPath, QBrush(itemGroup.getColor()));
         } else {
-            painter->fillPath(painterPath, itemGroup.getRootGroup().getColor());
+            painter->fillPath(painterPath, todo::ItemUtils::getRootGroupColor(itemGroup));
         }
     }
 

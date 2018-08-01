@@ -66,8 +66,8 @@ todo::ItemGroup GroupDetailWidget::collectData() const {
     newItemGroup.setId(this->rawItemGroup.getId());                             // 8
     newItemGroup.setType(this->rawItemGroup.getType());                         // 9
     newItemGroup.setColor(this->currentColor);                                  // 10
-    newItemGroup.setDirectGroup(this->rawItemGroup.getDirectGroup());           // 11
-    newItemGroup.setRootGroup(this->rawItemGroup.getRootGroup());               // 12
+    newItemGroup.setDirectGroupID(this->rawItemGroup.getDirectGroupID());       // 11
+    newItemGroup.setRootGroupID(this->rawItemGroup.getRootGroupID());           // 12
 
     return newItemGroup;
 }
