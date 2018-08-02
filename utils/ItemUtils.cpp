@@ -41,3 +41,23 @@ void todo::ItemUtils::assignItemDetailsToGroup(const QList<QString> &itemIDs, co
         ItemUtils::dataCenter.insertItemGroupRelation(relation);
     }
 }
+
+todo::ItemDetail todo::ItemUtils::assignItemDetailToGroup(const todo::ItemDetail &itemDetail, const QString &rGroupID,
+                                                          const QString &dGroupID) {
+    return ItemUtils::assignItemDetailsToGroup({itemDetail}, rGroupID, dGroupID)[0];
+}
+
+QList<todo::ItemDetail>
+todo::ItemUtils::assignItemDetailsToGroup(const QList<todo::ItemDetail> &itemDetails, const QString &rGroupID,
+                                          const QString &dGroupID) {
+    QList<ItemDetail> resultList;
+    QList<QString> itemIDs;
+    foreach (auto const &item, itemDetails) {
+        itemIDs.append(item.getId());
+        resultList.append(item);
+        resultList.last().setRootGroupID(rGroupID);
+        resultList.last().setDirectGroupID(dGroupID);
+    }
+    ItemUtils::assignItemDetailsToGroup(itemIDs, rGroupID, dGroupID);
+    return resultList;
+}
