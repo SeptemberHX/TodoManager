@@ -69,6 +69,7 @@ public:
     virtual void insertItemGroupRelation(const ItemGroupRelation &relation) = 0;
     virtual QList<ItemGroupRelation> selectItemGroupRelationByParentID(const QString &parentID) = 0;
     virtual QList<ItemGroupRelation> selectItemGroupRelationByItemID(const QString &itemID) = 0;
+    virtual QList<ItemGroupRelation> selectAllItemGroupRelation() = 0;
     // End
 
     virtual void init() = 0;

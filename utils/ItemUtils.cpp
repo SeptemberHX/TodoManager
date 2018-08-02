@@ -26,3 +26,18 @@ QColor todo::ItemUtils::getRootGroupColor(const todo::ItemAndGroupWrapper &wrapp
         return Qt::transparent;
     }
 }
+
+void todo::ItemUtils::assignItemDetailToGroup(const QString &itemID, const QString &rootGroupID, const QString &directGroupID) {
+    ItemUtils::assignItemDetailsToGroup({itemID}, rootGroupID, directGroupID);
+}
+
+void todo::ItemUtils::assignItemDetailsToGroup(const QList<QString> &itemIDs, const QString &rootGroupID, const QString &directGroupID) {
+    foreach (auto const &itemID, itemIDs) {
+        ItemUtils::dataCenter.deleteItemGroupRelationByItemID(itemID);
+        ItemGroupRelation relation;
+        relation.setRootGroupID(rootGroupID);
+        relation.setDirectGroupID(directGroupID);
+        relation.setItemID(itemID);
+        ItemUtils::dataCenter.insertItemGroupRelation(relation);
+    }
+}

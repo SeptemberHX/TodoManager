@@ -47,13 +47,13 @@ public:
 
     void setLastUpdatedTime(const QDateTime &lastUpdatedTime);
 
-    const QList<ItemGroup> &getSubGroupList() const;
+    const QList<QString> &getSubGroupIDList() const;
 
-    void setSubGroupList(const QList<ItemGroup> &subGroupList);
+    void setSubGroupIDList(const QList<QString> &subGroupIDList);
 
-    const QList<ItemDetail> &getItemDetailList() const;
+    const QList<QString> &getItemDetailIDList() const;
 
-    void setItemDetailList(const QList<ItemDetail> &itemDetailList);
+    void setItemDetailIDList(const QList<QString> &itemDetailIDList);
 
     const QDate &getFromDate() const;
 
@@ -67,9 +67,9 @@ public:
 
     void setColor(const QColor &color);
 
-    void addItemDetail(const ItemDetail &itemDetail);
+    void addItemDetail(const QString &itemDetailID);
 
-    void addItemGroup(const ItemGroup &itemGroup);
+    void addItemGroup(const QString &itemGroupID);
 
     bool operator==(const ItemGroup &otherGroup) const;
 
@@ -88,8 +88,8 @@ private:
     QString directGroupID;
     QString rootGroupID;
     // only one level
-    QList<ItemGroup> subGroupList;
-    QList<ItemDetail> itemDetailList;
+    QList<QString> subGroupIDList;
+    QList<QString> itemDetailIDList;
 };
 
 }

@@ -18,11 +18,6 @@ namespace todo {
 
 class ItemGroupUtils {
 public:
-    static QList<ItemGroup> buildGroup(const QList<ItemGroup> &itemGroupList,
-                                const QList<ItemDetail> &itemList,
-                                const QList<ItemGroupRelation> &relationList
-    );
-
     static ItemGroupOverview getGroupOverview(const ItemGroup &itemGroup);
 
     /**
@@ -32,14 +27,10 @@ public:
      */
     static QList<QString> getGroupPath(const QString &subGroupID);
 
+    static QMap<QString, QList<QString>> getFullRelationTree();
+
 private:
     static DataCenter dataCenter;
-
-    static void buildGroup_(ItemGroup *rootGroupPtr,
-                            const QMap<QString, ItemGroup> &groupMap,
-                            const QMap<QString, ItemDetail> &detailMap,
-                            const QMap<QString, QList<todo::ItemGroupRelation>> &relationMap
-    );
 };
 
 }

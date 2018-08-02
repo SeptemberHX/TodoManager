@@ -55,4 +55,5 @@ todo::AbstractDao *todo::DaoFactory::getSQLDao(todo::DaoType type) {
             }
             return this->daoPtrMap["SQLiteDao"];
     }
+    return nullptr;
 }

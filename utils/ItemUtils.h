@@ -15,11 +15,13 @@ namespace todo {
 class ItemUtils {
 public:
 
-
     static QColor getRootGroupColor(const ItemAndGroupWrapper &wrapper);
 
     static ItemDetail generateNewItemDetail(const QString &title,
             const QString &rootItemID="", const QString &directItemID="");
+
+    static void assignItemDetailToGroup(const QString &itemID, const QString &rootGroupID, const QString &directGroupID);
+    static void assignItemDetailsToGroup(const QList<QString> &itemIDs, const QString &rootGroupID, const QString &directGroupID);
 
 private:
     static DataCenter dataCenter;

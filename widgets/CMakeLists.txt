@@ -29,6 +29,7 @@ set (widgets_files
 	CalendarMode/CalendarMonthWidget.cpp
 	CalendarMode/CalendarWeekWidget.cpp
 	CustomListView.cpp
+	ProjectChooseDialog.cpp
 	ProjectMode/ProjectModeWidget.cpp
 	ProjectMode/GroupWidget.cpp
 	ProjectMode/GroupDetailWidget.cpp

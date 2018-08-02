@@ -61,22 +61,6 @@ void todo::ItemGroup::setLastUpdatedTime(const QDateTime &lastUpdatedTime) {
     this->itemGroupDao.setLastUpdatedTime(lastUpdatedTime);
 }
 
-const QList<todo::ItemGroup> &todo::ItemGroup::getSubGroupList() const {
-    return subGroupList;
-}
-
-void todo::ItemGroup::setSubGroupList(const QList<todo::ItemGroup> &subGroupList) {
-    ItemGroup::subGroupList = subGroupList;
-}
-
-const QList<todo::ItemDetail> &todo::ItemGroup::getItemDetailList() const {
-    return itemDetailList;
-}
-
-void todo::ItemGroup::setItemDetailList(const QList<todo::ItemDetail> &itemDetailList) {
-    ItemGroup::itemDetailList = itemDetailList;
-}
-
 todo::ItemGroup::ItemGroup() {
     this->itemGroupDao.setId(todo::StringUtils::generateItemGroupUniqueID());
     this->itemGroupDao.setCreatedTime(QDateTime::currentDateTime());
@@ -88,12 +72,12 @@ todo::ItemGroup::ItemGroup() {
     this->itemGroupDao.setColor(Qt::white);
 }
 
-void todo::ItemGroup::addItemDetail(const todo::ItemDetail &itemDetail) {
-    this->itemDetailList.append(itemDetail);
+void todo::ItemGroup::addItemDetail(const QString &itemDetailID) {
+    this->itemDetailIDList.append(itemDetailID);
 }
 
-void todo::ItemGroup::addItemGroup(const todo::ItemGroup &itemGroup) {
-    this->subGroupList.append(itemGroup);
+void todo::ItemGroup::addItemGroup(const QString &itemGroupID) {
+    this->subGroupIDList.append(itemGroupID);
 }
 
 const QDate &todo::ItemGroup::getFromDate() const {
@@ -150,4 +134,20 @@ const QString &todo::ItemGroup::getRootGroupID() const {
 
 void todo::ItemGroup::setRootGroupID(const QString &rootGroupID) {
     ItemGroup::rootGroupID = rootGroupID;
+}
+
+const QList<QString> &todo::ItemGroup::getSubGroupIDList() const {
+    return subGroupIDList;
+}
+
+void todo::ItemGroup::setSubGroupIDList(const QList<QString> &subGroupIDList) {
+    ItemGroup::subGroupIDList = subGroupIDList;
+}
+
+const QList<QString> &todo::ItemGroup::getItemDetailIDList() const {
+    return itemDetailIDList;
+}
+
+void todo::ItemGroup::setItemDetailIDList(const QList<QString> &itemDetailIDList) {
+    ItemGroup::itemDetailIDList = itemDetailIDList;
 }

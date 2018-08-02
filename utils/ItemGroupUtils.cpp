@@ -9,67 +9,14 @@
 
 todo::DataCenter todo::ItemGroupUtils::dataCenter;
 
-QList<todo::ItemGroup>
-todo::ItemGroupUtils::buildGroup(const QList<todo::ItemGroup> &itemGroupList, const QList<todo::ItemDetail> &itemList,
-                                 const QList<todo::ItemGroupRelation> &relationList) {
-    QMap<QString, ItemGroup> itemGroupMap;
-    QMap<QString, ItemDetail> itemMap;
-    QMap<QString, QList<ItemGroupRelation>> relationListMap;
-    QList<ItemGroup> rootGroupList;
-
-    // prepare for calculation
-    foreach(const ItemGroup &itemGroup, itemGroupList) {
-        if (itemGroup.getType() == ItemGroupType::PROJECT) {
-            rootGroupList.append(itemGroup);
-        } else {
-            itemGroupMap.insert(itemGroup.getId(), itemGroup);
-        }
-    }
-    foreach(auto const &item, itemList) {
-        itemMap.insert(item.getId(), item);
-    }
-    foreach(auto const &relation, relationList) {
-        if (!relationListMap.contains(relation.getDirectGroupID())) {
-            relationListMap.insert(relation.getDirectGroupID(), QList<ItemGroupRelation>());
-        }
-        relationListMap[relation.getDirectGroupID()].append(relation);
-    }
-
-    // calculate
-    QList<ItemGroup> resultList;
-    foreach(auto const &rootGroup, rootGroupList) {
-        ItemGroup currRootGroup = rootGroup;
-        buildGroup_(&currRootGroup, itemGroupMap, itemMap, relationListMap);
-        resultList.append(currRootGroup);
-    }
-
-    return resultList;
-}
-
-void
-todo::ItemGroupUtils::buildGroup_(todo::ItemGroup *rootGroupPtr, const QMap<QString, todo::ItemGroup> &groupMap,
-                                  const QMap<QString, todo::ItemDetail> &detailMap,
-                                  const QMap<QString, QList<todo::ItemGroupRelation>> &relationListMap) {
-    if (relationListMap.contains(rootGroupPtr->getId())) {
-        foreach (auto &relation, relationListMap[rootGroupPtr->getId()]) {
-            if (detailMap.contains(relation.getItemID())) {
-                rootGroupPtr->addItemDetail(detailMap[relation.getItemID()]);
-            } else {
-                ItemGroup childGroup = groupMap[relation.getItemID()];
-                buildGroup_(&childGroup, groupMap, detailMap, relationListMap);
-                rootGroupPtr->addItemGroup(childGroup);
-            }
-        }
-    }
-}
-
 todo::ItemGroupOverview todo::ItemGroupUtils::getGroupOverview(const todo::ItemGroup &itemGroup) {
     ItemGroupOverview overview;
 
     int totalItemCount = 0;
     int totalItemDoneCount = 0;
     int subGroupDoneCount = 0;
-    foreach (auto const &childGroup, itemGroup.getSubGroupList()) {
+    auto subGroupList = ItemGroupUtils::dataCenter.selectItemGroupByIDs(itemGroup.getSubGroupIDList());
+    foreach (auto const &childGroup, subGroupList) {
         auto childOverview = ItemGroupUtils::getGroupOverview(childGroup);
         if (childOverview.isDone()) {
             ++subGroupDoneCount;
@@ -80,17 +27,18 @@ todo::ItemGroupOverview todo::ItemGroupUtils::getGroupOverview(const todo::ItemG
     }
 
     int subItemDoneCount = 0;
-    foreach (auto const &item, itemGroup.getItemDetailList()) {
+    auto subItemList = ItemGroupUtils::dataCenter.selectItemDetailByIDs(itemGroup.getItemDetailIDList());
+    foreach (auto const &item, subItemList) {
         if (item.isDone()) {
             ++subItemDoneCount;
         }
     }
-    totalItemCount += itemGroup.getItemDetailList().size();
+    totalItemCount += itemGroup.getItemDetailIDList().size();
     totalItemDoneCount += subItemDoneCount;
 
-    overview.setSubGroupCount(itemGroup.getSubGroupList().size());
+    overview.setSubGroupCount(itemGroup.getSubGroupIDList().size());
     overview.setSubGroupDoneCount(subGroupDoneCount);
-    overview.setSubItemCount(itemGroup.getItemDetailList().size());
+    overview.setSubItemCount(itemGroup.getItemDetailIDList().size());
     overview.setSubItemDoneCount(subItemDoneCount);
     overview.setTotalItemCount(totalItemCount);
     overview.setTotalItemDoneCount(totalItemDoneCount);
@@ -116,4 +64,19 @@ QList<QString> todo::ItemGroupUtils::getGroupPath(const QString &subGroupID) {
     }
 
     return resultPathList;
+}
+
+QMap<QString, QList<QString>> todo::ItemGroupUtils::getFullRelationTree() {
+    QMap<QString, QList<QString>> fullRelationTreeMap;
+
+    auto relations = ItemGroupUtils::dataCenter.selectAllItemGroupRelation();
+    foreach (auto const &relation, relations) {
+        if (!fullRelationTreeMap.contains(relation.getDirectGroupID())) {
+            fullRelationTreeMap.insert(relation.getDirectGroupID(), QList<QString>());
+        }
+
+        fullRelationTreeMap[relation.getDirectGroupID()].append(relation.getItemID());
+    }
+
+    return fullRelationTreeMap;
 }

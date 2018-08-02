@@ -38,6 +38,7 @@ public:
     void insertItemDetail(const ItemDetail &itemDetail);
     void updateDoneByID(const QString &itemID, bool flag);
     QList<ItemDetail> selectItemDetailByDate(const QDate &fromDate, const QDate &toDate);
+    QList<ItemDetail> selectItemDetailByIDs(const QList<QString> &itemIDs);
     // ---------------- todo_item.item_detail Ends ----------------
 
     // ---------------- todo_item.tags Starts -----------------
@@ -75,9 +76,13 @@ public:
 
     void deleteItemGroupRelationByDirectParentIDAndItemID(const QString &directParentID, const QString &itemID);
 
+    void deleteItemGroupRelationByItemID(const QString &itemID);
+
     void insertItemGroupRelation(const ItemGroupRelation &relation);
 
     QList<ItemGroupRelation> selectItemGroupRelationByItemID(const QString &itemID);
+
+    QList<ItemGroupRelation> selectAllItemGroupRelation();
     // End
 
     QList<todo::ItemAndGroupWrapper> selectItemByDirectGroupID(const QString &groupID);

@@ -13,8 +13,10 @@
 #include "widgets/CalendarMode/CalendarModeWidget.h"
 #include "widgets/CalendarMode/CalendarTimeLineWidget.h"
 #include "widgets/ProjectMode/GroupDetailWidget.h"
+#include "widgets/ProjectChooseDialog.h"
 #include "data/DataCenter.h"
 #include <QLabel>
+#include <QDebug>
 
 
 int main(int argc, char *argv[])
@@ -29,6 +31,11 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     w.show();
+
+    ProjectChooseDialog d;
+    if (d.exec() == QDialog::Accepted) {
+        qDebug() << d.getSelectedProjectIDPair().first << d.getSelectedProjectIDPair().second;
+    }
 
 //    GroupDetailWidget gdw;
 //    gdw.show();

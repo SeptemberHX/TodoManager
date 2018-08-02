@@ -97,6 +97,8 @@ public:
     QList<ItemGroupRelation> selectItemGroupRelationByParentID(const QString &parentID) override;
 
     QList<ItemGroupRelation> selectItemGroupRelationByItemID(const QString &itemID) override;
+
+    QList<ItemGroupRelation> selectAllItemGroupRelation() override;
     // End
 
     void init() override;
