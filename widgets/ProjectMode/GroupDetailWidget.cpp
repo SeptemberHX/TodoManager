@@ -40,12 +40,20 @@ void GroupDetailWidget::loadItemGroup(const todo::ItemGroup &itemGroup) {
     ui->toDateEdit->setDate(itemGroup.getToDate());
 
     if (itemGroup.getType() == todo::ItemGroupType::PROJECT) {
+        ui->projectInfoWidget->hide();
         ui->colorToolButton->show();
         ui->colorToolButton->setStyleSheet(QString("background:%1").arg(itemGroup.getColor().name()));
     } else {
+        ui->projectInfoWidget->show();
+        auto rootGroup = this->dataCenter.selectItemGroupByID(this->rawItemGroup.getRootGroupID());
+        auto directGroup = this->dataCenter.selectItemGroupByID(this->rawItemGroup.getDirectGroupID());
+        ui->rootProjectLabel->setText(QString("<a href = %1>%2</a>").arg(rootGroup[0].getId()).arg(rootGroup[0].getTitle()));
+        ui->directProjectLabel->setText(QString("<a href = %1>%2</a>").arg(directGroup[0].getId()).arg(directGroup[0].getTitle()));
         ui->colorToolButton->hide();
     }
     this->currentColor = itemGroup.getColor();
+    this->rootGroupID = itemGroup.getRootGroupID();
+    this->directGroupID = itemGroup.getDirectGroupID();
     QString timeLabelStrTemp("CreatedTime:\n%1\nLastUpdatedTime:\n%2");
     ui->timeLabel->setText(timeLabelStrTemp.arg(itemGroup.getCreatedTime().toString("yyyy-MM-dd  hh:mm:ss"))
                                            .arg(itemGroup.getLastUpdatedTime().toString("yyyy-MM-dd  hh:mm:ss"))
@@ -66,8 +74,8 @@ todo::ItemGroup GroupDetailWidget::collectData() const {
     newItemGroup.setId(this->rawItemGroup.getId());                             // 8
     newItemGroup.setType(this->rawItemGroup.getType());                         // 9
     newItemGroup.setColor(this->currentColor);                                  // 10
-    newItemGroup.setDirectGroupID(this->rawItemGroup.getDirectGroupID());       // 11
-    newItemGroup.setRootGroupID(this->rawItemGroup.getRootGroupID());           // 12
+    newItemGroup.setDirectGroupID(this->directGroupID);                         // 11
+    newItemGroup.setRootGroupID(this->rootGroupID);                             // 12
 
     return newItemGroup;
 }

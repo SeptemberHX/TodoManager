@@ -26,7 +26,7 @@ QList<todo::ItemDetail> todo::DataCenter::selectItemDetailByDate(const QDate &ta
 }
 
 void todo::DataCenter::updateItemDetailByID(const QString &itemID, const ItemDetail &oldItemDetail, const ItemDetail &newItemDetail) {
-    if (oldItemDetail.toDao() == newItemDetail.toDao()) {
+    if (oldItemDetail.toDao() != newItemDetail.toDao()) {
         DaoFactory::getInstance()->getSQLDao()->updateItemDetailByID(itemID, newItemDetail.toDao());
         GlobalCache::getInstance()->updateItemDetailDaoByID(itemID, newItemDetail.toDao());
     }

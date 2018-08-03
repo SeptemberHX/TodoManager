@@ -106,5 +106,5 @@ bool todo::ItemDetailDao::operator==(const todo::ItemDetailDao &other) const {
 }
 
 bool todo::ItemDetailDao::operator!=(const todo::ItemDetailDao &other) const {
-    return operator==(other);
+    return !operator==(other);
 }

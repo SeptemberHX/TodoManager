@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QAbstractButton>
+#include "../../data/DataCenter.h"
 #include "../../core/ItemGroup.h"
 #include "../../core/ItemAndGroupWrapper.h"
 
@@ -34,10 +35,14 @@ private:
     Ui::GroupDetailWidget *ui;
     todo::ItemGroup rawItemGroup;  // backup for the original itemGroup
     QColor currentColor;
+    todo::DataCenter dataCenter;
 
     // ui change between view and edit mode
     void changeReadOnly(bool readOnly);
     bool readOnlyFlag;
+
+    QString rootGroupID;
+    QString directGroupID;
 
     void connectModifiedSignal();
 private slots:

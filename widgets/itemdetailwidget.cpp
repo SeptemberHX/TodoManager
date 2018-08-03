@@ -8,6 +8,7 @@
 #include <QTimeEdit>
 #include <QMessageBox>
 #include "itemaddtagwidget.h"
+#include "ProjectChooseDialog.h"
 #include "../utils/ItemTagUtils.h"
 #include "../utils/itemdetailutils.h"
 
@@ -58,6 +59,10 @@ ItemDetailWidget::ItemDetailWidget(QWidget *parent) :
     // jump to project
     connect(ui->rootProjectLabel, &QLabel::linkActivated, this, &ItemDetailWidget::try_jump_to);
     connect(ui->directProjectLabel, &QLabel::linkActivated, this, &ItemDetailWidget::try_jump_to);
+
+    // edit relation
+    connect(ui->deleteRelationToolButton, &QToolButton::clicked, this, &ItemDetailWidget::deleteRelationButton_clicked);
+    connect(ui->editRelationToolButton, &QToolButton::clicked, this, &ItemDetailWidget::editRelationButton_clicked);
 
     // set icons
     ui->editToolButton->setIcon(QIcon::fromTheme("edit"));
@@ -210,19 +215,15 @@ todo::ItemDetail ItemDetailWidget::collectItemDetail() {
         result.setId(this->currItemPtr->getId());
         result.setCreatedTime(this->currItemPtr->getCreatedTime());
         result.setDone(this->currItemPtr->isDone());
-        result.setRootGroupID(this->currItemPtr->getRootGroupID());
-        result.setDirectGroupID(this->currItemPtr->getDirectGroupID());
+        result.setRootGroupID(this->rootGroupID);
+        result.setDirectGroupID(this->directGroupID);
     }
 
     return result;
 }
 
 bool ItemDetailWidget::checkIfInputLegal() {
-    if (ui->titleLineEdit->text().size() == 0) {
-        return false;
-    }
-
-    return true;
+    return !ui->titleLineEdit->text().isEmpty();
 }
 
 void ItemDetailWidget::scheduleTime_changed() {
@@ -283,6 +284,8 @@ void ItemDetailWidget::reloadCurrItemDetail() {
     if (this->currItemPtr->hasRootGroup()) {
         auto rootGroup = this->dataCenter.selectItemGroupByID(this->currItemPtr->getRootGroupID());
         auto directGroup = this->dataCenter.selectItemGroupByID(this->currItemPtr->getDirectGroupID());
+        this->directGroupID = directGroup[0].getId();
+        this->rootGroupID = rootGroup[0].getId();
         ui->rootProjectLabel->setText(QString("<a href = %1>%2</a>").arg(rootGroup[0].getId()).arg(rootGroup[0].getTitle()));
         ui->directProjectLabel->setText(QString("<a href = %1>%2</a>").arg(directGroup[0].getId()).arg(directGroup[0].getTitle()));
         ui->projectInfoWidget->show();
@@ -326,4 +329,27 @@ bool ItemDetailWidget::isEditing() const {
 
 void ItemDetailWidget::try_jump_to(const QString &itemID) {
     emit jumpTo(itemID);
+}
+
+void ItemDetailWidget::editRelationButton_clicked() {
+    ProjectChooseDialog dialog(this);
+    if (dialog.exec() == QDialog::Accepted) {
+        auto idPair = dialog.getSelectedProjectIDPair();
+        this->rootGroupID = idPair.first;
+        this->directGroupID = idPair.second;
+        QString rootTitle = this->dataCenter.selectItemGroupByID(this->rootGroupID)[0].getTitle();
+        QString directTitle = this->dataCenter.selectItemGroupByID(this->directGroupID)[0].getTitle();
+
+        ui->noneLabel->hide();
+        ui->pathWidget->show();
+        ui->rootProjectLabel->setText(QString("<a href = %1>%2</a>").arg(this->rootGroupID).arg(rootTitle));
+        ui->directProjectLabel->setText(QString("<a href = %1>%2</a>").arg(this->directGroupID).arg(directTitle));
+    }
+}
+
+void ItemDetailWidget::deleteRelationButton_clicked() {
+    this->rootGroupID = "";
+    this->directGroupID = "";
+    ui->noneLabel->show();
+    ui->pathWidget->hide();
 }

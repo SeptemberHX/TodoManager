@@ -58,6 +58,9 @@ private:
     void saveBtn_clicked();
     void cancelBtn_clicked();
 
+    QString directGroupID;
+    QString rootGroupID;
+
     Ui::ItemDetailWidget *ui;
     QButtonGroup *itemModeBtnGroup;
     TagWidget *tagWidget;
@@ -75,6 +78,8 @@ private slots:
     void markDoneBtn_clicked();
     void deleteButton_clicked();
     void try_jump_to(const QString &itemID);
+    void deleteRelationButton_clicked();
+    void editRelationButton_clicked();
 };
 
 #endif // ITEMDETAILWIDGET_H
