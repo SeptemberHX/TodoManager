@@ -100,7 +100,6 @@ private:
     ItemListWidget *listWidget;
     QLabel *infoLabel;
 
-    bool currentItemEdited;
     todo::ItemDetail currentItem;
     QMap<QString, todo::ItemDetail> currItemDetailMap;
     todo::DataCenter dataCenter;

@@ -146,7 +146,12 @@ void ItemDetailWidget::setReadOnly(bool isReadOnly) {
     ui->scheduleTimeGroupBox->setDisabled(isReadOnly);
 
     ui->descriptionTextEdit->setReadOnly(isReadOnly);
-    ui->projectInfoWidget->setVisible(isReadOnly);
+
+    if (isReadOnly && this->currItemPtr != nullptr && this->currItemPtr->hasRootGroup()) {
+        ui->projectInfoWidget->show();
+    } else {
+        ui->projectInfoWidget->hide();
+    }
 }
 
 void ItemDetailWidget::editBtn_clicked() {
