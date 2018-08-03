@@ -17,7 +17,8 @@ FORMS += \
     $$PWD/ProjectMode/groupwidget.ui \
     $$PWD/ProjectMode/GroupDetailWidget.ui \
     $$PWD/ProjectMode/NavigationBarWidget.ui \
-    $$PWD/ProjectChooseDialog.ui
+    $$PWD/ProjectChooseDialog.ui \
+    $$PWD/MyTextEdit.ui
 
 HEADERS += \
     $$PWD/tagwidget.h \
@@ -43,7 +44,8 @@ HEADERS += \
     $$PWD/ProjectMode/GroupWidget.h \
     $$PWD/ProjectMode/GroupDetailWidget.h \
     $$PWD/ProjectMode/NavigationBarWidget.h \
-    $$PWD/ProjectChooseDialog.h
+    $$PWD/ProjectChooseDialog.h \
+    $$PWD/MyTextEdit.h
 
 SOURCES += \
     $$PWD/tagwidget.cpp \
@@ -69,4 +71,5 @@ SOURCES += \
     $$PWD/ProjectMode/GroupWidget.cpp \
     $$PWD/ProjectMode/GroupDetailWidget.cpp \
     $$PWD/ProjectMode/NavigationBarWidget.cpp \
-    $$PWD/ProjectChooseDialog.cpp
+    $$PWD/ProjectChooseDialog.cpp \
+    $$PWD/MyTextEdit.cpp

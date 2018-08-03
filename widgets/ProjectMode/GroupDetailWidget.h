@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QAbstractButton>
+#include "../MyTextEdit.h"
 #include "../../data/DataCenter.h"
 #include "../../core/ItemGroup.h"
 #include "../../core/ItemAndGroupWrapper.h"
@@ -33,6 +34,7 @@ signals:
     void saveActionTriggered(const todo::ItemAndGroupWrapper &itemWrapper);
 private:
     Ui::GroupDetailWidget *ui;
+    MyTextEdit *descriptionTextEdit;
     todo::ItemGroup rawItemGroup;  // backup for the original itemGroup
     QColor currentColor;
     todo::DataCenter dataCenter;

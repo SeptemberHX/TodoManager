@@ -9,7 +9,8 @@ GroupDetailWidget::GroupDetailWidget(QWidget *parent) :
     ui(new Ui::GroupDetailWidget)
 {
     ui->setupUi(this);
-    this->changeToViewMode();
+    this->descriptionTextEdit = new MyTextEdit(this);
+    ui->groupBoxHorizontalLayout->addWidget(this->descriptionTextEdit);
 
     connect(ui->editToolButton, &QToolButton::clicked, this, &GroupDetailWidget::changeToEditMode);
     connect(ui->deleteToolButton, &QToolButton::clicked, this, &GroupDetailWidget::delete_button_clicked);
@@ -22,6 +23,8 @@ GroupDetailWidget::GroupDetailWidget(QWidget *parent) :
     // set icons
     ui->deleteToolButton->setIcon(QIcon::fromTheme("editdelete"));
     ui->editToolButton->setIcon(QIcon::fromTheme("edit"));
+
+    this->changeToViewMode();
 }
 
 GroupDetailWidget::~GroupDetailWidget()
@@ -34,7 +37,7 @@ void GroupDetailWidget::loadItemGroup(const todo::ItemGroup &itemGroup) {
     this->changeToViewMode();  // set to view mode first, or will emit itemModified() signal
 
     ui->titleLineEdit->setText(itemGroup.getTitle());
-    ui->descriptionTextEdit->setText(itemGroup.getDescription());
+    this->descriptionTextEdit->setHtml(itemGroup.getDescription());
     ui->milestoneCheckBox->setChecked(itemGroup.isMileStone());
     ui->fromDateEdit->setDate(itemGroup.getFromDate());
     ui->toDateEdit->setDate(itemGroup.getToDate());
@@ -65,7 +68,7 @@ todo::ItemGroup GroupDetailWidget::collectData() const {
 
     // fill the new object
     newItemGroup.setTitle(ui->titleLineEdit->text());                           // 1
-    newItemGroup.setDescription(ui->descriptionTextEdit->toPlainText());        // 2
+    newItemGroup.setDescription(this->descriptionTextEdit->toHtml());        // 2
     newItemGroup.setMileStone(ui->milestoneCheckBox->isChecked());              // 3
     newItemGroup.setFromDate(ui->fromDateEdit->date());                         // 4
     newItemGroup.setToDate(ui->toDateEdit->date());                             // 5
@@ -98,7 +101,7 @@ void GroupDetailWidget::changeReadOnly(bool readOnly) {
     ui->buttonBox->setVisible(!readOnly);
     ui->operationWidget->setVisible(readOnly);
     ui->titleLineEdit->setReadOnly(readOnly);
-    ui->descriptionTextEdit->setReadOnly(readOnly);
+    this->descriptionTextEdit->setReadOnly(readOnly);
     ui->fromDateEdit->setReadOnly(readOnly);
     ui->toDateEdit->setReadOnly(readOnly);
     ui->colorToolButton->setEnabled(!readOnly);
@@ -112,7 +115,7 @@ void GroupDetailWidget::changeReadOnly(bool readOnly) {
 
 void GroupDetailWidget::connectModifiedSignal() {
     connect(ui->titleLineEdit, &QLineEdit::textChanged, this, &GroupDetailWidget::item_modified);
-    connect(ui->descriptionTextEdit, &QTextEdit::textChanged, this, &GroupDetailWidget::item_modified);
+    connect(this->descriptionTextEdit, &MyTextEdit::textChanged, this, &GroupDetailWidget::item_modified);
     connect(ui->milestoneCheckBox, &QCheckBox::stateChanged, this, &GroupDetailWidget::item_modified);
     connect(ui->fromDateEdit, &QDateEdit::dateChanged, this, &GroupDetailWidget::item_modified);
     connect(ui->toDateEdit, &QDateEdit::dateChanged, this, &GroupDetailWidget::item_modified);

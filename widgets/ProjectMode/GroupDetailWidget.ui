@@ -216,7 +216,7 @@
             <property name="title">
              <string>Description</string>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <layout class="QHBoxLayout" name="groupBoxHorizontalLayout">
              <property name="spacing">
               <number>3</number>
              </property>
@@ -232,9 +232,6 @@
              <property name="bottomMargin">
               <number>3</number>
              </property>
-             <item>
-              <widget class="QTextEdit" name="descriptionTextEdit"/>
-             </item>
             </layout>
            </widget>
           </item>

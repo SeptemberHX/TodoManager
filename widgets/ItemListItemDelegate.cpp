@@ -6,6 +6,7 @@
 #include <QPainterPath>
 #include <QDebug>
 #include <QVariant>
+#include <QTextDocumentFragment>
 #include "ItemListItemDelegate.h"
 #include "../config/TodoConfig.h"
 #include "../utils/StringUtils.h"
@@ -183,8 +184,12 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     painter->setPen(Qt::gray);
     painter->setFont(QFont("Arias", 10));
     painter->drawText(descriptionRect, Qt::AlignLeft | Qt::AlignVCenter,
-                      todo::StringUtils::elideText(itemDetail.getDescription(), painter->fontMetrics(),
-                                                   descriptionRect.width()));
+                      todo::StringUtils::elideText(
+                              QTextDocumentFragment::fromHtml(itemDetail.getDescription()).toPlainText(),
+                              painter->fontMetrics(),
+                              descriptionRect.width()
+                              )
+                      );
 
     // draw isDone color label
     QPainterPath doneLabelPath;
@@ -319,7 +324,8 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
     QRect availableRect(QPoint(titleRect.left(), titleRect.bottom() + titleMargins.bottom() + descriptionMargins.top()),
                         toRect.bottomLeft() + QPoint(-dateLabelMargin.left(), 0));
     availableRect.setBottom(availableRect.bottom() - availableRect.height() + maxHeight);
-    painter->drawText(availableRect, Qt::TextWordWrap | Qt::TextSingleLine | Qt::AlignTop, itemGroup.getDescription(), &availableRect);
+    painter->drawText(availableRect, Qt::TextWordWrap | Qt::TextSingleLine | Qt::AlignTop,
+            QTextDocumentFragment::fromHtml(itemGroup.getDescription()).toPlainText(), &availableRect);
 
     // draw selection item's border
     if (option.state & QStyle::State_Selected) {

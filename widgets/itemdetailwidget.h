@@ -7,6 +7,7 @@
 #include "../core/ItemDetail.h"
 #include "../core/ItemTag.h"
 #include "tagwidget.h"
+#include "MyTextEdit.h"
 
 namespace Ui {
 class ItemDetailWidget;
@@ -69,6 +70,7 @@ private:
     ItemDetailWidgetMode editMode;
 
     todo::ItemDetail *currItemPtr;
+    MyTextEdit *descriptionTextEdit;
 
 private slots:
     void editBtn_clicked();

@@ -38,9 +38,13 @@ ItemDetailWidget::ItemDetailWidget(QWidget *parent) :
     ui->tagLabel->setFixedWidth(ui->tagLabel->fontMetrics().width(ui->tagLabel->text()) + 6);
     // ------ end
 
+    // description edit
+    this->descriptionTextEdit = new MyTextEdit(this);
+    ui->groupBoxVerticalLayout->addWidget(this->descriptionTextEdit);
+
     // listWidget change info view when detail edited
     connect(ui->titleLineEdit, &QLineEdit::textChanged, this, &ItemDetailWidget::uiItemEdited);
-    connect(ui->descriptionTextEdit, &QTextEdit::textChanged, this, &ItemDetailWidget::uiItemEdited);
+    connect(this->descriptionTextEdit, &MyTextEdit::textChanged, this, &ItemDetailWidget::uiItemEdited);
     connect(ui->prioritySpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ItemDetailWidget::uiItemEdited);
     connect(ui->scheduleFromTimeEdit, &QTimeEdit::timeChanged, this, &ItemDetailWidget::uiItemEdited);
     connect(ui->scheduleToTimeEdit, &QTimeEdit::timeChanged, this, &ItemDetailWidget::uiItemEdited);
@@ -152,7 +156,7 @@ void ItemDetailWidget::setReadOnly(bool isReadOnly) {
     ui->prioritySpinBox->setReadOnly(isReadOnly);
     ui->scheduleTimeGroupBox->setDisabled(isReadOnly);
 
-    ui->descriptionTextEdit->setReadOnly(isReadOnly);
+    this->descriptionTextEdit->setReadOnly(isReadOnly);
 
     if (isReadOnly) {
         if (this->currItemPtr != nullptr && this->currItemPtr->hasRootGroup()) {
@@ -203,7 +207,7 @@ todo::ItemDetail ItemDetailWidget::collectItemDetail() {
     }
 
     todo::ItemDetail result(ui->titleLineEdit->text());
-    result.setDescription(ui->descriptionTextEdit->toPlainText());
+    result.setDescription(this->descriptionTextEdit->toHtml());
     result.setMode(this->widgetMode);
     result.setPriority(ui->prioritySpinBox->value());
     result.setTargetDate(ui->scheduleDateEdit->date());
@@ -267,7 +271,7 @@ void ItemDetailWidget::reloadCurrItemDetail() {
     for (auto const &tag : this->currItemPtr->getTags()) {
         this->addTagButton(tag);
     }
-    ui->descriptionTextEdit->setText(this->currItemPtr->getDescription());
+    this->descriptionTextEdit->setHtml(this->currItemPtr->getDescription());
     ui->scheduleDateEdit->setDate(this->currItemPtr->getTargetDate());
     ui->scheduleFromTimeEdit->setTime(this->currItemPtr->getFromTime());
     ui->scheduleToTimeEdit->setTime(this->currItemPtr->getToTime());
