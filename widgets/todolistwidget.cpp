@@ -97,10 +97,6 @@ TodoListWidget::~TodoListWidget()
 
 void TodoListWidget::todayBtn_clicked()
 {
-// Only for test...
-//    auto itemDetail = ItemDetailUtils::createOneItemDetail();
-//    this->currItemDetailMap.insert(itemDetail.getId(), itemDetail);
-//    this->loadItemDetailToListView(QList<todo::ItemDetail>{itemDetail});
     ui->filterDateEdit->setDate(QDate::currentDate());
 }
 
@@ -242,11 +238,8 @@ void TodoListWidget::updateItemDetail(const todo::ItemDetail &itemDetail) {
     curr.setLastUpdatedTime(QDateTime::currentDateTime());
     this->dataCenter.updateItemDetailByID(curr.getId(), curr);  // save to database
     this->currItemDetailMap[curr.getId()] = curr;  // save it to detail map
-//    this->detailWidget->loadItemDetail(curr);  // change detail widget content. It will not change by itself.
+    this->detailWidget->loadItemDetail(curr);  // change detail widget content. It will not change by itself.
 
-    // reset the flag. Should reset it before refresh list widget,
-    // or will be disturbed by list widget removing and adding item and emitting selected_item_changed signal.
-    // TODO: redesign the code to avoid this !!
     this->listWidget->refresh_or_remove_item_info(curr);  // refresh item if meets condition, or remove it.
 }
 
