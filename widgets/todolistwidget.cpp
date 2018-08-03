@@ -236,7 +236,7 @@ void TodoListWidget::updateStatusBarInfo() {
 void TodoListWidget::updateItemDetail(const todo::ItemDetail &itemDetail) {
     todo::ItemDetail curr(itemDetail);
     curr.setLastUpdatedTime(QDateTime::currentDateTime());
-    this->dataCenter.updateItemDetailByID(curr.getId(), curr);  // save to database
+    this->dataCenter.updateItemDetailByID(curr.getId(), this->currItemDetailMap[curr.getId()], curr);  // save to database
     this->currItemDetailMap[curr.getId()] = curr;  // save it to detail map
     this->detailWidget->loadItemDetail(curr);  // change detail widget content. It will not change by itself.
 

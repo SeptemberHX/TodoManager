@@ -33,7 +33,7 @@ public:
 
     // ---------------- todo_item.item_detail Starts ----------------
     QList<ItemDetail> selectItemDetailByDate(const QDate &targetDate);
-    void updateItemDetailByID(const QString &itemID, const ItemDetail &itemDetail);
+    void updateItemDetailByID(const QString &itemID, const ItemDetail &oldItemDetail, const ItemDetail &newItemDetail);
     void deleteItemDetailByIDCompletely(const QString &itemID);
     void insertItemDetail(const ItemDetail &itemDetail);
     void updateDoneByID(const QString &itemID, bool flag);

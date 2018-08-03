@@ -91,3 +91,20 @@ const QString &todo::ItemDetailDao::getId() const {
 void todo::ItemDetailDao::setId(const QString &id) {
     ItemDetailDao::id = id;
 }
+
+bool todo::ItemDetailDao::operator==(const todo::ItemDetailDao &other) const {
+    return this->title == other.title &&
+           this->description == other.description &&
+           this->fromTime == other.fromTime &&
+           this->toTime == other.toTime &&
+           this->targetDate == other.targetDate &&
+           this->mode == other.mode &&
+           this->priority == other.priority &&
+           this->createdTime == other.createdTime &&
+           this->lastUpdatedTime == other.lastUpdatedTime &&
+           this->done == other.done;
+}
+
+bool todo::ItemDetailDao::operator!=(const todo::ItemDetailDao &other) const {
+    return operator==(other);
+}

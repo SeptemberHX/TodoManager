@@ -172,3 +172,30 @@ const QString &todo::ItemDetail::getDirectGroupID() const {
 void todo::ItemDetail::setDirectGroupID(const QString &directGroupID) {
     ItemDetail::directGroupID = directGroupID;
 }
+
+bool todo::ItemDetail::isTagDiff(const todo::ItemDetail &other) const {
+    if (this->tags.size() != other.tags.size()) return true;
+
+    for (int i = 0; i < this->tags.size(); ++i) {
+        if (this->tags[i] != other.tags[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool todo::ItemDetail::isRootGroupDiff(const todo::ItemDetail &other) const {
+    return this->getRootGroupID() != other.getRootGroupID();
+}
+
+bool todo::ItemDetail::isDirectGroupDiff(const todo::ItemDetail &other) const {
+    return this->getDirectGroupID() != other.getDirectGroupID();
+}
+
+todo::ItemGroupRelation todo::ItemDetail::generateRelation() const {
+    ItemGroupRelation relation;
+    relation.setRootGroupID(this->getRootGroupID());
+    relation.setDirectGroupID(this->getDirectGroupID());
+    relation.setItemID(this->getId());
+    return relation;
+}

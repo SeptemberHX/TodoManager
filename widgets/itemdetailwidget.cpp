@@ -63,6 +63,8 @@ ItemDetailWidget::ItemDetailWidget(QWidget *parent) :
     ui->editToolButton->setIcon(QIcon::fromTheme("edit"));
     ui->deleteToolButton->setIcon(QIcon::fromTheme("editdelete"));
     ui->finishToolButton->setIcon(QIcon::fromTheme("checkmark"));
+    ui->deleteRelationToolButton->setIcon(QIcon::fromTheme("editdelete"));
+    ui->editRelationToolButton->setIcon(QIcon::fromTheme("edit"));
 
     this->changeToViewMode();
 
@@ -147,10 +149,25 @@ void ItemDetailWidget::setReadOnly(bool isReadOnly) {
 
     ui->descriptionTextEdit->setReadOnly(isReadOnly);
 
-    if (isReadOnly && this->currItemPtr != nullptr && this->currItemPtr->hasRootGroup()) {
-        ui->projectInfoWidget->show();
+    if (isReadOnly) {
+        if (this->currItemPtr != nullptr && this->currItemPtr->hasRootGroup()) {
+            ui->projectInfoWidget->show();
+            ui->noneLabel->hide();
+            ui->relationOperationWidget->hide();
+            ui->pathWidget->show();
+        } else {
+            ui->projectInfoWidget->hide();
+        }
     } else {
-        ui->projectInfoWidget->hide();
+        ui->projectInfoWidget->show();
+        if (this->currItemPtr->hasRootGroup()) {
+            ui->noneLabel->hide();
+            ui->pathWidget->show();
+        } else {
+            ui->noneLabel->show();
+            ui->pathWidget->hide();
+        }
+        ui->relationOperationWidget->show();
     }
 }
 

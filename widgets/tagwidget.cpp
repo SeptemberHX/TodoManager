@@ -19,6 +19,7 @@ TagWidget::TagWidget(QWidget *parent) :
     this->tagLayout->addWidget(ui->addTagButton);
 
     connect(ui->addTagButton, &QToolButton::clicked, this, &TagWidget::addTagBtn_clicked);
+    ui->addTagButton->setIcon(QIcon::fromTheme("list-add"));
 }
 
 TagWidget::~TagWidget()

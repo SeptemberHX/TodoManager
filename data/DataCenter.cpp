@@ -25,16 +25,28 @@ QList<todo::ItemDetail> todo::DataCenter::selectItemDetailByDate(const QDate &ta
     return this->fillItemDetailInfo(results);
 }
 
-void todo::DataCenter::updateItemDetailByID(const QString &itemID, const todo::ItemDetail &itemDetail) {
-    DaoFactory::getInstance()->getSQLDao()->updateItemDetailByID(itemID, itemDetail.toDao());
-    GlobalCache::getInstance()->updateItemDetailDaoByID(itemID, itemDetail.toDao());
+void todo::DataCenter::updateItemDetailByID(const QString &itemID, const ItemDetail &oldItemDetail, const ItemDetail &newItemDetail) {
+    if (oldItemDetail.toDao() == newItemDetail.toDao()) {
+        DaoFactory::getInstance()->getSQLDao()->updateItemDetailByID(itemID, newItemDetail.toDao());
+        GlobalCache::getInstance()->updateItemDetailDaoByID(itemID, newItemDetail.toDao());
+    }
 
-    // For Now
-    DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemID(itemDetail.getId());
-    int i = 1;
-    for (auto const &tag : itemDetail.getTags()) {
-        DaoFactory::getInstance()->getSQLDao()->insertItemAndTagMatch(ItemDetailAndTag(itemDetail.getId(), tag.getId(), i));
-        ++i;
+    if (newItemDetail.isTagDiff(oldItemDetail)) {
+        // For Now
+        DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemID(newItemDetail.getId());
+        int i = 1;
+        for (auto const &tag : newItemDetail.getTags()) {
+            DaoFactory::getInstance()->getSQLDao()->insertItemAndTagMatch(
+                    ItemDetailAndTag(newItemDetail.getId(), tag.getId(), i));
+            ++i;
+        }
+    }
+
+    if (newItemDetail.isRootGroupDiff(oldItemDetail)) {
+        DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByItemID(newItemDetail.getId());
+        if (newItemDetail.hasRootGroup()) {
+            DaoFactory::getInstance()->getSQLDao()->insertItemGroupRelation(newItemDetail.generateRelation());
+        }
     }
 
     emit(this->databaseModified());

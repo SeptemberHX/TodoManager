@@ -63,6 +63,10 @@ public:
 
     void setId(const QString &id);
 
+    bool operator==(const ItemDetailDao &other) const;
+
+    bool operator!=(const ItemDetailDao &other) const;
+
 private:
     QString title;
     QString description;

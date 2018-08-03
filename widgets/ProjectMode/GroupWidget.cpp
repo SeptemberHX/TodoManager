@@ -187,7 +187,7 @@ void GroupWidget::save_action_triggered(const todo::ItemAndGroupWrapper &wrapper
     } else {
         auto detail = wrapper.getItemDetail();
         detail.setLastUpdatedTime(QDateTime::currentDateTime());
-        this->dataCenter.updateItemDetailByID(detail.getId(), detail);
+        this->dataCenter.updateItemDetailByID(detail.getId(), this->itemMap[detail.getId()].getItemDetail(), detail);
         this->itemMap[detail.getId()] = detail;
         this->listWidget->refresh_item_info(detail);
     }

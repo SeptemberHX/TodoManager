@@ -10,6 +10,7 @@
 #include "ItemTag.h"
 #include "ItemDetailDao.h"
 #include "ItemGroupDao.h"
+#include "ItemGroupRelation.h"
 
 namespace todo {
     /**
@@ -85,6 +86,14 @@ namespace todo {
         const QString &getDirectGroupID() const;
 
         void setDirectGroupID(const QString &directGroupID);
+
+        bool isTagDiff(const ItemDetail &other) const;
+
+        bool isRootGroupDiff(const ItemDetail &other) const;
+
+        bool isDirectGroupDiff(const ItemDetail &other) const;
+
+        ItemGroupRelation generateRelation() const;
 
         // ------ End
 
