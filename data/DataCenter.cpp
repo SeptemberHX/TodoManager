@@ -42,7 +42,7 @@ void todo::DataCenter::updateItemDetailByID(const QString &itemID, const ItemDet
         }
     }
 
-    if (newItemDetail.isRootGroupDiff(oldItemDetail)) {
+    if (newItemDetail.isRootGroupDiff(oldItemDetail) || newItemDetail.isDirectGroupDiff(oldItemDetail)) {
         DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByItemID(newItemDetail.getId());
         GlobalCache::getInstance()->deleteRelationByItemID(newItemDetail.getId());
         if (newItemDetail.hasRootGroup()) {

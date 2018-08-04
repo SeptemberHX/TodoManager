@@ -61,7 +61,6 @@ QList<todo::ItemDetailDao> todo::GlobalCache::getItemDetailDaoByIDs(const QList<
             notInCacheIDs.append(itemIDs[i]);
         }
     }
-    qDebug() << "cache hit size " << indexDaoMap.size();
     auto queryDaos = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByIDs(notInCacheIDs);
     foreach (auto const &itemDao, queryDaos) {
         this->itemDetailDaoCache.insert(itemDao.getId(), new ItemDetailDao(itemDao));
@@ -91,7 +90,6 @@ QList<todo::ItemGroupDao> todo::GlobalCache::getItemGroupDaoByIDs(const QList<QS
             notInCacheIDs.append(itemIDs[i]);
         }
     }
-    qDebug() << "cache hit size " << indexDaoMap.size();
     auto queryDaos = DaoFactory::getInstance()->getSQLDao()->selectItemGroupByIDs(notInCacheIDs);
     foreach (auto const &itemDao, queryDaos) {
         this->itemGroupDaoCache.insert(itemDao.getId(), new ItemGroupDao(itemDao));

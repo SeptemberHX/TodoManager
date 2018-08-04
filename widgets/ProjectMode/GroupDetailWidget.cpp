@@ -3,6 +3,8 @@
 #include <QString>
 #include <QPushButton>
 #include <QColorDialog>
+#include <QPieSeries>
+#include "../../utils/ItemGroupUtils.h"
 
 GroupDetailWidget::GroupDetailWidget(QWidget *parent) :
     QWidget(parent),
@@ -61,6 +63,37 @@ void GroupDetailWidget::loadItemGroup(const todo::ItemGroup &itemGroup) {
     ui->timeLabel->setText(timeLabelStrTemp.arg(itemGroup.getCreatedTime().toString("yyyy-MM-dd  hh:mm:ss"))
                                            .arg(itemGroup.getLastUpdatedTime().toString("yyyy-MM-dd  hh:mm:ss"))
     );
+
+    auto overview = todo::ItemGroupUtils::getGroupOverview(itemGroup);
+    ui->subGroupCountLabel->setText(QString::number(overview.getSubGroupCount()));
+    ui->subGroupDoneCountLabel->setText(QString::number(overview.getSubGroupDoneCount()));
+    ui->subItemCounLabel->setText(QString::number(overview.getSubItemCount()));
+    ui->subItemDoneCountLabel->setText(QString::number(overview.getSubItemDoneCount()));
+    ui->totalItemCountLabel->setText(QString::number(overview.getTotalItemCount()));
+    ui->totalItemDoneCountLabel->setText(QString::number(overview.getTotalItemDoneCount()));
+
+    auto chartPtr = ui->chartview->chart();
+    if (chartPtr == nullptr) {
+        chartPtr = new QChart();
+    }
+    chartPtr->removeAllSeries();
+    QPieSeries *pieSeries = new QPieSeries(chartPtr);
+    int subItemCount = itemGroup.getSubGroupIDList().size() + itemGroup.getItemDetailIDList().size();
+    int n1 = 0, n2 = 0, n3 = 0;
+    if (subItemCount != 0) {
+        n1 = overview.getSubGroupDoneCount() * 100 / subItemCount;
+        n2 = (overview.getSubGroupCount() - overview.getSubGroupDoneCount()) * 100 / subItemCount;
+        n3 = (overview.getSubItemCount() - overview.getSubItemDoneCount()) * 100 / subItemCount;
+    }
+    int n4 = 100 - n1 - n2 - n3;
+    pieSeries->append("Child Project Finished", n1);
+    pieSeries->append("Child Project Not Finished", n2);
+    pieSeries->append("Child Task Finished", n4);
+    pieSeries->append("Child Task Not Finished", n3);
+    chartPtr->addSeries(pieSeries);
+    chartPtr->legend()->setAlignment(Qt::AlignRight);
+    chartPtr->setTitle("Project's child items chart");
+    ui->chartview->setChart(chartPtr);
 }
 
 todo::ItemGroup GroupDetailWidget::collectData() const {
@@ -68,7 +101,7 @@ todo::ItemGroup GroupDetailWidget::collectData() const {
 
     // fill the new object
     newItemGroup.setTitle(ui->titleLineEdit->text());                           // 1
-    newItemGroup.setDescription(this->descriptionTextEdit->toHtml());        // 2
+    newItemGroup.setDescription(this->descriptionTextEdit->toHtml());           // 2
     newItemGroup.setMileStone(ui->milestoneCheckBox->isChecked());              // 3
     newItemGroup.setFromDate(ui->fromDateEdit->date());                         // 4
     newItemGroup.setToDate(ui->toDateEdit->date());                             // 5
