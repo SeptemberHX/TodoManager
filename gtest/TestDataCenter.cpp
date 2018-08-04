@@ -40,7 +40,4 @@ TEST(DataCenter, ItemGroupRelation) {
 
     dataCenter.insertItemGroupRelation(relation);
     EXPECT_EQ(relation, dataCenter.selectItemGroupRelationByRootID(relation.getRootGroupID())[0]);
-
-    dataCenter.deleteItemGroupRelationByDirectParentIDAndItemID(relation.getDirectGroupID(), relation.getItemID());
-    EXPECT_EQ(0, dataCenter.selectItemGroupRelationByRootID(relation.getRootGroupID()).size());
 }

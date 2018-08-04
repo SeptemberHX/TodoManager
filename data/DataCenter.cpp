@@ -44,8 +44,10 @@ void todo::DataCenter::updateItemDetailByID(const QString &itemID, const ItemDet
 
     if (newItemDetail.isRootGroupDiff(oldItemDetail)) {
         DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByItemID(newItemDetail.getId());
+        GlobalCache::getInstance()->deleteRelationByItemID(newItemDetail.getId());
         if (newItemDetail.hasRootGroup()) {
             DaoFactory::getInstance()->getSQLDao()->insertItemGroupRelation(newItemDetail.generateRelation());
+            GlobalCache::getInstance()->addRelation(newItemDetail.generateRelation());
         }
     }
 
@@ -175,21 +177,16 @@ void todo::DataCenter::insertItemGroup(const todo::ItemGroupDao &itemGroupDao) {
 }
 
 QList<todo::ItemGroupRelation> todo::DataCenter::selectItemGroupRelationByRootID(const QString &rootID) {
-    return DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByRootID(rootID);
-}
-
-void todo::DataCenter::deleteItemGroupRelationByDirectParentIDAndItemID(const QString &directParentID,
-                                                                        const QString &itemID) {
-    DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByDirectParentIDAndItemID(directParentID, itemID);
-    emit databaseModified();
+    return GlobalCache::getInstance()->getItemGroupRelationByRootID(rootID);
 }
 
 void todo::DataCenter::insertItemGroupRelation(const todo::ItemGroupRelation &relation) {
     DaoFactory::getInstance()->getSQLDao()->insertItemGroupRelation(relation);
+    GlobalCache::getInstance()->addRelation(relation);
 }
 
 QList<todo::ItemAndGroupWrapper> todo::DataCenter::selectItemByDirectGroupID(const QString &groupID) {
-    auto relationList = DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByParentID(groupID);
+    auto relationList = GlobalCache::getInstance()->getItemGroupRelationByDirectGroupID(groupID);
     QList<QString> itemDetailIDs;
     QList<QString> itemGroupIDs;
     foreach (auto const &relation, relationList) {
@@ -242,6 +239,7 @@ void todo::DataCenter::deleteGroupCompletely_(const QString &groupID) {
         DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByDirectParentIDAndItemID(
                 relation.getDirectGroupID(), relation.getItemID()
         );
+        GlobalCache::getInstance()->deleteRelationByItemID(relation.getItemID());
     }
 
     // delete itself
@@ -252,6 +250,7 @@ void todo::DataCenter::deleteItemDetailByIDCompletely_(const QString &itemID) {
     DaoFactory::getInstance()->getSQLDao()->deleteItemDetailByID(itemID);
     DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemID(itemID);
     DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByItemID(itemID);
+    GlobalCache::getInstance()->deleteRelationByItemID(itemID);
 }
 
 QList<todo::ItemGroup> todo::DataCenter::fillItemGroupInfo(const QList<todo::ItemGroupDao> &itemGroupDaos) {
@@ -260,13 +259,13 @@ QList<todo::ItemGroup> todo::DataCenter::fillItemGroupInfo(const QList<todo::Ite
     foreach (auto const &itemGroupDao, itemGroupDaos) {
         ItemGroup group(itemGroupDao);
 
-        auto relations = DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByItemID(group.getId());
+        auto relations = GlobalCache::getInstance()->getItemGroupRelationByItemID(group.getId());
         if (relations.size() > 0) {
             group.setRootGroupID(relations[0].getRootGroupID());
             group.setDirectGroupID(relations[0].getDirectGroupID());
         }
 
-        auto otherRelations = DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByParentID(group.getId());
+        auto otherRelations = GlobalCache::getInstance()->getItemGroupRelationByDirectGroupID(group.getId());
         if (otherRelations.size() > 0) {
             QList<QString> subGroupIDs, subItemIDs;
             foreach (auto const &relation, otherRelations) {
@@ -290,7 +289,7 @@ QList<todo::ItemDetail> todo::DataCenter::fillItemDetailInfo(const QList<todo::I
     auto resultList = this->fillTagInfo(itemDetailDaos);
 
     for (int i = 0; i < resultList.size(); ++i) {
-        auto relations = DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByItemID(resultList[i].getId());
+        auto relations = GlobalCache::getInstance()->getItemGroupRelationByItemID(itemDetailDaos[i].getId());
         if (relations.size() > 0) {
             resultList[i].setRootGroupID(relations[0].getRootGroupID());
             resultList[i].setDirectGroupID(relations[0].getDirectGroupID());
@@ -315,5 +314,6 @@ QList<todo::ItemDetail> todo::DataCenter::selectItemDetailByIDs(const QList<QStr
 
 void todo::DataCenter::deleteItemGroupRelationByItemID(const QString &itemID) {
     DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByItemID(itemID);
+    GlobalCache::getInstance()->deleteRelationByItemID(itemID);
     emit databaseModified();
 }

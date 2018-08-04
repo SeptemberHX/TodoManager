@@ -4,7 +4,9 @@
 
 #include "../dao/DaoFactory.h"
 #include "GlobalCache.h"
+#include "../utils/StringUtils.h"
 #include <QDebug>
+#include <QQueue>
 
 todo::GlobalCache* todo::GlobalCache::instance = nullptr;
 
@@ -105,4 +107,101 @@ QList<todo::ItemGroupDao> todo::GlobalCache::getItemGroupDaoByIDs(const QList<QS
         }
     }
     return resultList;
+}
+
+QList<todo::ItemGroupRelation> todo::GlobalCache::getItemGroupRelationByDirectGroupID(const QString &directGroupID) {
+    QList<todo::ItemGroupRelation> resultList;
+    if (this->groupID2RelationIndex.contains(directGroupID)) {
+        foreach (auto const &index, this->groupID2RelationIndex[directGroupID]) {
+            resultList.append(this->relationList[index]);
+        }
+    } else {
+        resultList = DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByParentID(directGroupID);
+        QList<int> indexList;
+        foreach (auto const &relation, resultList) {
+            int itemIndex = -1;
+            if (this->itemID2RelationIndex.contains(relation.getItemID())) {
+                itemIndex = this->itemID2RelationIndex[relation.getItemID()];
+            } else {
+                this->relationList.append(relation);
+                itemIndex = this->relationList.size() - 1;
+            }
+
+            this->itemID2RelationIndex.insert(relation.getItemID(), itemIndex);
+            indexList.append(itemIndex);
+        }
+        this->groupID2RelationIndex.insert(directGroupID, indexList);
+    }
+    return resultList;
+}
+
+QList<todo::ItemGroupRelation> todo::GlobalCache::getItemGroupRelationByItemID(const QString &itemID) {
+    QList<ItemGroupRelation> resultList;
+    if (this->itemID2RelationIndex.contains(itemID)) {
+        resultList.append(this->relationList[this->itemID2RelationIndex[itemID]]);
+    } else {
+        auto relations = DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByItemID(itemID);
+        if (!relations.isEmpty()) {
+            resultList.append(relations[0]);
+            this->relationList.append(relations[0]);
+            this->itemID2RelationIndex.insert(itemID, this->relationList.size() - 1);
+        }
+    }
+    return resultList;
+}
+
+QList<todo::ItemGroupRelation> todo::GlobalCache::getItemGroupRelationByRootID(const QString &itemID) {
+    QList<ItemGroupRelation> resultList;
+    if (this->groupID2RelationIndex.contains(itemID)) {
+        QQueue<QString> itemQueue;
+        while (!itemQueue.isEmpty()) {
+            QString currItemID = itemQueue.first();
+            if (StringUtils::checkIfItemGroup(currItemID)) {
+                auto relations = this->getItemGroupRelationByDirectGroupID(currItemID);
+                resultList.append(relations);
+                foreach (auto const &relation, relations) {
+                    itemQueue.append(relation.getItemID());
+                }
+            } else {
+                auto relations = this->getItemGroupRelationByItemID(currItemID);
+                resultList.append(relations);
+            }
+
+            itemQueue.pop_front();
+        }
+    } else {
+        resultList = DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByRootID(itemID);
+        foreach (auto const &relation, resultList) {
+            if (this->itemID2RelationIndex.contains(relation.getItemID())) {
+                continue;
+            } else {
+                this->relationList.append(relation);
+                this->itemID2RelationIndex.insert(relation.getItemID(), this->relationList.size() - 1);
+                if (!this->groupID2RelationIndex.contains(relation.getDirectGroupID())) {
+                    this->groupID2RelationIndex.insert(relation.getDirectGroupID(), {});
+                }
+                this->groupID2RelationIndex[relation.getDirectGroupID()].append(this->relationList.size() - 1);
+            }
+        }
+    }
+    return resultList;
+}
+
+void todo::GlobalCache::deleteRelationByItemID(const QString &taskID) {
+    if (!this->itemID2RelationIndex.contains(taskID)) {
+        return;
+    }
+
+    int relationIndex = this->itemID2RelationIndex[taskID];
+    this->itemID2RelationIndex.remove(taskID);
+    this->groupID2RelationIndex[this->relationList[relationIndex].getDirectGroupID()].removeOne(relationIndex);
+}
+
+void todo::GlobalCache::addRelation(const todo::ItemGroupRelation &relation) {
+    this->relationList.append(relation);
+    this->itemID2RelationIndex.insert(relation.getItemID(), this->relationList.size() - 1);
+    if (!this->groupID2RelationIndex.contains(relation.getDirectGroupID())) {
+        this->groupID2RelationIndex.insert(relation.getDirectGroupID(), {});
+    }
+    this->groupID2RelationIndex[relation.getDirectGroupID()].append(this->relationList.size() - 1);
 }

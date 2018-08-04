@@ -12,6 +12,7 @@
 #include "../utils/StringUtils.h"
 #include "../utils/DrawUtils.h"
 #include "../utils/ItemUtils.h"
+#include "../utils/ItemGroupUtils.h"
 
 ItemListItemDelegate::ItemListItemDelegate(QObject *parent)
     : QStyledItemDelegate(parent) {
@@ -264,7 +265,10 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
                       percentSize.width(),
                       percentSize.height()
     );
-    todo::DrawUtils::drawRectWithCircle(*painter, QFont("Arial", 8), Qt::white, "50%", percentRect, Qt::darkRed, 0.5);
+    todo::ItemGroupOverview overview = todo::ItemGroupUtils::getGroupOverview(itemGroup);
+    double percent = overview.getTotalItemDoneCount() * 1.0 / overview.getTotalItemCount();
+    todo::DrawUtils::drawRectWithCircle(*painter, QFont("Arial", 8), Qt::white,
+            QString("%1\%").arg(QString::number(int(percent * 100))), percentRect, QColor("#665bff"), percent);
 
     // draw title
     painter->setFont(QFont("Arial", 14));

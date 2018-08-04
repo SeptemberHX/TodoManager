@@ -74,8 +74,6 @@ public:
     // ItemGroupRelation
     QList<ItemGroupRelation> selectItemGroupRelationByRootID(const QString &rootID);
 
-    void deleteItemGroupRelationByDirectParentIDAndItemID(const QString &directParentID, const QString &itemID);
-
     void deleteItemGroupRelationByItemID(const QString &itemID);
 
     void insertItemGroupRelation(const ItemGroupRelation &relation);
