@@ -25,6 +25,7 @@ GroupDetailWidget::GroupDetailWidget(QWidget *parent) :
     // set icons
     ui->deleteToolButton->setIcon(QIcon::fromTheme("editdelete"));
     ui->editToolButton->setIcon(QIcon::fromTheme("edit"));
+    ui->chartview->setRenderHint(QPainter::Antialiasing);
 
     this->changeToViewMode();
 }
@@ -86,12 +87,12 @@ void GroupDetailWidget::loadItemGroup(const todo::ItemGroup &itemGroup) {
         n3 = (overview.getSubItemCount() - overview.getSubItemDoneCount()) * 100 / subItemCount;
     }
     int n4 = 100 - n1 - n2 - n3;
-    pieSeries->append("Child Project Finished", n1);
-    pieSeries->append("Child Project Not Finished", n2);
-    pieSeries->append("Child Task Finished", n4);
-    pieSeries->append("Child Task Not Finished", n3);
+    pieSeries->append("Project F", n1);
+    pieSeries->append("Project NF", n2);
+    pieSeries->append("Task F", n4);
+    pieSeries->append("Task NF", n3);
     chartPtr->addSeries(pieSeries);
-    chartPtr->legend()->setAlignment(Qt::AlignRight);
+    chartPtr->legend()->setAlignment(Qt::AlignBottom);
     chartPtr->setTitle("Project's child items chart");
     ui->chartview->setChart(chartPtr);
 }

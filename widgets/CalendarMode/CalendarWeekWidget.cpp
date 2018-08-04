@@ -9,25 +9,13 @@ CalendarWeekWidget::CalendarWeekWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    int weekDay = 7;
     for (int column = 0; column < 7; ++column) {
-        if (weekDay > 7) {
-            weekDay %= 7;
-        }
-
-        // header
-        QLabel *tagLabel = new QLabel(QDate::longDayName(weekDay), this);
-        tagLabel->setAlignment(Qt::AlignCenter);
-        tagLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-        ui->gridLayout->addWidget(tagLabel, 0, column);
-        ++weekDay;
-
         // timeline widget
         CalendarTimeLineWidget *timeLineWidget = new CalendarTimeLineWidget(this);
         connect(timeLineWidget, &CalendarTimeLineWidget::itemClicked, this, &CalendarWeekWidget::item_clicked);
         connect(timeLineWidget, &CalendarTimeLineWidget::targetDayClicked, this, &CalendarWeekWidget::targetDay_clicked);
         this->timeLineWidgetList.append(timeLineWidget);
-        ui->gridLayout->addWidget(timeLineWidget, 1, column);
+        ui->weekHorizontalLayout->addWidget(timeLineWidget);
     }
 
     // load this week's data

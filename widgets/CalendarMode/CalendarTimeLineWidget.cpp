@@ -35,13 +35,13 @@ void CalendarTimeLineWidget::paintEvent(QPaintEvent *event) {
 
     // calculate echo rect's height and width
     // from 0 to 24, 25 rect in total
-    int rectHeight = (event->rect().height() - timeLineMargin.top() - timeLineMargin.bottom()) / 25;
-    int rectWidget = (event->rect().width() - timeLineMargin.left() - timeLineMargin.right());
+    int rectHeight = (this->height() - timeLineMargin.top() - timeLineMargin.bottom()) / 25;
+    int rectWidget = (this->width() - timeLineMargin.left() - timeLineMargin.right());
     QRect lastRect(event->rect().left() + timeLineMargin.left(),
                    event->rect().top() + timeLineMargin.top(),
                    rectWidget,
                    rectHeight);
-    int hour = 0;
+    int hour = event->rect().y() * 26 / this->height();
     QSize defaultHourSize(30, 30);
     QRect lastHourRect(lastRect.left(),
                        lastRect.bottom() - defaultHourSize.height(),
@@ -73,9 +73,13 @@ void CalendarTimeLineWidget::paintEvent(QPaintEvent *event) {
     // draw schedule mode tasks
     foreach(auto itemDetail, this->itemDetailList) {
         if (itemDetail.getMode() == todo::ItemMode::SCHEDULE) {
-            int targetTop = int(itemDetail.getFromTime().msecsSinceStartOfDay() / totalMSecondOneDay * totalHeight);
-            int targetBottom = int(itemDetail.getToTime().msecsSinceStartOfDay() / totalMSecondOneDay * totalHeight);
-            QRect targetRect(lastHourRect.right() + 5, event->rect().top() + targetTop,
+//            int targetTop = int(itemDetail.getFromTime().msecsSinceStartOfDay() / totalMSecondOneDay * totalHeight);
+            auto hRect = this->hour2Rect[itemDetail.getFromTime().hour() + 1];
+            int targetTop = hRect.top() + itemDetail.getFromTime().minute() * hRect.height() / 60;
+            auto tRect = this->hour2Rect[itemDetail.getToTime().hour() + 1];
+            int targetBottom = tRect.top() + itemDetail.getToTime().minute() * tRect.height() / 60;
+//            int targetBottom = int(itemDetail.getToTime().msecsSinceStartOfDay() / totalMSecondOneDay * totalHeight);
+            QRect targetRect(lastHourRect.right() + 5, targetTop,
                              rectWidget - 35, targetBottom - targetTop);
 
             QColor targetBgColor(Qt::gray);
