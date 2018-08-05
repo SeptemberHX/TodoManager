@@ -152,6 +152,7 @@ QList<todo::ItemGroupRelation> todo::GlobalCache::getItemGroupRelationByRootID(c
     QList<ItemGroupRelation> resultList;
     if (this->groupID2RelationIndex.contains(itemID)) {
         QQueue<QString> itemQueue;
+        itemQueue.push_back(itemID);
         while (!itemQueue.isEmpty()) {
             QString currItemID = itemQueue.first();
             if (StringUtils::checkIfItemGroup(currItemID)) {

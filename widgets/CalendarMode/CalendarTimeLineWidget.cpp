@@ -64,8 +64,6 @@ void CalendarTimeLineWidget::paintEvent(QPaintEvent *event) {
 
     // draw item detail according to their fromTime and endTime
     // remember to check ItemDetail::type
-    int totalHeight = 24 * rectHeight;
-    double totalMSecondOneDay = 24 * 60 * 60 * 1000;
     painter.setPen(Qt::white);
     painter.setFont(QFont("Aria", 8));
     this->itemDetailID2Rect.clear();
@@ -73,12 +71,10 @@ void CalendarTimeLineWidget::paintEvent(QPaintEvent *event) {
     // draw schedule mode tasks
     foreach(auto itemDetail, this->itemDetailList) {
         if (itemDetail.getMode() == todo::ItemMode::SCHEDULE) {
-//            int targetTop = int(itemDetail.getFromTime().msecsSinceStartOfDay() / totalMSecondOneDay * totalHeight);
             auto hRect = this->hour2Rect[itemDetail.getFromTime().hour() + 1];
             int targetTop = hRect.top() + itemDetail.getFromTime().minute() * hRect.height() / 60;
             auto tRect = this->hour2Rect[itemDetail.getToTime().hour() + 1];
             int targetBottom = tRect.top() + itemDetail.getToTime().minute() * tRect.height() / 60;
-//            int targetBottom = int(itemDetail.getToTime().msecsSinceStartOfDay() / totalMSecondOneDay * totalHeight);
             QRect targetRect(lastHourRect.right() + 5, targetTop,
                              rectWidget - 35, targetBottom - targetTop);
 

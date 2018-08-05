@@ -300,7 +300,7 @@ QList<todo::ItemDetail> todo::DataCenter::fillItemDetailInfo(const QList<todo::I
 }
 
 QList<todo::ItemGroupRelation> todo::DataCenter::selectItemGroupRelationByItemID(const QString &itemID) {
-    return DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByItemID(itemID);
+    return GlobalCache::getInstance()->getItemGroupRelationByItemID(itemID);
 }
 
 QList<todo::ItemGroupRelation> todo::DataCenter::selectAllItemGroupRelation() {

@@ -48,6 +48,7 @@ todo::ItemGroupOverview todo::ItemGroupUtils::getGroupOverview(const todo::ItemG
 
 QList<QString> todo::ItemGroupUtils::getGroupPath(const QString &subGroupID) {
     auto relations = ItemGroupUtils::dataCenter.selectItemGroupRelationByItemID(subGroupID);
+    qDebug() << relations.size();
     if (relations.empty()) {
         return {subGroupID};
     }
@@ -63,6 +64,7 @@ QList<QString> todo::ItemGroupUtils::getGroupPath(const QString &subGroupID) {
         resultPathList.push_front(id2RelationMap[resultPathList.first()].getDirectGroupID());
     }
 
+    qDebug() << resultPathList.size();
     return resultPathList;
 }
 
