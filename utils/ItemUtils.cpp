@@ -67,10 +67,14 @@ QString todo::ItemUtils::generateToolTip(const todo::ItemAndGroupWrapper &wrappe
     QString tooltipStr;
     tooltipStr += wrapper.getTitle();
 
-    QString plainDescritpion = QTextDocumentFragment::fromHtml(wrapper.getDescription()).toPlainText();
+    QString plainDescritpion = ItemUtils::getPlainDescription(wrapper);
     if (!plainDescritpion.isEmpty()) {
         tooltipStr += "\n\n" + plainDescritpion;
     }
 
     return tooltipStr;
+}
+
+QString todo::ItemUtils::getPlainDescription(const todo::ItemAndGroupWrapper &wrapper) {
+    return QTextDocumentFragment::fromHtml(wrapper.getDescription()).toPlainText();
 }

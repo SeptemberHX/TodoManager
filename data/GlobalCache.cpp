@@ -204,3 +204,9 @@ void todo::GlobalCache::addRelation(const todo::ItemGroupRelation &relation) {
     }
     this->groupID2RelationIndex[relation.getDirectGroupID()].append(this->relationList.size() - 1);
 }
+
+void todo::GlobalCache::deleteRelationByItemIDs(const QList<QString> &taskIDList) {
+    foreach (auto const &taskID, taskIDList) {
+        this->deleteRelationByItemID(taskID);
+    }
+}

@@ -45,7 +45,18 @@ public:
     QList<ItemTag> selectAllItemTag();
     QList<ItemTag> selectItemTagById(const QString &tagId);
     void updateItemTagById(const QString &tagId, const ItemTag &itemTag);
-    void deleteItemTagById(const QString &tagId);
+
+    /**
+     * delete target tag only. All items belong to it will be kept.
+     * @param tagId
+     */
+    void deleteItemTagOnlyById(const QString &tagId);
+
+    /**
+     * delete target tag and all items belong to it
+     * @param tagId
+     */
+    void deleteItemTagAndAllItemsByTagId(const QString &tagId);
     void insertItemTag(const ItemTag &tag);
     // ---------------- todo_item.tags Ends -----------------
 
@@ -99,6 +110,7 @@ private:
     // for recursive or avoiding emit signal repeatly
     void deleteGroupCompletely_(const QString &groupID);
     void deleteItemDetailByIDCompletely_(const QString &itemID);
+    void deleteItemDetailByIDsCompletely_(const QList<QString> &itemIDList);
 };
 
 }

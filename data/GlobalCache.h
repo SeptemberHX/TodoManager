@@ -34,6 +34,7 @@ public:
     QList<ItemGroupRelation> getItemGroupRelationByRootID(const QString &itemID);
 
     void deleteRelationByItemID(const QString &taskID);
+    void deleteRelationByItemIDs(const QList<QString> &taskIDList);
     void addRelation(const ItemGroupRelation &relation);
 
 private:

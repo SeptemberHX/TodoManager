@@ -25,6 +25,8 @@ public:
 
     void deleteItemDetailByID(const QString &itemID) override;
 
+    void deleteItemDetailByIDs(const QList<QString> &itemIDs) override;
+
     void insertItemDetail(const ItemDetailDao &itemDetailDao) override;
 
     void updateDoneByID(const QString &itemID, bool flag) override;
@@ -60,6 +62,10 @@ public:
     void deleteItemAndTagMatch(const ItemDetailAndTag &match) override;
 
     void deleteItemAndTagMatchByItemID(const QString &itemID) override;
+
+    void deleteItemAndTagMatchByItemIDs(const QList<QString> &itemIDList) override;
+
+    void deleteItemAndTagMatchByTagID(const QString &tagID) override;
     // End
 
     // For notification
@@ -92,6 +98,8 @@ public:
 
     void deleteItemGroupRelationByItemID(const QString &itemID) override;
 
+    void deleteItemGroupRelationByItemIDs(const QList<QString> &itemIDList) override;
+
     void insertItemGroupRelation(const ItemGroupRelation &relation) override;
 
     QList<ItemGroupRelation> selectItemGroupRelationByParentID(const QString &parentID) override;
@@ -107,6 +115,7 @@ public:
 
 private:
     void createTables();
+    QString generateWhereClauseStrValues(const QString &fieldName, const QString &operation, bool isAnd, const QList<QString> &valueList);
     QSqlDatabase db;
     int sqlType; // 0: MySQL, 1: SQLite
 };

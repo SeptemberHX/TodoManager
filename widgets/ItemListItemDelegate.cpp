@@ -185,7 +185,7 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     painter->setFont(QFont("Arias", 10));
     painter->drawText(descriptionRect, Qt::AlignLeft | Qt::AlignVCenter,
                       todo::StringUtils::elideText(
-                              todo::ItemUtils::generateToolTip(itemDetail),
+                              todo::ItemUtils::getPlainDescription(itemDetail),
                               painter->fontMetrics(),
                               descriptionRect.width()
                               )
@@ -328,7 +328,7 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
                         toRect.bottomLeft() + QPoint(-dateLabelMargin.left(), 0));
     availableRect.setBottom(availableRect.bottom() - availableRect.height() + maxHeight);
     painter->drawText(availableRect, Qt::TextWordWrap | Qt::TextSingleLine | Qt::AlignTop,
-            todo::ItemUtils::generateToolTip(itemGroup), &availableRect);
+            todo::ItemUtils::getPlainDescription(itemGroup), &availableRect);
 
     // draw selection item's border
     if (option.state & QStyle::State_Selected) {

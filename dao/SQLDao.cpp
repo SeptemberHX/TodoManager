@@ -83,6 +83,18 @@ void todo::SQLDao::deleteItemDetailByID(const QString &itemID) {
     }
 }
 
+void todo::SQLDao::deleteItemDetailByIDs(const QList<QString> &itemIDs) {
+    if (itemIDs.isEmpty()) return;
+
+    QString whereClauseStr = this->generateWhereClauseStrValues("id", "=", false, itemIDs);
+    QString queryStr("DELETE FROM todo_items WHERE ");
+    queryStr += whereClauseStr;
+    QSqlQuery query(this->db);
+    if (!query.exec(queryStr)) {
+        throw SqlErrorException();
+    }
+}
+
 void todo::SQLDao::insertItemDetail(const todo::ItemDetailDao &itemDetailDao) {
     QSqlQuery query(this->db);
     query.prepare("INSERT INTO todo_items"
@@ -430,6 +442,28 @@ void todo::SQLDao::deleteItemAndTagMatchByItemID(const QString &itemID) {
     query.prepare("DELETE FROM item_tags"
                   " WHERE itemID=:itemID;");
     query.bindValue(":itemID", itemID);
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
+}
+
+void todo::SQLDao::deleteItemAndTagMatchByItemIDs(const QList<QString> &itemIDList) {
+    if (itemIDList.isEmpty()) return;
+
+    QString whereClauseStr = this->generateWhereClauseStrValues("itemID", "=", false, itemIDList);
+    QString queryStr("DELETE FROM item_tags WHERE ");
+    queryStr += whereClauseStr;
+    QSqlQuery query(this->db);
+    if (!query.exec(queryStr)) {
+        throw SqlErrorException();
+    }
+}
+
+void todo::SQLDao::deleteItemAndTagMatchByTagID(const QString &tagID) {
+    QSqlQuery query(this->db);
+    query.prepare("DELETE FROM item_tags"
+                  " WHERE tagID=:tagID;");
+    query.bindValue(":tagID", tagID);
     if (!query.exec()) {
         throw SqlErrorException();
     }
@@ -853,6 +887,19 @@ void todo::SQLDao::deleteItemGroupRelationByItemID(const QString &itemID) {
     }
 }
 
+void todo::SQLDao::deleteItemGroupRelationByItemIDs(const QList<QString> &itemIDList) {
+    if (itemIDList.isEmpty()) return;
+
+    QString whereClauseStr = this->generateWhereClauseStrValues("itemID", "=", false, itemIDList);
+    QString queryStr("DELETE FROM item_group_relations WHERE ");
+    queryStr += whereClauseStr;
+
+    QSqlQuery query(this->db);
+    if (!query.exec(queryStr)) {
+        throw SqlErrorException();
+    }
+}
+
 QList<todo::ItemGroupRelation> todo::SQLDao::selectAllItemGroupRelation() {
     QList<ItemGroupRelation> resultList;
     QSqlQuery query(this->db);
@@ -872,4 +919,18 @@ QList<todo::ItemGroupRelation> todo::SQLDao::selectAllItemGroupRelation() {
     }
 
     return resultList;
+}
+
+QString todo::SQLDao::generateWhereClauseStrValues(const QString &fieldName, const QString &operation, bool isAnd,
+                                          const QList<QString> &valueList) {
+    QStringList itemIDList;
+    for (auto const &valueStr : valueList) {
+        itemIDList.append(QString(" %1 %2 \"%3\"").arg(fieldName).arg(operation).arg(valueStr));
+    }
+
+    if (isAnd) {
+        return itemIDList.join(" AND ");
+    } else {
+        return itemIDList.join(" or ");
+    }
 }

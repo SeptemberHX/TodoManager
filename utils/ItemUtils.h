@@ -23,6 +23,7 @@ public:
     static ItemDetail assignItemDetailToGroup(const ItemDetail &itemDetail, const QString &rGroupID, const QString &dGroupID);
     static QList<ItemDetail> assignItemDetailsToGroup(const QList<ItemDetail> &itemDetails, const QString &rGroupID, const QString &dGroupID);
 
+    static QString getPlainDescription(const ItemAndGroupWrapper &wrapper);
     static QString generateToolTip(const ItemAndGroupWrapper & wrapper);
 
 private:
