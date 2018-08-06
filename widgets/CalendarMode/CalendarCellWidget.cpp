@@ -180,10 +180,10 @@ void CalendarCellWidget::mouseMoveEvent(QMouseEvent *event) {
         if (this->itemDetailID2Rect[itemDetailID].contains(event->pos())) {
             this->mouseHoverPair = QPair<bool, QRect>(true, this->itemDetailID2Rect[itemDetailID]);
 
-            QString toolTipText("%1\n\n%2");
+            QString toolTipText;
             foreach(auto itemDetail, this->itemDetailList) {
                 if (itemDetail.getId() == itemDetailID) {
-                    toolTipText = toolTipText.arg(itemDetail.getTitle()).arg(itemDetail.getDescription());
+                    toolTipText = todo::ItemUtils::generateToolTip(itemDetail);
                     break;
                 }
             }

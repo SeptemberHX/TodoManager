@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QToolTip>
 #include "../../utils/StringUtils.h"
+#include "../../utils/ItemUtils.h"
 
 bool compareFun(const todo::ItemDetail &item1, const todo::ItemDetail &item2) {
     return item1.getFromTime() < item2.getFromTime();
@@ -124,10 +125,10 @@ void CalendarTimeLineWidget::mouseMoveEvent(QMouseEvent *event) {
         if (this->itemDetailID2Rect[itemDetailID].contains(event->pos())) {
             this->mouseHoverPair = QPair<bool, QRect>(true, this->itemDetailID2Rect[itemDetailID]);
 
-            QString toolTipText("%1\n\n%2");
+            QString toolTipText;
             foreach(auto itemDetail, this->itemDetailList) {
                 if (itemDetail.getId() == itemDetailID) {
-                    toolTipText = toolTipText.arg(itemDetail.getTitle()).arg(itemDetail.getDescription());
+                    toolTipText = todo::ItemUtils::generateToolTip(itemDetail);
                     break;
                 }
             }

@@ -43,6 +43,10 @@ public:
 
     bool hasRootGroup() const;
 
+    QString getTitle() const;
+
+    QString getDescription() const;
+
     friend std::ostream &operator<<(std::ostream &os, const ItemAndGroupWrapper &itemAndGroupPair);
 
     friend QDataStream&operator<<(QDataStream &os, const ItemAndGroupWrapper &itemAndGroupPair);

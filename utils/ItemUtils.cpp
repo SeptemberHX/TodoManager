@@ -4,6 +4,7 @@
 
 #include "ItemUtils.h"
 #include <QUuid>
+#include <QTextDocumentFragment>
 
 todo::DataCenter todo::ItemUtils::dataCenter;
 
@@ -60,4 +61,16 @@ todo::ItemUtils::assignItemDetailsToGroup(const QList<todo::ItemDetail> &itemDet
     }
     ItemUtils::assignItemDetailsToGroup(itemIDs, rGroupID, dGroupID);
     return resultList;
+}
+
+QString todo::ItemUtils::generateToolTip(const todo::ItemAndGroupWrapper &wrapper) {
+    QString tooltipStr;
+    tooltipStr += wrapper.getTitle();
+
+    QString plainDescritpion = QTextDocumentFragment::fromHtml(wrapper.getDescription()).toPlainText();
+    if (!plainDescritpion.isEmpty()) {
+        tooltipStr += "\n\n" + plainDescritpion;
+    }
+
+    return tooltipStr;
 }

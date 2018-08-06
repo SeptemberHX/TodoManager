@@ -72,3 +72,13 @@ bool todo::ItemAndGroupWrapper::hasRootGroup() const {
 QString todo::ItemAndGroupWrapper::getDirectGroupID() const {
     if (this->isGroup()) return this->itemGroup.getDirectGroupID();
     else return this->itemDetail.getDirectGroupID();}
+
+QString todo::ItemAndGroupWrapper::getTitle() const {
+    if (this->isGroup()) return  this->itemGroup.getTitle();
+    else return this->itemDetail.getTitle();
+}
+
+QString todo::ItemAndGroupWrapper::getDescription() const {
+    if (this->isGroup()) return this->itemGroup.getDescription();
+    else return this->itemDetail.getDescription();
+}
