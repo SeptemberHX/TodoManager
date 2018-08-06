@@ -36,6 +36,6 @@ set (widgets_files
 	ProjectMode/GroupWidget.cpp
 	ProjectMode/GroupDetailWidget.cpp
 	ProjectMode/NavigationBarWidget.cpp
-)
+        Common/CommonAction.cpp Common/CommonAction.h)
 add_library(widgets ${widgets_files})
 target_link_libraries(widgets Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Charts core utils data)

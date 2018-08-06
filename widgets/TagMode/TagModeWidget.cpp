@@ -4,6 +4,7 @@
 #include "../../utils/StringUtils.h"
 #include "TagModeWidget.h"
 #include "ui_TagModeWidget.h"
+#include "../Common/CommonAction.h"
 
 bool compareItemTagWithName(const todo::ItemTag &itemTag1, const todo::ItemTag &itemTag2) {
     return todo::StringUtils::compareString(itemTag1.getName(), itemTag2.getName());
@@ -14,6 +15,11 @@ TagModeWidget::TagModeWidget(QWidget *parent) :
     ui(new Ui::TagModeWidget)
 {
     ui->setupUi(this);
+
+    this->tagListMenu = new QMenu(this);
+    this->initRightClickMenu();
+    ui->listView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->listView, &QListView::customContextMenuRequested, this, &TagModeWidget::show_tagList_context_menu);
 
     this->todoListWidget = new TodoListWidget(this, TodoListWidgetMode::TAG);
     this->mainSplitter = new QSplitter(this);
@@ -30,7 +36,7 @@ TagModeWidget::TagModeWidget(QWidget *parent) :
 
     this->loadTagList();
 
-    connect(ui->listView, &QListView::clicked, this, &TagModeWidget::list_selected_item_changed);
+    connect(ui->listView, &QListView::pressed, this, &TagModeWidget::list_selected_item_changed);
     connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &TagModeWidget::database_modified);
     connect(this->todoListWidget, &TodoListWidget::jumpToGroup, this, &TagModeWidget::jump_to_group);
 }
@@ -86,4 +92,33 @@ void TagModeWidget::loadTagList() {
 
 void TagModeWidget::jump_to_group(const QString &groupID) {
     emit jumpToGroup(groupID);
+}
+
+void TagModeWidget::initRightClickMenu() {
+    QList<QAction*> actionList = CommonAction::getInstance()->getTagActions(false);
+    foreach (auto const actionPtr, actionList) {
+        connect(actionPtr, &QAction::triggered, this, &TagModeWidget::rightClickMenu_clicked);
+        this->tagListMenu->addAction(actionPtr);
+    }
+}
+
+void TagModeWidget::rightClickMenu_clicked() {
+    auto actionType = CommonAction::getInstance()->getActionType(dynamic_cast<QAction*>(sender()));
+    auto tag = ui->listView->selectionModel()->selectedIndexes()[0].data(Qt::UserRole + 1).value<todo::ItemTag>();
+    switch (actionType) {
+        case CommonActionType::TAG_REMOVE_ONLY:
+            qDebug() << "remove tag" << tag.getName() << "only";
+            break;
+        case CommonActionType::TAG_REMOVE_COMPLETE:
+            qDebug() << "remove tag" << tag.getName() << "completely";
+            break;
+        default:
+            break;
+    }
+}
+
+void TagModeWidget::show_tagList_context_menu(const QPoint &point) {
+    if (this->itemModel->itemFromIndex(ui->listView->indexAt(point)) == nullptr) return;
+
+    this->tagListMenu->popup(QCursor::pos());
 }
