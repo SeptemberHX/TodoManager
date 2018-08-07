@@ -1,6 +1,7 @@
 #include <QCollator>
 #include <QLocale>
 #include <QDebug>
+#include <QMessageBox>
 #include "../../utils/StringUtils.h"
 #include "TagModeWidget.h"
 #include "ui_TagModeWidget.h"
@@ -38,6 +39,7 @@ TagModeWidget::TagModeWidget(QWidget *parent) :
 
     connect(ui->listView, &QListView::pressed, this, &TagModeWidget::list_selected_item_changed);
     connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &TagModeWidget::database_modified);
+    connect(&this->dataCenter, &todo::DataCenter::databaseModified, this, &TagModeWidget::database_modified);
     connect(this->todoListWidget, &TodoListWidget::jumpToGroup, this, &TagModeWidget::jump_to_group);
 }
 
@@ -108,9 +110,19 @@ void TagModeWidget::rightClickMenu_clicked() {
     switch (actionType) {
         case CommonActionType::TAG_REMOVE_ONLY:
             qDebug() << "remove tag" << tag.getName() << "only";
+            if (this->todoListWidget->isEditing()) {
+                QMessageBox::information(this, "Attention!", "Save your work first !!");
+                return;
+            }
+            this->deleteTag(tag, false);
             break;
         case CommonActionType::TAG_REMOVE_COMPLETE:
             qDebug() << "remove tag" << tag.getName() << "completely";
+            if (this->todoListWidget->isEditing()) {
+                QMessageBox::information(this, "Attention!", "Save your work first !!");
+                return;
+            }
+            this->deleteTag(tag, true);
             break;
         default:
             break;
@@ -121,4 +133,35 @@ void TagModeWidget::show_tagList_context_menu(const QPoint &point) {
     if (this->itemModel->itemFromIndex(ui->listView->indexAt(point)) == nullptr) return;
 
     this->tagListMenu->popup(QCursor::pos());
+}
+
+void TagModeWidget::removeTagFromList(const QString &tagID) {
+    for (int i = 0; i < this->itemModel->rowCount(); ++i) {
+        auto tag = this->itemModel->item(i)->data(Qt::UserRole + 1).value<todo::ItemTag>();
+        if (tagID == tag.getId()) {
+            this->itemModel->removeRow(i);
+            break;
+        }
+    }
+}
+
+void TagModeWidget::deleteTag(const todo::ItemTag &tag, bool ifDeleteTasks) {
+    QString informationStr("Are you sure to delete tag");
+    if (ifDeleteTasks) {
+        informationStr += " and all tasks belong to it ?";
+    } else {
+        informationStr += " only ? Tasks will be kept.";
+    }
+
+    if (QMessageBox::information(this, "Attention", informationStr, QMessageBox::Ok | QMessageBox::Cancel)
+                            == QMessageBox::Cancel) {
+        return;
+    }
+
+    if (ifDeleteTasks) {
+        this->dataCenter.deleteItemTagAndAllItemsByTagId(tag.getId());
+    } else {
+        this->dataCenter.deleteItemTagOnlyById(tag.getId());
+    }
+    this->removeTagFromList(tag.getId());
 }

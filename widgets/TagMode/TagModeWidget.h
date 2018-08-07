@@ -48,6 +48,8 @@ private:
     void clear();
     void loadTagList();
     void initRightClickMenu();
+    void removeTagFromList(const QString &tagID);
+    void deleteTag(const todo::ItemTag &tag, bool ifDeleteTasks);
 };
 
 #endif // TAGMODEWIDGET_H

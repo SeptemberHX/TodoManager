@@ -335,6 +335,10 @@ void TodoListWidget::jump_to_specific_group(const QString &groupID) {
     emit jumpToGroup(groupID);
 }
 
+bool TodoListWidget::isEditing() const {
+    return this->detailWidget->isEditing();
+}
+
 // --------- InboxViewFilterCondition --------
 
 const QDate &InboxViewFilterCondition::getTargetFromDate() const {

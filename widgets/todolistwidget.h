@@ -79,6 +79,8 @@ public:
      */
     void loadItems(const QList<todo::ItemDetail> &itemDetails);
 
+    bool isEditing() const;
+
 public slots:
     /**
      * read data from DataCenter again.

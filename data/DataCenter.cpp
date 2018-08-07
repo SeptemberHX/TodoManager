@@ -100,7 +100,9 @@ void todo::DataCenter::deleteItemTagAndAllItemsByTagId(const QString &tagId) {
     foreach (auto const &tagMatch, tagMatchList) {
         itemIDList.append(tagMatch.getItemID());
     }
+    DaoFactory::getInstance()->getSQLDao()->deleteItemTagById(tagId);
     this->deleteItemDetailByIDsCompletely_(itemIDList);
+    emit databaseModified();
 }
 
 void todo::DataCenter::insertItemTag(const todo::ItemTag &tag) {

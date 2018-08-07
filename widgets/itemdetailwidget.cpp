@@ -294,6 +294,8 @@ void ItemDetailWidget::reloadCurrItemDetail() {
         ui->directProjectLabel->setText(QString("<a href = %1>%2</a>").arg(directGroup[0].getId()).arg(directGroup[0].getTitle()));
         ui->projectInfoWidget->show();
     } else {
+        this->directGroupID.clear();
+        this->rootGroupID.clear();
         ui->projectInfoWidget->hide();
     }
 }
