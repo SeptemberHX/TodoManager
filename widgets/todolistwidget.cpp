@@ -62,6 +62,9 @@ TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
     connect(this->detailWidget, &ItemDetailWidget::jumpTo, this, &TodoListWidget::jump_to_specific_group);
     // end
 
+    // jump to tag
+    connect(this->detailWidget, &ItemDetailWidget::tagClicked, this, &TodoListWidget::item_tag_clicked);
+
     connect(&this->dataCenter, &todo::DataCenter::databaseModified, this, &TodoListWidget::database_modified);
 
     // set icons
@@ -337,6 +340,10 @@ void TodoListWidget::jump_to_specific_group(const QString &groupID) {
 
 bool TodoListWidget::isEditing() const {
     return this->detailWidget->isEditing();
+}
+
+void TodoListWidget::item_tag_clicked(const QString &itemID) {
+    emit jumpToTag(itemID);
 }
 
 // --------- InboxViewFilterCondition --------

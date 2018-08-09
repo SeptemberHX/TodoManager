@@ -29,6 +29,9 @@ signals:
     void databaseModified();
     void jumpToGroup(const QString &groupID);
 
+public slots:
+    void jump_to_tag(const QString &tagID);
+
 private slots:
     void list_selected_item_changed();
     void database_modified();

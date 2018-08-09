@@ -165,3 +165,13 @@ void TagModeWidget::deleteTag(const todo::ItemTag &tag, bool ifDeleteTasks) {
     }
     this->removeTagFromList(tag.getId());
 }
+
+void TagModeWidget::jump_to_tag(const QString &tagID) {
+    for (int r = 0; r < this->itemModel->rowCount(); ++r) {
+        auto tag = this->itemModel->item(r)->data(Qt::UserRole + 1).value<todo::ItemTag>();
+        if (tagID == tag.getId()) {
+            ui->listView->setCurrentIndex(this->itemModel->index(r, 0));
+            return;
+        }
+    }
+}

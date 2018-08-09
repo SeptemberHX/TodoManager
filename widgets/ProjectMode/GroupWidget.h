@@ -32,6 +32,7 @@ public slots:
 signals:
     void enterItem(const QString &itemID, const QString &name);
     void databaseModified();
+    void jumpToTag(const QString &itemID);
 
 private:
     Ui::GroupWidget *ui;
@@ -66,6 +67,7 @@ private slots:
     void save_action_triggered(const todo::ItemAndGroupWrapper &wrapper);
     void markDone_clicked(bool flag);
     void refresh_button_clicked();
+    void item_tag_clicked(const QString &itemID);
 };
 
 #endif // GROUPWIDGET_H

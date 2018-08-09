@@ -30,6 +30,7 @@ public:
 
 signals:
     void tag_changed();  // tell other widgets that tags changed. So other widgets can adjust there info view.
+    void tagClicked(const QString &tagID);
 
 private:
     Ui::TagWidget *ui;

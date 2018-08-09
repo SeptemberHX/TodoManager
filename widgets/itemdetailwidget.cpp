@@ -64,6 +64,9 @@ ItemDetailWidget::ItemDetailWidget(QWidget *parent) :
     connect(ui->rootProjectLabel, &QLabel::linkActivated, this, &ItemDetailWidget::try_jump_to);
     connect(ui->directProjectLabel, &QLabel::linkActivated, this, &ItemDetailWidget::try_jump_to);
 
+    // jump to tag
+    connect(this->tagWidget, &TagWidget::tagClicked, this, &ItemDetailWidget::item_tag_clicked);
+
     // edit relation
     connect(ui->deleteRelationToolButton, &QToolButton::clicked, this, &ItemDetailWidget::deleteRelationButton_clicked);
     connect(ui->editRelationToolButton, &QToolButton::clicked, this, &ItemDetailWidget::editRelationButton_clicked);
@@ -358,4 +361,8 @@ void ItemDetailWidget::deleteRelationButton_clicked() {
     this->directGroupID = "";
     ui->noneLabel->show();
     ui->pathWidget->hide();
+}
+
+void ItemDetailWidget::item_tag_clicked(const QString &itemID) {
+    emit tagClicked(itemID);
 }

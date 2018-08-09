@@ -69,6 +69,7 @@ private slots:
     void modeBtn_clicked(QAbstractButton *button);
     void database_modified();
     void jump_to_specific_group(const QString &groupID);
+    void jump_to_specific_tag(const QString &itemID);
 
 public slots:
     void update_notification_timer();

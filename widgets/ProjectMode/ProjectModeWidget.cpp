@@ -20,6 +20,7 @@ ProjectModeWidget::ProjectModeWidget(QWidget *parent) :
     connect(this->groupWidget, &GroupWidget::enterItem, this, &ProjectModeWidget::enter_item);
     connect(this->navigationBarWidget, &NavigationBarWidget::jumpTo, this->groupWidget, QOverload<const QList<QString>&>::of(&GroupWidget::jump_to));
     connect(this->groupWidget, &GroupWidget::databaseModified, this, &ProjectModeWidget::database_modified);
+    connect(this->groupWidget, &GroupWidget::jumpToTag, this, &ProjectModeWidget::item_tag_clicked);
 }
 
 ProjectModeWidget::~ProjectModeWidget()
@@ -48,4 +49,8 @@ void ProjectModeWidget::jump_to(const QString &itemID) {
     }
     fullPathList.push_front(NavigationBarWidget::ROOT);
     this->groupWidget->jump_to(fullPathList);
+}
+
+void ProjectModeWidget::item_tag_clicked(const QString &itemID) {
+    emit jumpToTag(itemID);
 }

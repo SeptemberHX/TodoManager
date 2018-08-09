@@ -241,6 +241,8 @@ void GroupWidget::initUI() {
     connect(this->itemDetailWidget, &ItemDetailWidget::markDoneClicked, this, &GroupWidget::markDone_clicked);
     connect(ui->refreshToolButton, &QToolButton::clicked, this, &GroupWidget::refresh_button_clicked);
 
+    connect(this->itemDetailWidget, &ItemDetailWidget::tagClicked, this, &GroupWidget::item_tag_clicked);
+
     // set icons
     ui->refreshToolButton->setIcon(QIcon::fromTheme("view-refresh"));
     ui->sortToolButton->setIcon(QIcon::fromTheme("sort-presence"));
@@ -273,4 +275,8 @@ QString GroupWidget::getCurrentDirectGroupID() const {
 
 bool GroupWidget::isRootLevel() const {
     return this->currPathList.size() <= 1;
+}
+
+void GroupWidget::item_tag_clicked(const QString &itemID) {
+    emit jumpToTag(itemID);
 }

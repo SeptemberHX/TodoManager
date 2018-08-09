@@ -25,6 +25,7 @@ public slots:
 
 signals:
     void databaseModified();
+    void jumpToTag(const QString &itemID);
 
 private:
     todo::DataCenter dataCenter;
@@ -36,6 +37,7 @@ private:
 private slots:
     void enter_item(const QString &itemID, const QString &name);
     void database_modified();
+    void item_tag_clicked(const QString &itemID);
 };
 
 #endif // PROJECTMODEWIDGET_H

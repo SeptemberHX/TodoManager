@@ -39,17 +39,10 @@ void TagWidget::addTag(const todo::ItemTag &tagItem) {
     tagButton->setText(tagItem.getName());
     tagButton->setTagColor(tagItem.getColor());
 
-//    int tIndex = ui->horizontalLayout->indexOf(ui->addTagButton);
-//    ui->horizontalLayout->insertWidget(tIndex, tagButton);
-
     int tIndex = this->tagLayout->indexOf(ui->addTagButton);
     this->tagLayout->insertWidget(tIndex, tagButton);
 
     this->tagLabelList.append(tagButton);
-
-    if (this->readOnly) {
-        tagButton->setEnabled(false);
-    }
 }
 
 QList<todo::ItemTag> TagWidget::getTags() {
@@ -70,23 +63,22 @@ TagLabelWidget *TagWidget::findTagButton(const QString &tagStr) {
 }
 
 void TagWidget::tagLabel_clicked() {
-    auto tagButton = dynamic_cast<TagLabelWidget*>(sender());
-//    ui->horizontalLayout->removeWidget(tagButton);
-    this->tagLayout->removeWidget(tagButton);
-    this->tagLabelList.removeOne(tagButton);
-    this->tagMap.remove(tagButton->text());
-    delete tagButton;
+    auto tagButton = dynamic_cast<TagLabelWidget *>(sender());
+    if (!this->readOnly) {
+        this->tagLayout->removeWidget(tagButton);
+        this->tagLabelList.removeOne(tagButton);
+        this->tagMap.remove(tagButton->text());
+        delete tagButton;
 
-    emit tag_changed();
+        emit tag_changed();
+    } else {
+        emit tagClicked(tagButton->text());
+    }
 }
 
 void TagWidget::setReadOnly(bool isReadOnly) {
     this->readOnly = isReadOnly;
     ui->addTagButton->setVisible(!isReadOnly);
-
-    for (auto tagButton : this->tagLabelList) {
-        tagButton->setEnabled(!isReadOnly);
-    }
 }
 
 void TagWidget::resizeAll() {

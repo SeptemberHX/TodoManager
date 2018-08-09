@@ -38,6 +38,7 @@ signals:
     void markDoneClicked(bool isDone);
     void deleteButtonClicked();
     void jumpTo(const QString &itemID);
+    void tagClicked(const QString &tagID);
 
 public slots:
     void modeButtonToggled();
@@ -82,6 +83,7 @@ private slots:
     void try_jump_to(const QString &itemID);
     void deleteRelationButton_clicked();
     void editRelationButton_clicked();
+    void item_tag_clicked(const QString &itemID);
 };
 
 #endif // ITEMDETAILWIDGET_H

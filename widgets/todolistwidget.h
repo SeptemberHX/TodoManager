@@ -132,6 +132,7 @@ signals:
     void changeStatusBarText(const QString &newStr);
     void databaseModified();  // for notification
     void jumpToGroup(const QString &groupID);
+    void jumpToTag(const QString &tagID);
 
 private slots:
     void todayBtn_clicked();
@@ -158,6 +159,8 @@ private slots:
     void inboxFilter_changed(const InboxViewFilterCondition &newCondition);
 
     void jump_to_specific_group(const QString &groupID);
+
+    void item_tag_clicked(const QString &itemID);
 };
 
 #endif // TODOLISTWIDGET_H
