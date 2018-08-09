@@ -16,11 +16,14 @@ TagModeWidget::TagModeWidget(QWidget *parent) :
     ui(new Ui::TagModeWidget)
 {
     ui->setupUi(this);
+    this->listView = new CustomListView(this);
+    this->listView->setMinimumWidth(200);
+    ui->verticalLayout->addWidget(this->listView);
 
     this->tagListMenu = new QMenu(this);
     this->initRightClickMenu();
-    ui->listView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->listView, &QListView::customContextMenuRequested, this, &TagModeWidget::show_tagList_context_menu);
+    this->listView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this->listView, &QListView::customContextMenuRequested, this, &TagModeWidget::show_tagList_context_menu);
 
     this->todoListWidget = new TodoListWidget(this, TodoListWidgetMode::TAG);
     this->mainSplitter = new QSplitter(this);
@@ -30,14 +33,14 @@ TagModeWidget::TagModeWidget(QWidget *parent) :
     this->mainSplitter->setStretchFactor(1, 3);
     ui->horizontalLayout->addWidget(this->mainSplitter);
 
-    this->itemModel = new QStandardItemModel(ui->listView);
-    ui->listView->setItemDelegate(new TagModeListItemDelegate(ui->listView));
-    ui->listView->setModel(this->itemModel);
-    ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    this->itemModel = new QStandardItemModel(this->listView);
+    this->listView->setItemDelegate(new TagModeListItemDelegate(this->listView));
+    this->listView->setModel(this->itemModel);
+    this->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     this->loadTagList();
 
-    connect(ui->listView, &QListView::pressed, this, &TagModeWidget::list_selected_item_changed);
+    connect(this->listView, &CustomListView::currentIndexChanged, this, &TagModeWidget::list_selected_item_changed);
     connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &TagModeWidget::database_modified);
     connect(&this->dataCenter, &todo::DataCenter::databaseModified, this, &TagModeWidget::database_modified);
     connect(this->todoListWidget, &TodoListWidget::jumpToGroup, this, &TagModeWidget::jump_to_group);
@@ -58,14 +61,14 @@ void TagModeWidget::setItemTags(const QList<todo::ItemTag> &itemTags) {
 }
 
 void TagModeWidget::list_selected_item_changed() {
-    ui->listView->setEnabled(false);
+    this->listView->setEnabled(false);
     qDebug() << "Selected item changed";
-    todo::ItemTag currSelectedTag = ui->listView->currentIndex().data(Qt::UserRole + 1).value<todo::ItemTag>();
+    todo::ItemTag currSelectedTag = this->listView->currentIndex().data(Qt::UserRole + 1).value<todo::ItemTag>();
     auto itemDetailList = this->dataCenter.selectItemDetailsByTag(currSelectedTag);
     qDebug() << "Current selected item is " << currSelectedTag.getName()
              << ", and has " << itemDetailList.count() << " items";
     this->todoListWidget->loadItems(itemDetailList);
-    ui->listView->setEnabled(true);
+    this->listView->setEnabled(true);
 }
 
 void TagModeWidget::database_modified() {
@@ -73,10 +76,10 @@ void TagModeWidget::database_modified() {
 }
 
 void TagModeWidget::refresh_current_items() {
-    auto currentRow = ui->listView->currentIndex().row();
+    auto currentRow = this->listView->currentIndex().row();
     this->loadTagList();
     if (this->itemModel->rowCount() > currentRow) {
-        ui->listView->setCurrentIndex(this->itemModel->index(currentRow, 0));
+        this->listView->setCurrentIndex(this->itemModel->index(currentRow, 0));
     }
     this->list_selected_item_changed();
 }
@@ -106,7 +109,7 @@ void TagModeWidget::initRightClickMenu() {
 
 void TagModeWidget::rightClickMenu_clicked() {
     auto actionType = CommonAction::getInstance()->getActionType(dynamic_cast<QAction*>(sender()));
-    auto tag = ui->listView->selectionModel()->selectedIndexes()[0].data(Qt::UserRole + 1).value<todo::ItemTag>();
+    auto tag = this->listView->selectionModel()->selectedIndexes()[0].data(Qt::UserRole + 1).value<todo::ItemTag>();
     switch (actionType) {
         case CommonActionType::TAG_REMOVE_ONLY:
             qDebug() << "remove tag" << tag.getName() << "only";
@@ -130,7 +133,7 @@ void TagModeWidget::rightClickMenu_clicked() {
 }
 
 void TagModeWidget::show_tagList_context_menu(const QPoint &point) {
-    if (this->itemModel->itemFromIndex(ui->listView->indexAt(point)) == nullptr) return;
+    if (this->itemModel->itemFromIndex(this->listView->indexAt(point)) == nullptr) return;
 
     this->tagListMenu->popup(QCursor::pos());
 }
@@ -170,7 +173,7 @@ void TagModeWidget::jump_to_tag(const QString &tagID) {
     for (int r = 0; r < this->itemModel->rowCount(); ++r) {
         auto tag = this->itemModel->item(r)->data(Qt::UserRole + 1).value<todo::ItemTag>();
         if (tagID == tag.getId()) {
-            ui->listView->setCurrentIndex(this->itemModel->index(r, 0));
+            this->listView->setCurrentIndex(this->itemModel->index(r, 0));
             return;
         }
     }

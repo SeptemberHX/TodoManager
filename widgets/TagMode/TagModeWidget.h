@@ -9,6 +9,7 @@
 #include "TagModeListItemDelegate.h"
 #include "../../core/ItemTag.h"
 #include "../todolistwidget.h"
+#include "../CustomListView.h"
 
 namespace Ui {
 class TagModeWidget;
@@ -47,6 +48,7 @@ private:
     QStandardItemModel *itemModel;
     TodoListWidget *todoListWidget;
     QSplitter *mainSplitter;
+    CustomListView *listView;
 
     void clear();
     void loadTagList();
