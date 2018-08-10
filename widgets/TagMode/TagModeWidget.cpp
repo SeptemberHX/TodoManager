@@ -112,7 +112,6 @@ void TagModeWidget::rightClickMenu_clicked() {
     auto tag = this->listView->selectionModel()->selectedIndexes()[0].data(Qt::UserRole + 1).value<todo::ItemTag>();
     switch (actionType) {
         case CommonActionType::TAG_REMOVE_ONLY:
-            qDebug() << "remove tag" << tag.getName() << "only";
             if (this->todoListWidget->isEditing()) {
                 QMessageBox::information(this, "Attention!", "Save your work first !!");
                 return;
@@ -120,7 +119,6 @@ void TagModeWidget::rightClickMenu_clicked() {
             this->deleteTag(tag, false);
             break;
         case CommonActionType::TAG_REMOVE_COMPLETE:
-            qDebug() << "remove tag" << tag.getName() << "completely";
             if (this->todoListWidget->isEditing()) {
                 QMessageBox::information(this, "Attention!", "Save your work first !!");
                 return;
