@@ -2,8 +2,7 @@ enable_testing()
 
 set(
     test_files
-    TestItemGroupUtils.cpp
-    test_main.cpp
+        test_main.cpp
     TestDataCenter.cpp
     TestCore.cpp
 )

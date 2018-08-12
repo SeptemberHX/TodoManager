@@ -23,22 +23,35 @@ todo::GlobalCache *todo::GlobalCache::getInstance() {
     return GlobalCache::instance;
 }
 
-const todo::ItemDetailDao &todo::GlobalCache::getItemDetailDaoByID(const QString &itemID) {
+QList<todo::ItemDetailDao> todo::GlobalCache::getItemDetailDaoByID(const QString &itemID) {
+    QList<todo::ItemDetailDao> resultList;
     if (!this->itemDetailDaoCache.contains(itemID)) {
         auto targetDaos = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByIDs({itemID});
-        auto targetDaoPtr = new ItemDetailDao(targetDaos[0]);
-        this->itemDetailDaoCache.insert(itemID, targetDaoPtr);
+        if (targetDaos.size() > 0) {
+            auto targetDaoPtr = new ItemDetailDao(targetDaos[0]);
+            resultList.append(*targetDaoPtr);
+            this->itemDetailDaoCache.insert(itemID, targetDaoPtr);
+        }
+    } else {
+        resultList.append(*(this->itemDetailDaoCache[itemID]));
     }
-    return *(this->itemDetailDaoCache[itemID]);
+    return resultList;
 }
 
-const todo::ItemGroupDao &todo::GlobalCache::getItemGroupDaoByID(const QString &itemID) {
+QList<todo::ItemGroupDao> todo::GlobalCache::getItemGroupDaoByID(const QString &itemID) {
+    QList<todo::ItemGroupDao> resultList;
     if (!this->itemGroupDaoCache.contains(itemID)) {
         auto targetDaos = DaoFactory::getInstance()->getSQLDao()->selectItemGroupByID(itemID);
-        auto targetDaoPtr = new ItemGroupDao(targetDaos[0]);
-        this->itemGroupDaoCache.insert(itemID, targetDaoPtr);
+        if (targetDaos.size() > 0) {
+            auto targetDaoPtr = new ItemGroupDao(targetDaos[0]);
+            resultList.append(*targetDaoPtr);
+            this->itemGroupDaoCache.insert(itemID, targetDaoPtr);
+        }
+    } else {
+        resultList.append(*(this->itemGroupDaoCache[itemID]));
     }
-    return *(this->itemGroupDaoCache[itemID]);
+
+    return resultList;
 }
 
 void todo::GlobalCache::updateItemDetailDaoByID(const QString &itemID, const todo::ItemDetailDao& detailDao) {
@@ -209,4 +222,12 @@ void todo::GlobalCache::deleteRelationByItemIDs(const QList<QString> &taskIDList
     foreach (auto const &taskID, taskIDList) {
         this->deleteRelationByItemID(taskID);
     }
+}
+
+void todo::GlobalCache::deleteItemDetailDaoByID(const QString &itemID) {
+    this->itemDetailDaoCache.remove(itemID);
+}
+
+void todo::GlobalCache::deleteItemGroupDaoByID(const QString &itemID) {
+    this->itemGroupDaoCache.remove(itemID);
 }

@@ -75,8 +75,6 @@ public:
 
     void updateItemGroupByID(const QString &groupID, const ItemGroupDao &itemGroupDao);
 
-    void deleteItemGroupByID(const QString &groupID);
-
     void insertItemGroup(const ItemGroupDao &itemGroupDao);
 
     QList<ItemGroup> selectItemGroupByIDs(const QList<QString> &groupIDs);

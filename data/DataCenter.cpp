@@ -73,11 +73,13 @@ void todo::DataCenter::insertItemDetail(const todo::ItemDetail &itemDetail) {
 
 void todo::DataCenter::updateDoneByID(const QString &itemID, bool flag) {
     DaoFactory::getInstance()->getSQLDao()->updateDoneByID(itemID, flag);
-    auto oldCacheItem = GlobalCache::getInstance()->getItemDetailDaoByID(itemID);
-    oldCacheItem.setDone(flag);
-    GlobalCache::getInstance()->updateItemDetailDaoByID(itemID, oldCacheItem);
+    auto oldCacheItems = GlobalCache::getInstance()->getItemDetailDaoByID(itemID);
+    if (oldCacheItems.size() > 0) {
+        oldCacheItems[0].setDone(flag);
+        GlobalCache::getInstance()->updateItemDetailDaoByID(itemID, oldCacheItems[0]);
 
-    emit(this->databaseModified());
+        emit(this->databaseModified());
+    }
 }
 
 QList<todo::ItemTag> todo::DataCenter::selectItemTagById(const QString &tagId) {
@@ -164,18 +166,13 @@ QList<todo::ItemDetail> todo::DataCenter::selectItemDetailsByTag(const todo::Ite
 }
 
 QList<todo::ItemGroup> todo::DataCenter::selectItemGroupByID(const QString &groupID) {
-    auto itemGroupDao = GlobalCache::getInstance()->getItemGroupDaoByID(groupID);
-    return this->fillItemGroupInfo({itemGroupDao});
+    auto itemGroupDaos = GlobalCache::getInstance()->getItemGroupDaoByID(groupID);
+    return this->fillItemGroupInfo(itemGroupDaos);
 }
 
 void todo::DataCenter::updateItemGroupByID(const QString &groupID, const todo::ItemGroupDao &itemGroupDao) {
     DaoFactory::getInstance()->getSQLDao()->updateItemGroupByID(groupID, itemGroupDao);
     GlobalCache::getInstance()->updateItemGroupDaoByID(groupID, itemGroupDao);
-    emit databaseModified();
-}
-
-void todo::DataCenter::deleteItemGroupByID(const QString &groupID) {
-    DaoFactory::getInstance()->getSQLDao()->deleteItemGroupByID(groupID);
     emit databaseModified();
 }
 
@@ -255,7 +252,8 @@ void todo::DataCenter::deleteGroupCompletely_(const QString &groupID) {
     }
 
     // delete itself
-    this->deleteItemGroupByID(groupID);
+    DaoFactory::getInstance()->getSQLDao()->deleteItemGroupByID(groupID);
+    GlobalCache::getInstance()->deleteItemGroupDaoByID(groupID);
 }
 
 void todo::DataCenter::deleteItemDetailByIDCompletely_(const QString &itemID) {
@@ -263,6 +261,7 @@ void todo::DataCenter::deleteItemDetailByIDCompletely_(const QString &itemID) {
     DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemID(itemID);
     DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByItemID(itemID);
     GlobalCache::getInstance()->deleteRelationByItemID(itemID);
+    GlobalCache::getInstance()->deleteItemDetailDaoByID(itemID);
 }
 
 void todo::DataCenter::deleteItemDetailByIDsCompletely_(const QList<QString> &itemIDList) {

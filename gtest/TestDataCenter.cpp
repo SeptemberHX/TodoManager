@@ -13,10 +13,11 @@ TEST(DataCenter, ItemGroup) {
     group1.setDescription("test_group1");
     group1.setType(todo::ItemGroupType::PROJECT);
 
+    dataCenter.insertItemGroup(group1.toDao());
     QList<QString> groupIDList{group1.getId()};
     EXPECT_EQ(group1, dataCenter.selectItemGroupByIDs(groupIDList)[0]);
 
-    dataCenter.deleteItemGroupByID(group1.getId());
+    dataCenter.deleteGroupCompletely(group1.getId());
     EXPECT_EQ(0, dataCenter.selectItemGroupByID(group1.getId()).size());
 }
 

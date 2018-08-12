@@ -22,12 +22,14 @@ class GlobalCache : public QObject {
     Q_OBJECT
 public:
     static GlobalCache* getInstance();
-    const ItemDetailDao& getItemDetailDaoByID(const QString &itemID);
+    QList<ItemDetailDao> getItemDetailDaoByID(const QString &itemID);
     QList<ItemDetailDao> getItemDetailDaoByIDs(const QList<QString> &itemIDs);
-    const ItemGroupDao& getItemGroupDaoByID(const QString &itemID);
+    QList<ItemGroupDao> getItemGroupDaoByID(const QString &itemID);
     QList<ItemGroupDao> getItemGroupDaoByIDs(const QList<QString> &itemIDs);
     void updateItemDetailDaoByID(const QString &itemID, const ItemDetailDao &detailDao);
     void updateItemGroupDaoByID(const QString &itemID, const ItemGroupDao &groupDao);
+    void deleteItemDetailDaoByID(const QString &itemID);
+    void deleteItemGroupDaoByID(const QString &itemID);
 
     QList<ItemGroupRelation> getItemGroupRelationByDirectGroupID(const QString &directGroupID);
     QList<ItemGroupRelation> getItemGroupRelationByItemID(const QString &itemID);
