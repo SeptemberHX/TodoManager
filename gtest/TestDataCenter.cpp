@@ -13,13 +13,6 @@ TEST(DataCenter, ItemGroup) {
     group1.setDescription("test_group1");
     group1.setType(todo::ItemGroupType::PROJECT);
 
-    dataCenter.insertItemGroup(group1);
-    EXPECT_EQ(group1, dataCenter.selectItemGroupByID(group1.getId())[0]);
-
-    group1.setTitle("test_group1_modified");
-    dataCenter.updateItemGroupByID(group1.getId(), group1);
-    EXPECT_EQ(group1, dataCenter.selectItemGroupByID(group1.getId())[0]);
-
     QList<QString> groupIDList{group1.getId()};
     EXPECT_EQ(group1, dataCenter.selectItemGroupByIDs(groupIDList)[0]);
 

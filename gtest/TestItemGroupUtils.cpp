@@ -10,8 +10,8 @@ TEST(ItemGroupUtils, getGroupOverview) {
     todo::ItemDetail item1_level1("1-1");
     todo::ItemDetail item2_level1("1-2");
 
-    rootGroup.addItemDetail(item1_level1);
-    rootGroup.addItemDetail(item2_level1);
+    rootGroup.addItemDetail(item1_level1.getId());
+    rootGroup.addItemDetail(item2_level1.getId());
 
     auto overView1 = todo::ItemGroupUtils::getGroupOverview(rootGroup);
     EXPECT_EQ(overView1.getSubItemCount(), 2);
@@ -21,9 +21,9 @@ TEST(ItemGroupUtils, getGroupOverview) {
     todo::ItemDetail item1_level2("2-1");
     todo::ItemDetail item2_level2("2-2");
     item2_level2.setDone(true);
-    subGroup.addItemDetail(item1_level2);
-    subGroup.addItemDetail(item2_level2);
-    rootGroup.addItemGroup(subGroup);
+    subGroup.addItemDetail(item1_level2.getId());
+    subGroup.addItemDetail(item2_level2.getId());
+    rootGroup.addItemGroup(subGroup.getId());
 
     auto overView2 = todo::ItemGroupUtils::getGroupOverview(rootGroup);
     EXPECT_EQ(overView2.getSubItemCount(), 2);
@@ -34,8 +34,8 @@ TEST(ItemGroupUtils, getGroupOverview) {
     todo::ItemGroup subGroup2;
     todo::ItemDetail item3_level2("2-3");
     item3_level2.setDone(true);
-    subGroup2.addItemDetail(item3_level2);
-    rootGroup.addItemGroup(subGroup2);
+    subGroup2.addItemDetail(item3_level2.getId());
+    rootGroup.addItemGroup(subGroup2.getId());
 
     auto overView3 = todo::ItemGroupUtils::getGroupOverview(rootGroup);
     EXPECT_EQ(overView3.getSubGroupDoneCount(), 1);
@@ -70,7 +70,4 @@ TEST(ItemGroupUtils, buildGroup) {
     QList<todo::ItemDetail> itemList{itemDetail1, itemDetail2};
     QList<todo::ItemGroupRelation> relationList{r1, r2, r3};
     QList<todo::ItemGroup> groupList{itemGroup1, subGroup1};
-
-    auto groupResult = todo::ItemGroupUtils::buildGroup(groupList, itemList, relationList);
-    EXPECT_EQ(groupResult.size(), 1);
 }
