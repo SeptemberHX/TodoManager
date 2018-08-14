@@ -2,6 +2,9 @@
 #define STICKYNOTEWIDGET_H
 
 #include <QWidget>
+#include <QStandardItemModel>
+#include <QDate>
+#include "../../data/DataCenter.h"
 
 namespace Ui {
 class StickyNoteWidget;
@@ -15,11 +18,21 @@ public:
     explicit StickyNoteWidget(QWidget *parent = 0);
     ~StickyNoteWidget();
 
+signals:
+    void databaseModified();
+
 private:
     Ui::StickyNoteWidget *ui;
+    QStandardItemModel *itemModel;
+    todo::DataCenter dataCenter;
 
     void initWidgetStyle();
     QString getStyleSheet(const QColor &bgColor, const QColor &fontColor);
+    void loadItemsByDate(const QDate &targetDate);
+
+private slots:
+    void list_item_changed(QStandardItem *item);
+    void database_modified();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

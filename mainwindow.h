@@ -14,6 +14,7 @@
 #include "widgets/TagMode/TagModeWidget.h"
 #include "widgets/CalendarMode/CalendarModeWidget.h"
 #include "widgets/ProjectMode/ProjectModeWidget.h"
+#include "widgets/StickyNote/StickyNoteWidget.h"
 #include "core/ItemDetail.h"
 #include "data/DataCenter.h"
 
@@ -33,6 +34,7 @@ public:
 
 private:
     void initConfig();
+    void initStickyNote();
 
     Ui::MainWindow *ui;
     QHBoxLayout *mainLayout;
@@ -62,6 +64,9 @@ private:
     int calendarMode;
     int projectMode;
     int currentMode;
+
+    // sticky notes
+    QList<StickyNoteWidget*> stickyNoteWidgetPtrList;
 
 private slots:
     void click_exit();

@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     this->initConfig();
+    this->initStickyNote();
 
     this->todoListWidget = new TodoListWidget(this);
     this->inboxViewWidget = new TodoListWidget(this, TodoListWidgetMode::INBOX);
@@ -251,4 +252,12 @@ void MainWindow::jump_to_specific_group(const QString &groupID) {
 void MainWindow::jump_to_specific_tag(const QString &itemID) {
     ui->tagModePushButton->click();
     this->tagModeWidget->jump_to_tag(itemID);
+}
+
+void MainWindow::initStickyNote() {
+    // may move this to StickyModeWidget in the future
+    auto stickyWidgetPtr = new StickyNoteWidget();
+    this->stickyNoteWidgetPtrList.append(stickyWidgetPtr);
+    connect(stickyWidgetPtr, &StickyNoteWidget::databaseModified, this, &MainWindow::database_modified);
+    stickyWidgetPtr->show();
 }
