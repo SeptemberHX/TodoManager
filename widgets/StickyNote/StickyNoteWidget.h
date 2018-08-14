@@ -17,6 +17,7 @@ class StickyNoteWidget : public QWidget
 public:
     explicit StickyNoteWidget(QWidget *parent = 0);
     ~StickyNoteWidget();
+    void setStickyNoteTitle(const QString &noteTitle);
 
 signals:
     void databaseModified();
@@ -25,6 +26,9 @@ private:
     Ui::StickyNoteWidget *ui;
     QStandardItemModel *itemModel;
     todo::DataCenter dataCenter;
+    bool isClickedOnTitle;
+    QPoint clickedOnTitlePoint;
+    QPoint widgetPosWhenClickedOnTitle;
 
     void initWidgetStyle();
     QString getStyleSheet(const QColor &bgColor, const QColor &fontColor);

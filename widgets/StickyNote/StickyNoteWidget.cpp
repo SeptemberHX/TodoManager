@@ -1,27 +1,26 @@
 #include "StickyNoteWidget.h"
 #include "ui_StickyNoteWidget.h"
-#include <QPainter>
-#include <QtMath>
-#include <QGraphicsDropShadowEffect>
 #include <QString>
 #include <QDebug>
 #include "../../utils/ItemUtils.h"
 
 StickyNoteWidget::StickyNoteWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::StickyNoteWidget)
+    ui(new Ui::StickyNoteWidget),
+    isClickedOnTitle(false)
 {
     ui->setupUi(this);
     this->itemModel = new QStandardItemModel(ui->listView);
     ui->listView->setModel(this->itemModel);
 
     this->initWidgetStyle();
-    connect(ui->closeToolButton, &QToolButton::clicked, this, &StickyNoteWidget::close);
+    connect(ui->closeToolButton, &QToolButton::clicked, this, &StickyNoteWidget::hide);
 
     connect(this->itemModel, &QStandardItemModel::itemChanged, this, &StickyNoteWidget::list_item_changed);
     connect(&this->dataCenter, &todo::DataCenter::databaseModified, this, &StickyNoteWidget::database_modified);
 
     this->loadItemsByDate(QDate::currentDate());
+    this->setStickyNoteTitle(QDate::currentDate().toString("yyyy-MM-dd"));
 }
 
 StickyNoteWidget::~StickyNoteWidget()
@@ -32,20 +31,34 @@ StickyNoteWidget::~StickyNoteWidget()
 void StickyNoteWidget::initWidgetStyle() {
     ui->closeToolButton->setIcon(QIcon::fromTheme("window-close"));
     ui->editToolButton->setIcon(QIcon::fromTheme("edit"));
-    this->setWindowFlag(Qt::FramelessWindowHint);
+    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnBottomHint | Qt::Tool);
     this->setStyleSheet(this->getStyleSheet("#FAF9DE", Qt::black));
     ui->listView->setSelectionMode(QAbstractItemView::NoSelection);
+    ui->titleLabel->setAlignment(Qt::AlignCenter);
 }
 
 void StickyNoteWidget::mousePressEvent(QMouseEvent *event) {
+    if (ui->titleLabel->underMouse()) {
+        this->isClickedOnTitle = true;
+        this->clickedOnTitlePoint = event->globalPos();
+        this->widgetPosWhenClickedOnTitle = this->pos();
+    }
+
     QWidget::mousePressEvent(event);
 }
 
 void StickyNoteWidget::mouseMoveEvent(QMouseEvent *event) {
+    if (this->isClickedOnTitle) {
+        this->move(event->globalPos() - this->clickedOnTitlePoint + this->widgetPosWhenClickedOnTitle);
+    }
     QWidget::mouseMoveEvent(event);
 }
 
 void StickyNoteWidget::mouseReleaseEvent(QMouseEvent *event) {
+    if (this->isClickedOnTitle) {
+        this->isClickedOnTitle = false;
+    }
+
     QWidget::mouseReleaseEvent(event);
 }
 
@@ -67,8 +80,10 @@ void StickyNoteWidget::loadItemsByDate(const QDate &targetDate) {
         listItemPtr->setCheckable(true);
         if (item.isDone()) {
             listItemPtr->setCheckState(Qt::Checked);
+            listItemPtr->setForeground(Qt::gray);
         } else {
             listItemPtr->setCheckState(Qt::Unchecked);
+            listItemPtr->setForeground(Qt::black);
         }
         auto f = listItemPtr->font();
         f.setStrikeOut(item.isDone());
@@ -88,12 +103,18 @@ void StickyNoteWidget::list_item_changed(QStandardItem *item) {
     auto f = item->font();
     if (item->checkState()) {
         f.setStrikeOut(true);
+        item->setForeground(Qt::gray);
     } else {
         f.setStrikeOut(false);
+        item->setForeground(Qt::black);
     }
     item->setFont(f);
 }
 
 void StickyNoteWidget::database_modified() {
     emit databaseModified();
+}
+
+void StickyNoteWidget::setStickyNoteTitle(const QString &noteTitle) {
+    ui->titleLabel->setText(noteTitle);
 }
