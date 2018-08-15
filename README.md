@@ -8,8 +8,8 @@
 
 ![project](https://github.com/SeptemberHX/TodoManager/blob/master/screenshot/project.png)
 
-![project overview](https://github.com/SeptemberHX/TodoManager/blob/master/screenshot/project-overview.png)
+![project_overview](https://github.com/SeptemberHX/TodoManager/blob/master/screenshot/project-overview.png)
 
 ![edit](https://github.com/SeptemberHX/TodoManager/blob/master/screenshot/edit.png)
 
-![sticky note](https://github.com/SeptemberHX/TodoManager/blob/master/screenshot/desktop-sticky-note.png)
+![sticky_note](https://github.com/SeptemberHX/TodoManager/blob/master/screenshot/desktop-sticky-note.png)
