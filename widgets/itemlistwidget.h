@@ -62,6 +62,7 @@ public:
 
     bool isPointHasItem(const QPoint &point);
     QList<QString> getSelectedItemIDs();
+    QList<QString> getAllItemIDs();
 
 public slots:
     /**

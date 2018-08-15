@@ -252,3 +252,12 @@ QList<QString> ItemListWidget::getSelectedItemIDs() {
 bool ItemListWidget::isPointHasItem(const QPoint &point) {
     return this->itemModel->itemFromIndex(this->listView->indexAt(point)) != nullptr;
 }
+
+QList<QString> ItemListWidget::getAllItemIDs() {
+    QList<QString> itemIDList;
+    for (int i = 0; i < this->itemModel->rowCount(); ++i) {
+        todo::ItemAndGroupWrapper rowItem = this->getItemPairByRow(i);
+        itemIDList.append(rowItem.getID());
+    }
+    return itemIDList;
+}

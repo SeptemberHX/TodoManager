@@ -40,6 +40,7 @@ public:
     void updateDoneByID(const QString &itemID, bool flag);
     QList<ItemDetail> selectItemDetailByDate(const QDate &fromDate, const QDate &toDate);
     QList<ItemDetail> selectItemDetailByIDs(const QList<QString> &itemIDs);
+    ItemDetail selectItemDetailByID(const QString &itemID);
     // ---------------- todo_item.item_detail Ends ----------------
 
     // ---------------- todo_item.tags Starts -----------------

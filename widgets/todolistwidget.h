@@ -103,8 +103,6 @@ private:
     ItemListWidget *listWidget;
     QLabel *infoLabel;
 
-    todo::ItemDetail currentItem;
-    QMap<QString, todo::ItemDetail> currItemDetailMap;
     todo::DataCenter dataCenter;
 
     TodoListWidgetMode viewMode;
@@ -128,6 +126,7 @@ private:
     void updateStatusBarInfo();
 
     void database_modified();
+    QString getCurrentItemID();
 
     QMenu *itemListMenu;
     ProjectChooseDialog *projectChooseDialog;

@@ -352,3 +352,9 @@ void todo::DataCenter::deleteItemGroupRelationByItemID(const QString &itemID) {
     GlobalCache::getInstance()->deleteRelationByItemID(itemID);
     emit databaseModified();
 }
+
+todo::ItemDetail todo::DataCenter::selectItemDetailByID(const QString &itemID) {
+    auto itemDetailDaos = GlobalCache::getInstance()->getItemDetailDaoByID(itemID);
+    assert(itemDetailDaos.size() == 1);
+    return this->fillItemDetailInfo(itemDetailDaos)[0];
+}

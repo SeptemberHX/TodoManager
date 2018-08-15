@@ -72,7 +72,6 @@ QList<todo::ItemDetailDao> todo::GlobalCache::getItemDetailDaoByIDs(const QList<
             indexDaoMap.insert(i, *this->itemDetailDaoCache[itemIDs[i]]);
         } else {
             notInCacheIDs.append(itemIDs[i]);
-            qDebug() << itemIDs[i];
         }
     }
     auto queryDaos = DaoFactory::getInstance()->getSQLDao()->selectItemDetailByIDs(notInCacheIDs);
