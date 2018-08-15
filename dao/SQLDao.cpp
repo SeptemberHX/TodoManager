@@ -934,3 +934,15 @@ QString todo::SQLDao::generateWhereClauseStrValues(const QString &fieldName, con
         return itemIDList.join(" or ");
     }
 }
+
+void todo::SQLDao::startTransaction() {
+    this->db.transaction();
+}
+
+void todo::SQLDao::endTransaction(bool isSuccessful) {
+    if (isSuccessful) {
+        this->db.commit();
+    } else {
+        this->db.rollback();
+    }
+}

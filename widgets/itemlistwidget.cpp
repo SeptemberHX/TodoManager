@@ -72,7 +72,9 @@ void ItemListWidget::refresh_item_info(const todo::ItemAndGroupWrapper &wrapper)
     }
 }
 
-void ItemListWidget::listWidget_selectedItem_changed() {
+void ItemListWidget::listWidget_selectedItem_changed(const QModelIndex &current, const QModelIndex &previous) {
+    if (!current.isValid()) return;
+
     todo::ItemAndGroupWrapper itemAndGroupPair = this->getCurrSelectedItemPair();
     emit selectedItemChanged(itemAndGroupPair.getID());
 }
@@ -99,10 +101,6 @@ void ItemListWidget::removeItemWrapperByID(const QString &itemID) {
             this->itemModel->removeRow(i);
             break;
         }
-    }
-    todo::ItemAndGroupWrapper currPair = this->getCurrSelectedItemPair();
-    if (currPair.getID() != prevPair.getID()) {
-        emit selectedItemChanged(currPair.getID());
     }
 }
 

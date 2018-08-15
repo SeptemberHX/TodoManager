@@ -103,7 +103,6 @@ QList<todo::ItemGroupDao> todo::GlobalCache::getItemGroupDaoByIDs(const QList<QS
             indexDaoMap.insert(i, *this->itemGroupDaoCache[itemIDs[i]]);
         } else {
             notInCacheIDs.append(itemIDs[i]);
-            qDebug() << itemIDs[i];
         }
     }
     auto queryDaos = DaoFactory::getInstance()->getSQLDao()->selectItemGroupByIDs(notInCacheIDs);

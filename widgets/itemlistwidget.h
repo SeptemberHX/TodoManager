@@ -86,7 +86,7 @@ public slots:
     void refresh_or_remove_item_info(const todo::ItemAndGroupWrapper &wrapper);
 
 private slots:
-    void listWidget_selectedItem_changed();
+    void listWidget_selectedItem_changed(const QModelIndex &current, const QModelIndex &previous);
     void item_double_clicked(const QModelIndex &current);
     void custom_context_menu_requested(const QPoint &point);
 

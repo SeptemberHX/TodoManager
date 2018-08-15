@@ -4,6 +4,7 @@
 
 #include <QDebug>
 #include "DataCenter.h"
+#include "../core/SqlErrorException.h"
 #include "../utils/StringUtils.h"
 
 bool compareFunc(const todo::ItemDetailAndTag &t1, const todo::ItemDetailAndTag &t2) {
@@ -26,8 +27,19 @@ QList<todo::ItemDetail> todo::DataCenter::selectItemDetailByDate(const QDate &ta
 }
 
 void todo::DataCenter::updateItemDetailByID(const QString &itemID, const ItemDetail &oldItemDetail, const ItemDetail &newItemDetail) {
-    this->updateItemDetailByID_(itemID, oldItemDetail, newItemDetail);
-    emit(this->databaseModified());
+    DaoFactory::getInstance()->getSQLDao()->startTransaction();
+    bool sqlExecResult = true;
+    try {
+        // main part
+        this->updateItemDetailByID_(itemID, oldItemDetail, newItemDetail);
+        // end
+    } catch (const SqlErrorException &e) {
+        sqlExecResult = false;
+    }
+    DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
+    if (sqlExecResult) {
+        emit(this->databaseModified());
+    }
 }
 
 void todo::DataCenter::updateItemDetailsByIDList(const QList<QString> &itemIDList,
@@ -35,11 +47,21 @@ void todo::DataCenter::updateItemDetailsByIDList(const QList<QString> &itemIDLis
                                                  const QList<ItemDetail> &newItemDetailList) {
     assert(itemIDList.size() == oldItemDetailList.size());
     assert(itemIDList.size() == newItemDetailList.size());
-
-    for (int i = 0; i < itemIDList.size(); ++i) {
-        this->updateItemDetailByID_(itemIDList[i], oldItemDetailList[i], newItemDetailList[i]);
+    DaoFactory::getInstance()->getSQLDao()->startTransaction();
+    bool sqlExecResult = true;
+    try {
+        // main part
+        for (int i = 0; i < itemIDList.size(); ++i) {
+            this->updateItemDetailByID_(itemIDList[i], oldItemDetailList[i], newItemDetailList[i]);
+        }
+        //end
+    } catch (const SqlErrorException &e) {
+        sqlExecResult = false;
     }
-    emit(this->databaseModified());
+    DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
+    if (sqlExecResult) {
+        emit(this->databaseModified());
+    }
 }
 
 
@@ -72,29 +94,60 @@ void todo::DataCenter::updateItemDetailByID_(const QString &itemID, const todo::
 }
 
 void todo::DataCenter::deleteItemDetailByIDCompletely(const QString &itemID) {
-    this->deleteItemDetailByIDCompletely_(itemID);
-
-    emit(this->databaseModified());
+    DaoFactory::getInstance()->getSQLDao()->startTransaction();
+    bool sqlExecResult = true;
+    try {
+        // main part
+        this->deleteItemDetailByIDCompletely_(itemID);
+        // end
+    } catch (const SqlErrorException &e) {
+        sqlExecResult = false;
+    }
+    DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
+    if (sqlExecResult) {
+        emit(this->databaseModified());
+    }
 }
 
 void todo::DataCenter::insertItemDetail(const todo::ItemDetail &itemDetail) {
-    DaoFactory::getInstance()->getSQLDao()->insertItemDetail(itemDetail.toDao());
-    int i = 1;
-    for (auto const &tag : itemDetail.getTags()) {
-        DaoFactory::getInstance()->getSQLDao()->insertItemAndTagMatch(ItemDetailAndTag(itemDetail.getId(), tag.getId(), i));
-        ++i;
+    DaoFactory::getInstance()->getSQLDao()->startTransaction();
+    bool sqlExecResult = true;
+    try {
+        // main part
+        DaoFactory::getInstance()->getSQLDao()->insertItemDetail(itemDetail.toDao());
+        int i = 1;
+        for (auto const &tag : itemDetail.getTags()) {
+            DaoFactory::getInstance()->getSQLDao()->insertItemAndTagMatch(
+                    ItemDetailAndTag(itemDetail.getId(), tag.getId(), i));
+            ++i;
+        }
+        // end
+    } catch (const SqlErrorException &e) {
+        sqlExecResult = false;
     }
-
-    emit(this->databaseModified());
+    DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
+    if (sqlExecResult) {
+        emit(this->databaseModified());
+    }
 }
 
 void todo::DataCenter::updateDoneByID(const QString &itemID, bool flag) {
-    DaoFactory::getInstance()->getSQLDao()->updateDoneByID(itemID, flag);
-    auto oldCacheItems = GlobalCache::getInstance()->getItemDetailDaoByID(itemID);
-    if (oldCacheItems.size() > 0) {
-        oldCacheItems[0].setDone(flag);
-        GlobalCache::getInstance()->updateItemDetailDaoByID(itemID, oldCacheItems[0]);
-
+    DaoFactory::getInstance()->getSQLDao()->startTransaction();
+    bool sqlExecResult = true;
+    try {
+        // main part
+        DaoFactory::getInstance()->getSQLDao()->updateDoneByID(itemID, flag);
+        auto oldCacheItems = GlobalCache::getInstance()->getItemDetailDaoByID(itemID);
+        if (oldCacheItems.size() > 0) {
+            oldCacheItems[0].setDone(flag);
+            GlobalCache::getInstance()->updateItemDetailDaoByID(itemID, oldCacheItems[0]);
+        }
+        // end
+    } catch (const SqlErrorException &e) {
+        sqlExecResult = false;
+    }
+    DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
+    if (sqlExecResult) {
         emit(this->databaseModified());
     }
 }
@@ -108,20 +161,42 @@ void todo::DataCenter::updateItemTagById(const QString &tagId, const todo::ItemT
 }
 
 void todo::DataCenter::deleteItemTagOnlyById(const QString &tagId) {
-    DaoFactory::getInstance()->getSQLDao()->deleteItemTagById(tagId);
-    DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByTagID(tagId);
-    emit databaseModified();
+    DaoFactory::getInstance()->getSQLDao()->startTransaction();
+    bool sqlExecResult = true;
+    try {
+        // main part
+        DaoFactory::getInstance()->getSQLDao()->deleteItemTagById(tagId);
+        DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByTagID(tagId);
+        // end
+    } catch (const SqlErrorException &e) {
+        sqlExecResult = false;
+    }
+    DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
+    if (sqlExecResult) {
+        emit(this->databaseModified());
+    }
 }
 
 void todo::DataCenter::deleteItemTagAndAllItemsByTagId(const QString &tagId) {
-    auto tagMatchList = DaoFactory::getInstance()->getSQLDao()->selectItemAndTagMatchByTagID(tagId);
-    QList<QString> itemIDList;
-    foreach (auto const &tagMatch, tagMatchList) {
-        itemIDList.append(tagMatch.getItemID());
+    DaoFactory::getInstance()->getSQLDao()->startTransaction();
+    bool sqlExecResult = true;
+    try {
+        // main part
+        auto tagMatchList = DaoFactory::getInstance()->getSQLDao()->selectItemAndTagMatchByTagID(tagId);
+        QList<QString> itemIDList;
+                foreach (auto const &tagMatch, tagMatchList) {
+                itemIDList.append(tagMatch.getItemID());
+            }
+        DaoFactory::getInstance()->getSQLDao()->deleteItemTagById(tagId);
+        this->deleteItemDetailByIDsCompletely_(itemIDList);
+        // end
+    } catch (const SqlErrorException &e) {
+        sqlExecResult = false;
     }
-    DaoFactory::getInstance()->getSQLDao()->deleteItemTagById(tagId);
-    this->deleteItemDetailByIDsCompletely_(itemIDList);
-    emit databaseModified();
+    DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
+    if (sqlExecResult) {
+        emit(this->databaseModified());
+    }
 }
 
 void todo::DataCenter::insertItemTag(const todo::ItemTag &tag) {
@@ -244,10 +319,19 @@ QList<todo::ItemGroup> todo::DataCenter::selectItemGroupByType(const todo::ItemG
 }
 
 void todo::DataCenter::deleteGroupCompletely(const QString &groupID) {
-    this->deleteGroupCompletely_(groupID);
-
-    // emit signal
-    emit databaseModified();
+    DaoFactory::getInstance()->getSQLDao()->startTransaction();
+    bool sqlExecResult = true;
+    try {
+        // main part
+        this->deleteGroupCompletely_(groupID);
+        // end
+    } catch (const SqlErrorException &e) {
+        sqlExecResult = false;
+    }
+    DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
+    if (sqlExecResult) {
+        emit(this->databaseModified());
+    }
 }
 
 void todo::DataCenter::deleteGroupCompletely_(const QString &groupID) {
@@ -355,6 +439,9 @@ void todo::DataCenter::deleteItemGroupRelationByItemID(const QString &itemID) {
 
 todo::ItemDetail todo::DataCenter::selectItemDetailByID(const QString &itemID) {
     auto itemDetailDaos = GlobalCache::getInstance()->getItemDetailDaoByID(itemID);
+    if (itemDetailDaos.size() != 1) {
+        qDebug() << itemID;
+    }
     assert(itemDetailDaos.size() == 1);
     return this->fillItemDetailInfo(itemDetailDaos)[0];
 }

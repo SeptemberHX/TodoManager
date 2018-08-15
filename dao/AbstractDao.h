@@ -76,6 +76,11 @@ public:
     virtual QList<ItemGroupRelation> selectAllItemGroupRelation() = 0;
     // End
 
+    // for transaction
+    virtual void startTransaction() = 0;
+    virtual void endTransaction(bool isSuccessful) = 0;
+    // end
+
     virtual void init() = 0;
     virtual ~AbstractDao() = default;
 };

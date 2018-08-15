@@ -109,6 +109,12 @@ public:
     QList<ItemGroupRelation> selectAllItemGroupRelation() override;
     // End
 
+    // for transaction
+    void startTransaction() override;
+
+    void endTransaction(bool isSuccessful) override;
+    //end
+
     void init() override;
 
     ~SQLDao() override;
