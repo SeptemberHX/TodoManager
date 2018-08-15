@@ -22,11 +22,13 @@ ItemListWidget::ItemListWidget(QWidget *parent) :
     this->listView->setItemDelegate(new ItemListItemDelegate(this->listView));
     this->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->listView->setMinimumWidth(430);
+    this->listView->setContextMenuPolicy(Qt::CustomContextMenu);
 //    this->listView->setDragEnabled(true);
 //    this->listView->setDragDropMode(QAbstractItemView::DragDrop);
 
     connect(this->listView, &CustomListView::currentIndexChanged, this, &ItemListWidget::listWidget_selectedItem_changed);
     connect(this->listView, &CustomListView::doubleClicked, this, &ItemListWidget::item_double_clicked);
+    connect(this->listView, &CustomListView::customContextMenuRequested, this, &ItemListWidget::custom_context_menu_requested);
 
     // ------ default sorter ------
     this->addSorter(todo::DoneSorter(true));
@@ -233,4 +235,20 @@ void ItemListWidget::item_double_clicked(const QModelIndex &current) {
 
 QString ItemListWidget::currentItemID() const {
     return this->getCurrSelectedItemPair().getID();
+}
+
+void ItemListWidget::custom_context_menu_requested(const QPoint &point) {
+    emit customContextMenuRequested(point);
+}
+
+QList<QString> ItemListWidget::getSelectedItemIDs() {
+    QList<QString> selectedIDList;
+    foreach (auto const &index, this->listView->selectionModel()->selectedIndexes()) {
+        selectedIDList.append(index.data(Qt::UserRole + 1).value<todo::ItemAndGroupWrapper>().getID());
+    }
+    return selectedIDList;
+}
+
+bool ItemListWidget::isPointHasItem(const QPoint &point) {
+    return this->itemModel->itemFromIndex(this->listView->indexAt(point)) != nullptr;
 }

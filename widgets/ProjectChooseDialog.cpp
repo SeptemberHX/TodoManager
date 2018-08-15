@@ -38,7 +38,6 @@ void ProjectChooseDialog::buildProjectTree(QStandardItem *parentItem, const QLis
     auto childrenGroup = this->dataCenter.selectItemGroupByIDs(childrenID);
     QList<QStandardItem*> childItems;
     foreach (auto const &child, childrenGroup) {
-        qDebug() << child.getTitle();
         auto nameItemPtr = new QStandardItem(child.getTitle());
         parentItem->appendRow(nameItemPtr);
         this->itemPtr2IDMap.insert(nameItemPtr, child.getId());

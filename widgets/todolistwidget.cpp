@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QMenu>
+#include "Common/CommonAction.h"
 
 TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
     QWidget(parent),
@@ -36,6 +38,9 @@ TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
     this->newItemInputDialog->setInputMode(QInputDialog::TextInput);
     this->newItemInputDialog->resize(800, 300);
 
+    this->itemListMenu = new QMenu(this);
+    this->projectChooseDialog = new ProjectChooseDialog(this);
+
     connect(ui->todayToolBtn, &QToolButton::clicked, this, &TodoListWidget::todayBtn_clicked);
     connect(ui->addToolBtn, &QToolButton::clicked, this, &TodoListWidget::addBtn_clicked);
     connect(this->listWidget, &ItemListWidget::selectedItemChanged, this, &TodoListWidget::listWidget_selectedItem_changed);
@@ -65,7 +70,11 @@ TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
     // jump to tag
     connect(this->detailWidget, &ItemDetailWidget::tagClicked, this, &TodoListWidget::item_tag_clicked);
 
+    // database modified
     connect(&this->dataCenter, &todo::DataCenter::databaseModified, this, &TodoListWidget::database_modified);
+
+    // list right click menu
+    connect(this->listWidget, &ItemListWidget::customContextMenuRequested, this, &TodoListWidget::show_list_content_menu);
 
     // set icons
     ui->tagSorterToolButton->setIcon(QIcon::fromTheme("sort-presence"));
@@ -344,6 +353,55 @@ bool TodoListWidget::isEditing() const {
 
 void TodoListWidget::item_tag_clicked(const QString &itemID) {
     emit jumpToTag(itemID);
+}
+
+void TodoListWidget::rightClickMenu_clicked() {
+    switch (CommonAction::getInstance()->getActionType(sender()->objectName())) {
+        case CommonActionType::ITEMDETAIL_ASSIGN_TO_PROJECT:
+            if (this->isEditing()) {
+                QMessageBox::information(this, "Attention!", "Save your work first !!");
+                return;
+            }
+            this->assignItemDetailsToProject(this->listWidget->getSelectedItemIDs());
+            break;
+        default:
+            break;
+    }
+}
+
+void TodoListWidget::show_list_content_menu(const QPoint &point) {
+    if (!this->listWidget->isPointHasItem(point)) return;
+    this->initRightClickedMenu(this->listWidget->getSelectedItemIDs().size() > 1);
+    this->itemListMenu->popup(QCursor::pos());
+}
+
+void TodoListWidget::initRightClickedMenu(bool multiSelected) {
+    this->itemListMenu->clear();
+    auto actionTypeList = CommonAction::getInstance()->getItemDetailActions(multiSelected);
+    foreach (auto const &actionType, actionTypeList) {
+        QAction *actionPtr = new QAction(CommonAction::getInstance()->getActionName(actionType), this->itemListMenu);
+        actionPtr->setObjectName(actionPtr->text());
+        connect(actionPtr, &QAction::triggered, this, &TodoListWidget::rightClickMenu_clicked);
+        this->itemListMenu->addAction(actionPtr);
+    }
+}
+
+void TodoListWidget::assignItemDetailsToProject(const QList<QString> &itemDetailIDList) {
+    if (this->projectChooseDialog->exec() != QDialog::Accepted) return;
+
+    auto projectIDPair = this->projectChooseDialog->getSelectedProjectIDPair();
+    auto itemDetails = this->dataCenter.selectItemDetailByIDs(itemDetailIDList);
+    QList<todo::ItemDetail> newItemDetailList;
+    foreach (auto const &item, itemDetails) {
+        todo::ItemDetail itemCopy(item);
+        itemCopy.setDirectGroupID(projectIDPair.second);
+        itemCopy.setRootGroupID(projectIDPair.first);
+        newItemDetailList.append(itemCopy);
+    }
+    this->dataCenter.updateItemDetailsByIDList(itemDetailIDList, itemDetails, newItemDetailList);
+    foreach (auto const &newItem, newItemDetailList) {
+        this->listWidget->refresh_item_info(newItem);
+    }
 }
 
 // --------- InboxViewFilterCondition --------

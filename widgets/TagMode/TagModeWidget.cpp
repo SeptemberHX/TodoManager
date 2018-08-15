@@ -100,15 +100,17 @@ void TagModeWidget::jump_to_group(const QString &groupID) {
 }
 
 void TagModeWidget::initRightClickMenu() {
-    QList<QAction*> actionList = CommonAction::getInstance()->getTagActions(false);
-    foreach (auto const actionPtr, actionList) {
+    QList<CommonActionType> actionTypeList = CommonAction::getInstance()->getTagActions(false);
+    foreach (auto const actionType, actionTypeList) {
+        QAction *actionPtr = new QAction(CommonAction::getInstance()->getActionName(actionType), this->tagListMenu);
+        actionPtr->setObjectName(actionPtr->text());
         connect(actionPtr, &QAction::triggered, this, &TagModeWidget::rightClickMenu_clicked);
         this->tagListMenu->addAction(actionPtr);
     }
 }
 
 void TagModeWidget::rightClickMenu_clicked() {
-    auto actionType = CommonAction::getInstance()->getActionType(dynamic_cast<QAction*>(sender()));
+    auto actionType = CommonAction::getInstance()->getActionType(sender()->objectName());
     auto tag = this->listView->selectionModel()->selectedIndexes()[0].data(Qt::UserRole + 1).value<todo::ItemTag>();
     switch (actionType) {
         case CommonActionType::TAG_REMOVE_ONLY:

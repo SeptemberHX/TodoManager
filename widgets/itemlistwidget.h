@@ -60,6 +60,9 @@ public:
 
     QString currentItemID() const;
 
+    bool isPointHasItem(const QPoint &point);
+    QList<QString> getSelectedItemIDs();
+
 public slots:
     /**
      * Refresh item info, used then current item is edited so the list view can refresh immediately
@@ -84,10 +87,12 @@ public slots:
 private slots:
     void listWidget_selectedItem_changed();
     void item_double_clicked(const QModelIndex &current);
+    void custom_context_menu_requested(const QPoint &point);
 
 signals:
     void selectedItemChanged(const QString &newItemID);
     void doubleClicked(const QString &itemID);
+    void customContextMenuRequested(const QPoint &point);
 
 private:
     /**

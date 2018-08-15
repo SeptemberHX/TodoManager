@@ -10,20 +10,24 @@
 #include <QMap>
 
 enum CommonActionType {
-    TAG_REMOVE_ONLY,
+    TAG_REMOVE_ONLY = 0,
     TAG_REMOVE_COMPLETE,
+    ITEMDETAIL_ASSIGN_TO_PROJECT,
     ERROR
 };
 
 class CommonAction {
 public:
     static CommonAction *getInstance();
-    QList<QAction*> getTagActions(bool multiItems);
-    CommonActionType getActionType(QAction *actionPtr);
+    QString getActionName(const CommonActionType &actionType);
+    CommonActionType getActionType(const QString &name);
+    QList<CommonActionType> getTagActions(bool multiItems);
+    QList<CommonActionType> getItemDetailActions(bool multiItems);
 private:
     static CommonAction *instancePtr;
     CommonAction();
-    QMap<CommonActionType, QAction*> type2ActionPtrMap;
+    void initType2NameMap();
+    QMap<CommonActionType, QString> actionType2Name;
 };
 
 

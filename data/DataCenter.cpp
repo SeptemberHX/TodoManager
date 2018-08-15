@@ -26,6 +26,25 @@ QList<todo::ItemDetail> todo::DataCenter::selectItemDetailByDate(const QDate &ta
 }
 
 void todo::DataCenter::updateItemDetailByID(const QString &itemID, const ItemDetail &oldItemDetail, const ItemDetail &newItemDetail) {
+    this->updateItemDetailByID_(itemID, oldItemDetail, newItemDetail);
+    emit(this->databaseModified());
+}
+
+void todo::DataCenter::updateItemDetailsByIDList(const QList<QString> &itemIDList,
+                                                 const QList<todo::ItemDetail> &oldItemDetailList,
+                                                 const QList<ItemDetail> &newItemDetailList) {
+    assert(itemIDList.size() == oldItemDetailList.size());
+    assert(itemIDList.size() == newItemDetailList.size());
+
+    for (int i = 0; i < itemIDList.size(); ++i) {
+        this->updateItemDetailByID_(itemIDList[i], oldItemDetailList[i], newItemDetailList[i]);
+    }
+    emit(this->databaseModified());
+}
+
+
+void todo::DataCenter::updateItemDetailByID_(const QString &itemID, const todo::ItemDetail &oldItemDetail,
+                                             const todo::ItemDetail &newItemDetail) {
     if (oldItemDetail.toDao() != newItemDetail.toDao()) {
         DaoFactory::getInstance()->getSQLDao()->updateItemDetailByID(itemID, newItemDetail.toDao());
         GlobalCache::getInstance()->updateItemDetailDaoByID(itemID, newItemDetail.toDao());
@@ -50,8 +69,6 @@ void todo::DataCenter::updateItemDetailByID(const QString &itemID, const ItemDet
             GlobalCache::getInstance()->addRelation(newItemDetail.generateRelation());
         }
     }
-
-    emit(this->databaseModified());
 }
 
 void todo::DataCenter::deleteItemDetailByIDCompletely(const QString &itemID) {

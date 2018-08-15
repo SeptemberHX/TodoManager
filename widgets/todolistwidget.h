@@ -9,6 +9,7 @@
 #include "itemdetailwidget.h"
 #include "itemlistwidget.h"
 #include "../data/DataCenter.h"
+#include "ProjectChooseDialog.h"
 
 namespace Ui {
 class TodoListWidget;
@@ -128,6 +129,11 @@ private:
 
     void database_modified();
 
+    QMenu *itemListMenu;
+    ProjectChooseDialog *projectChooseDialog;
+    void initRightClickedMenu(bool multiSelected);
+    void assignItemDetailsToProject(const QList<QString> &itemDetailIDList);
+
 signals:
     void changeStatusBarText(const QString &newStr);
     void databaseModified();  // for notification
@@ -161,6 +167,10 @@ private slots:
     void jump_to_specific_group(const QString &groupID);
 
     void item_tag_clicked(const QString &itemID);
+
+    // right click menu of the list
+    void show_list_content_menu(const QPoint &point);
+    void rightClickMenu_clicked();
 };
 
 #endif // TODOLISTWIDGET_H

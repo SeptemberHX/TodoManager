@@ -34,6 +34,7 @@ public:
     // ---------------- todo_item.item_detail Starts ----------------
     QList<ItemDetail> selectItemDetailByDate(const QDate &targetDate);
     void updateItemDetailByID(const QString &itemID, const ItemDetail &oldItemDetail, const ItemDetail &newItemDetail);
+    void updateItemDetailsByIDList(const QList<QString> &itemIDList, const QList<ItemDetail> &oldItemDetailList, const QList<ItemDetail> &newItemDetailList);
     void deleteItemDetailByIDCompletely(const QString &itemID);
     void insertItemDetail(const ItemDetail &itemDetail);
     void updateDoneByID(const QString &itemID, bool flag);
@@ -104,6 +105,8 @@ private:
     QList<ItemDetail> fillTagInfo(const QList<ItemDetailDao> &itemDetailDaos);
     QList<ItemDetail> fillItemDetailInfo(const QList<ItemDetailDao> &itemDetailDaos);
     QList<ItemGroup> fillItemGroupInfo(const QList<ItemGroupDao> &itemGroupDaos);
+
+    void updateItemDetailByID_(const QString &itemID, const ItemDetail &oldItemDetail, const ItemDetail &newItemDetail);
 
     // for recursive or avoiding emit signal repeatly
     void deleteGroupCompletely_(const QString &groupID);
