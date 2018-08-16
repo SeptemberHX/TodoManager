@@ -41,11 +41,11 @@ const QString todo::StringUtils::PREFIX_ITEMDETAIL = "todo";
 const QString todo::StringUtils::PREFIX_ITEMGROUP = "group";
 
 QString todo::StringUtils::generateItemDetailUniqueID() {
-    return QString("%1_%2").arg(StringUtils::PREFIX_ITEMDETAIL).arg(QUuid::createUuid().toString().remove('{').remove('}'));
+    return StringUtils::generateUniqueID(StringUtils::PREFIX_ITEMDETAIL);
 }
 
 QString todo::StringUtils::generateItemGroupUniqueID() {
-    return QString("%1_%2").arg(StringUtils::PREFIX_ITEMGROUP).arg(QUuid::createUuid().toString().remove('{').remove('}'));
+    return StringUtils::generateUniqueID(StringUtils::PREFIX_ITEMGROUP);
 }
 
 bool todo::StringUtils::checkIfItemDetail(const QString &itemID) {
@@ -54,4 +54,8 @@ bool todo::StringUtils::checkIfItemDetail(const QString &itemID) {
 
 bool todo::StringUtils::checkIfItemGroup(const QString &itemGroup) {
     return itemGroup.startsWith(StringUtils::PREFIX_ITEMGROUP);
+}
+
+QString todo::StringUtils::generateUniqueID(const QString &prefix) {
+    return QString("%1_%2").arg(prefix).arg(QUuid::createUuid().toString().remove('{').remove('}'));
 }

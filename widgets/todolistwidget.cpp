@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QMenu>
 #include "Common/CommonAction.h"
+#include "../utils/StringUtils.h"
 
 TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
     QWidget(parent),
@@ -84,6 +85,8 @@ TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
     ui->addToolBtn->setIcon(QIcon::fromTheme("list-add"));
     ui->inboxAddToolBtn->setIcon(QIcon::fromTheme("list-add"));
     ui->inboxConditionToolBtn->setIcon(QIcon::fromTheme("sort-presence"));
+
+    this->setObjectName(todo::StringUtils::generateUniqueID("TodoListWidget"));
 
     switch (this->viewMode) {
         case TodoListWidgetMode::DAILY:

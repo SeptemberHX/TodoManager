@@ -18,6 +18,7 @@ public:
 
     static QString generateItemDetailUniqueID();
     static QString generateItemGroupUniqueID();
+    static QString generateUniqueID(const QString &prefix);
 
     static bool checkIfItemDetail(const QString &itemID);
     static bool checkIfItemGroup(const QString &itemGroup);

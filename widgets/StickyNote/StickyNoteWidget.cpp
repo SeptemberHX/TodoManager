@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QDebug>
 #include "../../utils/ItemUtils.h"
+#include "../../utils/StringUtils.h"
 
 StickyNoteWidget::StickyNoteWidget(QWidget *parent) :
     QWidget(parent),
@@ -23,6 +24,8 @@ StickyNoteWidget::StickyNoteWidget(QWidget *parent) :
 
     this->loadItemsByDate(QDate::currentDate());
     this->setStickyNoteTitle(QDate::currentDate().toString("yyyy-MM-dd"));
+
+    this->setObjectName(todo::StringUtils::generateUniqueID("StickyNoteWidget"));
 }
 
 StickyNoteWidget::~StickyNoteWidget()

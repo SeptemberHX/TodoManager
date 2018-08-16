@@ -213,27 +213,30 @@ void MainWindow::modeBtn_clicked(QAbstractButton *button) {
 }
 
 void MainWindow::database_modified() {
-    if (this->currentMode != this->dailyMode) {
+    if (sender()->objectName() != this->todoListWidget->objectName()) {
         this->todoListWidget->refresh_current_items();
     }
 
-    if (this->currentMode != this->inboxMode) {
+    if (sender()->objectName() != this->inboxViewWidget->objectName()) {
         this->inboxViewWidget->refresh_current_items();
     }
 
-    if (this->currentMode != this->tagMode) {
+    if (sender()->objectName() != this->tagModeWidget->objectName()) {
         this->tagModeWidget->refresh_current_items();
     }
 
-    if (this->currentMode != this->calendarMode) {
+    if (sender()->objectName() != this->calendarModeWidget->objectName()) {
         this->calendarModeWidget->refresh_current_items();
     }
 
-    if (this->currentMode != this->projectMode) {
+    if (sender()->objectName() != this->projectModeWidget->objectName()) {
         this->projectModeWidget->refresh_current_items();
     }
 
     foreach (auto const &stickyNoteWidgetPtr, this->stickyNoteWidgetPtrList) {
+        if (sender()->objectName() != stickyNoteWidgetPtr->objectName()) {
+            continue;
+        }
         stickyNoteWidgetPtr->refresh_current_items();
     }
 }

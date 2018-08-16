@@ -1,6 +1,7 @@
 #include "CalendarModeWidget.h"
 #include "ui_CalendarModeWidget.h"
 #include "CalendarCellWidget.h"
+#include "../../utils/StringUtils.h"
 #include <QDebug>
 #include <QLabel>
 
@@ -51,6 +52,8 @@ CalendarModeWidget::CalendarModeWidget(QWidget *parent) :
     ui->monthSpinBox->setValue(QDate::currentDate().month());
     ui->monthToolButton->click();
     this->setWeekLabelAccordingToWeekWidget();
+
+    this->setObjectName(todo::StringUtils::generateUniqueID("CalendarModeWidget"));
 }
 
 CalendarModeWidget::~CalendarModeWidget()
