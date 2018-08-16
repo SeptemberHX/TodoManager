@@ -129,7 +129,6 @@ private:
     QString getCurrentItemID();
 
     QMenu *itemListMenu;
-    ProjectChooseDialog *projectChooseDialog;
     void initRightClickedMenu(bool multiSelected);
     void assignItemDetailsToProject(const QList<QString> &itemDetailIDList);
 

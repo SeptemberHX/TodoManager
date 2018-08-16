@@ -40,7 +40,6 @@ TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
     this->newItemInputDialog->resize(800, 300);
 
     this->itemListMenu = new QMenu(this);
-    this->projectChooseDialog = new ProjectChooseDialog(this);
 
     connect(ui->todayToolBtn, &QToolButton::clicked, this, &TodoListWidget::todayBtn_clicked);
     connect(ui->addToolBtn, &QToolButton::clicked, this, &TodoListWidget::addBtn_clicked);
@@ -368,9 +367,10 @@ void TodoListWidget::initRightClickedMenu(bool multiSelected) {
 }
 
 void TodoListWidget::assignItemDetailsToProject(const QList<QString> &itemDetailIDList) {
-    if (this->projectChooseDialog->exec() != QDialog::Accepted) return;
+    ProjectChooseDialog projectChooseDialog(this);
+    if (projectChooseDialog.exec() != QDialog::Accepted) return;
 
-    auto projectIDPair = this->projectChooseDialog->getSelectedProjectIDPair();
+    auto projectIDPair = projectChooseDialog.getSelectedProjectIDPair();
     auto itemDetails = this->dataCenter.selectItemDetailByIDs(itemDetailIDList);
     QList<todo::ItemDetail> newItemDetailList;
     foreach (auto const &item, itemDetails) {
