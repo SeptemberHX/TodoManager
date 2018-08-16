@@ -1,13 +1,15 @@
 #include "StickyNoteWidget.h"
 #include "ui_StickyNoteWidget.h"
 #include <QString>
+#include <QThread>
 #include <QDebug>
 #include "../../utils/ItemUtils.h"
 
 StickyNoteWidget::StickyNoteWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::StickyNoteWidget),
-    isClickedOnTitle(false)
+    isClickedOnTitle(false),
+    isChangedByMySelf(false)
 {
     ui->setupUi(this);
     this->itemModel = new QStandardItemModel(ui->listView);
@@ -73,7 +75,9 @@ QString StickyNoteWidget::getStyleSheet(const QColor &bgColor, const QColor &fon
 }
 
 void StickyNoteWidget::loadItemsByDate(const QDate &targetDate) {
+    this->isChangedByMySelf = true;
     this->itemModel->clear();
+    qDebug() << "all items cleared";
     auto itemList = this->dataCenter.selectItemDetailByDate(targetDate);
     foreach (auto const &item, itemList) {
         auto listItemPtr = new QStandardItem(item.getTitle());
@@ -93,12 +97,13 @@ void StickyNoteWidget::loadItemsByDate(const QDate &targetDate) {
         listItemPtr->setEditable(false);
         this->itemModel->appendRow(listItemPtr);
     }
+    this->isChangedByMySelf = false;
 }
 
 void StickyNoteWidget::list_item_changed(QStandardItem *item) {
+    if (this->isChangedByMySelf) return;
+    this->isChangedByMySelf = true;
     auto itemDetail = item->data(Qt::UserRole + 1).value<todo::ItemDetail>();
-    qDebug() << itemDetail.getTitle() << item->checkState();
-    this->dataCenter.updateDoneByID(itemDetail.getId(), item->checkState());
 
     auto f = item->font();
     if (item->checkState()) {
@@ -109,6 +114,10 @@ void StickyNoteWidget::list_item_changed(QStandardItem *item) {
         item->setForeground(Qt::black);
     }
     item->setFont(f);
+
+    // move it to bottom to avoid databaseModified() signal interrupt current function
+    this->dataCenter.updateDoneByID(itemDetail.getId(), item->checkState());
+    this->isChangedByMySelf = false;
 }
 
 void StickyNoteWidget::database_modified() {
@@ -117,4 +126,9 @@ void StickyNoteWidget::database_modified() {
 
 void StickyNoteWidget::setStickyNoteTitle(const QString &noteTitle) {
     ui->titleLabel->setText(noteTitle);
+}
+
+void StickyNoteWidget::refresh_current_items() {
+    this->loadItemsByDate(QDate::currentDate());
+    this->setStickyNoteTitle(QDate::currentDate().toString("yyyy-MM-dd"));
 }

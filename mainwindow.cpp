@@ -232,6 +232,10 @@ void MainWindow::database_modified() {
     if (this->currentMode != this->projectMode) {
         this->projectModeWidget->refresh_current_items();
     }
+
+    foreach (auto const &stickyNoteWidgetPtr, this->stickyNoteWidgetPtrList) {
+        stickyNoteWidgetPtr->refresh_current_items();
+    }
 }
 
 void MainWindow::item_clicked(const todo::ItemDetail &item) {

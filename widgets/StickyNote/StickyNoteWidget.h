@@ -18,6 +18,7 @@ public:
     explicit StickyNoteWidget(QWidget *parent = 0);
     ~StickyNoteWidget();
     void setStickyNoteTitle(const QString &noteTitle);
+    void refresh_current_items();
 
 signals:
     void databaseModified();
@@ -29,6 +30,7 @@ private:
     bool isClickedOnTitle;
     QPoint clickedOnTitlePoint;
     QPoint widgetPosWhenClickedOnTitle;
+    bool isChangedByMySelf;
 
     void initWidgetStyle();
     QString getStyleSheet(const QColor &bgColor, const QColor &fontColor);
