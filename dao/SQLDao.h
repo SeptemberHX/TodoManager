@@ -109,6 +109,16 @@ public:
     QList<ItemGroupRelation> selectAllItemGroupRelation() override;
     // End
 
+    // StickyNoteDao
+    QList<StickyNoteDao> selectStickyNoteById(const QString &id) override;
+
+    void insertSticyNoteById(const StickyNoteDao &stickyNoteDao) override;
+
+    void updateSticyNoteById(const QString &id, const StickyNoteDao &stickyNoteDao) override;
+
+    void deleteSticyNoteById(const QString &id) override;
+    // End
+
     // for transaction
     void startTransaction() override;
 

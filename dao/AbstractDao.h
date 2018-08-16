@@ -8,6 +8,7 @@
 #include <QDate>
 #include <QList>
 #include <QString>
+#include "../core/StickyNoteDao.h"
 #include "../core/ItemDetailDao.h"
 #include "../core/ItemTag.h"
 #include "../core/ItemDetailAndTag.h"
@@ -74,6 +75,13 @@ public:
     virtual QList<ItemGroupRelation> selectItemGroupRelationByParentID(const QString &parentID) = 0;
     virtual QList<ItemGroupRelation> selectItemGroupRelationByItemID(const QString &itemID) = 0;
     virtual QList<ItemGroupRelation> selectAllItemGroupRelation() = 0;
+    // End
+
+    // StickyNoteDao
+    virtual QList<StickyNoteDao> selectStickyNoteById(const QString &id) = 0;
+    virtual void insertSticyNoteById(const StickyNoteDao &stickyNoteDao) = 0;
+    virtual void updateSticyNoteById(const QString &id, const StickyNoteDao &stickyNoteDao) = 0;
+    virtual void deleteSticyNoteById(const QString &id) = 0;
     // End
 
     // for transaction

@@ -946,3 +946,19 @@ void todo::SQLDao::endTransaction(bool isSuccessful) {
         this->db.rollback();
     }
 }
+
+QList<todo::StickyNoteDao> todo::SQLDao::selectStickyNoteById(const QString &id) {
+    return QList<StickyNoteDao>();
+}
+
+void todo::SQLDao::insertSticyNoteById(const todo::StickyNoteDao &stickyNoteDao) {
+
+}
+
+void todo::SQLDao::updateSticyNoteById(const QString &id, const todo::StickyNoteDao &stickyNoteDao) {
+
+}
+
+void todo::SQLDao::deleteSticyNoteById(const QString &id) {
+
+}
