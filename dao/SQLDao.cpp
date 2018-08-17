@@ -207,6 +207,19 @@ void todo::SQLDao::createTables() {
                       "     directGroupID VARCHAR(255) NOT NULL,"
                       "     itemID VARCHAR(255) NOT NULL"
                       ");");
+    sqlScripts.append("CREATE TABLE IF NOT EXISTS sticky_note("
+                      "     id VARCHAR(255) NOT NULL,"
+                      "     name VARCHAR(255) NOT NULL,"
+                      "     shown BOOLEAN NOT NULL,"
+                      "     x INTEGER NOT NULL,"
+                      "     y INTEGER NOT NULL,"
+                      "     type INTEGER NOT NULL,"
+                      "     fontColor VARCHAR(7),"
+                      "     backgroundColor VARCHAR(7),"
+                      "     createdTime DATETIME,"
+                      "     lastUpdatedTime DATETIME,"
+                      "     PRIMARY KEY (id)"
+                      ");");
 
     QSqlQuery query(this->db);
     for (auto &sqlScript : sqlScripts) {
@@ -948,17 +961,81 @@ void todo::SQLDao::endTransaction(bool isSuccessful) {
 }
 
 QList<todo::StickyNoteDao> todo::SQLDao::selectStickyNoteById(const QString &id) {
-    return QList<StickyNoteDao>();
+    QList<StickyNoteDao> resultList;
+    QSqlQuery query(this->db);
+    query.prepare("SELECT"
+                  " id, name, shown, x, y, `type`, fontColor, backgroundColor, createdTime, lastUpdatedTime"
+                  " FROM sticky_note"
+                  " WHERE id = :id");
+    query.bindValue(":id", id);
+    if (!query.exec()) {
+        throw SqlErrorException();
+    } else {
+        while (query.next()) {
+            StickyNoteDao dao;
+            dao.setId(query.value("id").toString());
+            dao.setName(query.value("name").toString());
+            dao.setShown(query.value("shown").toBool());
+            dao.setPos(QPoint(query.value("x").toInt(), query.value("y").toInt()));
+            dao.setType(StickyNoteType(query.value("type").toInt()));
+            dao.setFontColor(query.value("fontColor").toString());
+            dao.setBackgroundColor(query.value("backgroundColor").toString());
+            dao.setCreatedTime(query.value("createdTime").toDateTime());
+            dao.setLastUpdatedTime(query.value("lastUpdatedTime").toDateTime());
+            resultList.append(dao);
+        }
+    }
+
+    return resultList;
 }
 
-void todo::SQLDao::insertSticyNoteById(const todo::StickyNoteDao &stickyNoteDao) {
-
+void todo::SQLDao::insertStickyNoteById(const todo::StickyNoteDao &stickyNoteDao) {
+    QSqlQuery query(this->db);
+    query.prepare("INSERT INTO sticky_note"
+                  " (id, name, shown, x, y, `type`, fontColor, backgroundColor, createdTime, lastUpdatedTime)"
+                  " VALUES(:id, :name, :shown, :x, :y, :type, :fontColor, :bgColor, :createdTime, :lastUpdatedTime);");
+    query.bindValue(":id", stickyNoteDao.getId());
+    query.bindValue(":name", stickyNoteDao.getName());
+    query.bindValue(":shown", stickyNoteDao.isShown());
+    query.bindValue(":x", stickyNoteDao.getPos().x());
+    query.bindValue(":y", stickyNoteDao.getPos().y());
+    query.bindValue(":type", stickyNoteDao.getType());
+    query.bindValue(":fontColor", stickyNoteDao.getFontColor().name());
+    query.bindValue(":bgColor", stickyNoteDao.getBackgroundColor().name());
+    query.bindValue(":createdTime", stickyNoteDao.getCreatedTime());
+    query.bindValue(":lastUpdatedTime", stickyNoteDao.getLastUpdatedTime());
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
 }
 
-void todo::SQLDao::updateSticyNoteById(const QString &id, const todo::StickyNoteDao &stickyNoteDao) {
-
+void todo::SQLDao::updateStickyNoteById(const QString &id, const todo::StickyNoteDao &stickyNoteDao) {
+    QSqlQuery query(this->db);
+    query.prepare("UPDATE sticky_note"
+                  " SET name=:name, shown=:shown, x=:x, y=:y, `type`=:type, fontColor=:fontColor,"
+                  "     backgroundColor=:bgColor, createdTime=:createdTime, lastUpdatedTime=:lastUpdatedTime"
+                  " WHERE id=:id;");
+    query.bindValue(":id", id);
+    query.bindValue(":name", stickyNoteDao.getName());
+    query.bindValue(":shown", stickyNoteDao.isShown());
+    query.bindValue(":x", stickyNoteDao.getPos().x());
+    query.bindValue(":y", stickyNoteDao.getPos().y());
+    query.bindValue(":type", stickyNoteDao.getType());
+    query.bindValue(":fontColor", stickyNoteDao.getFontColor().name());
+    query.bindValue(":bgColor", stickyNoteDao.getBackgroundColor().name());
+    query.bindValue(":createdTime", stickyNoteDao.getCreatedTime());
+    query.bindValue(":lastUpdatedTime", stickyNoteDao.getLastUpdatedTime());
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
 }
 
-void todo::SQLDao::deleteSticyNoteById(const QString &id) {
-
+void todo::SQLDao::deleteStickyNoteById(const QString &id) {
+    QSqlQuery query(this->db);
+    query.prepare("DELETE FROM sticky_note"
+                  " WHERE id=:id;");
+    query.bindValue(":id", id);
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
 }

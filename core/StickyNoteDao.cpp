@@ -67,3 +67,11 @@ const QColor &todo::StickyNoteDao::getBackgroundColor() const {
 void todo::StickyNoteDao::setBackgroundColor(const QColor &backgroundColor) {
     StickyNoteDao::backgroundColor = backgroundColor;
 }
+
+const QString &todo::StickyNoteDao::getName() const {
+    return name;
+}
+
+void todo::StickyNoteDao::setName(const QString &name) {
+    StickyNoteDao::name = name;
+}

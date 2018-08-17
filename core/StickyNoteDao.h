@@ -55,8 +55,13 @@ public:
 
     void setBackgroundColor(const QColor &backgroundColor);
 
+    const QString &getName() const;
+
+    void setName(const QString &name);
+
 private:
     QString id;
+    QString name;
     bool shown;
     QPoint pos;
     StickyNoteType type;

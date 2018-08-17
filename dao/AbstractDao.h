@@ -79,9 +79,9 @@ public:
 
     // StickyNoteDao
     virtual QList<StickyNoteDao> selectStickyNoteById(const QString &id) = 0;
-    virtual void insertSticyNoteById(const StickyNoteDao &stickyNoteDao) = 0;
-    virtual void updateSticyNoteById(const QString &id, const StickyNoteDao &stickyNoteDao) = 0;
-    virtual void deleteSticyNoteById(const QString &id) = 0;
+    virtual void insertStickyNoteById(const StickyNoteDao &stickyNoteDao) = 0;
+    virtual void updateStickyNoteById(const QString &id, const StickyNoteDao &stickyNoteDao) = 0;
+    virtual void deleteStickyNoteById(const QString &id) = 0;
     // End
 
     // for transaction

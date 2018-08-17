@@ -112,11 +112,11 @@ public:
     // StickyNoteDao
     QList<StickyNoteDao> selectStickyNoteById(const QString &id) override;
 
-    void insertSticyNoteById(const StickyNoteDao &stickyNoteDao) override;
+    void insertStickyNoteById(const StickyNoteDao &stickyNoteDao) override;
 
-    void updateSticyNoteById(const QString &id, const StickyNoteDao &stickyNoteDao) override;
+    void updateStickyNoteById(const QString &id, const StickyNoteDao &stickyNoteDao) override;
 
-    void deleteSticyNoteById(const QString &id) override;
+    void deleteStickyNoteById(const QString &id) override;
     // End
 
     // for transaction
