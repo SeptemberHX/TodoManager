@@ -20,7 +20,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     this->initConfig();
-    this->initStickyNote();
 
     this->todoListWidget = new TodoListWidget(this);
     this->inboxViewWidget = new TodoListWidget(this, TodoListWidgetMode::INBOX);
@@ -238,13 +237,6 @@ void MainWindow::database_modified() {
     if (sender()->objectName() != this->projectModeWidget->objectName()) {
         this->projectModeWidget->refresh_current_items();
     }
-
-    foreach (auto const &stickyNoteWidgetPtr, this->stickyNoteWidgetPtrList) {
-        if (sender()->objectName() == stickyNoteWidgetPtr->objectName()) {
-            continue;
-        }
-        stickyNoteWidgetPtr->refresh_current_items();
-    }
 }
 
 void MainWindow::item_clicked(const todo::ItemDetail &item) {
@@ -265,12 +257,4 @@ void MainWindow::jump_to_specific_group(const QString &groupID) {
 void MainWindow::jump_to_specific_tag(const QString &itemID) {
     ui->tagModePushButton->click();
     this->tagModeWidget->jump_to_tag(itemID);
-}
-
-void MainWindow::initStickyNote() {
-    // may move this to StickyModeWidget in the future
-    auto stickyWidgetPtr = new StickyNoteWidget();
-    this->stickyNoteWidgetPtrList.append(stickyWidgetPtr);
-    connect(stickyWidgetPtr, &StickyNoteWidget::databaseModified, this, &MainWindow::database_modified);
-    stickyWidgetPtr->show();
 }

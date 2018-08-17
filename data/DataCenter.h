@@ -15,6 +15,7 @@
 #include "../dao/DaoFactory.h"
 #include "../core/ItemDetailAndTag.h"
 #include "../core/ItemAndGroupWrapper.h"
+#include "../core/StickyNote.h"
 
 namespace todo {
 
@@ -94,6 +95,19 @@ public:
     QList<ItemGroupRelation> selectAllItemGroupRelation();
     // End
 
+    // StickyNote
+    QList<StickyNote> selectStickyNoteByID(const QString &stickyNoteId);
+
+    QList<StickyNote> selectAllStickyNote();
+
+    void updateStickyNotePositionById(const QString &id, int x, int y);
+
+    void updateStickyNote(const StickyNote &stickyNote);
+
+    void insertStickyNote(const StickyNote &stickyNote);
+    // End
+
+
     QList<todo::ItemAndGroupWrapper> selectItemByDirectGroupID(const QString &groupID);
 
     // delete group completely, including all sub group and items belongs to it
@@ -106,6 +120,8 @@ private:
     QList<ItemDetail> fillTagInfo(const QList<ItemDetailDao> &itemDetailDaos);
     QList<ItemDetail> fillItemDetailInfo(const QList<ItemDetailDao> &itemDetailDaos);
     QList<ItemGroup> fillItemGroupInfo(const QList<ItemGroupDao> &itemGroupDaos);
+
+    QList<StickyNote> fillStickyNoteInfo(const QList<StickyNoteDao> &stickyNoteDaos);
 
     void updateItemDetailByID_(const QString &itemID, const ItemDetail &oldItemDetail, const ItemDetail &newItemDetail);
 

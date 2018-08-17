@@ -85,3 +85,13 @@ const QString &todo::StickyNote::getName() const {
 void todo::StickyNote::setName(const QString &name) {
     this->dao.setName(name);
 }
+
+todo::StickyNote::StickyNote(const todo::StickyNoteDao &dao) :
+    dao(dao)
+{
+
+}
+
+todo::StickyNoteDao todo::StickyNote::toDao() const {
+    return this->dao;
+}

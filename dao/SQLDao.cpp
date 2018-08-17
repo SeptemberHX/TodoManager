@@ -989,7 +989,7 @@ QList<todo::StickyNoteDao> todo::SQLDao::selectStickyNoteById(const QString &id)
     return resultList;
 }
 
-void todo::SQLDao::insertStickyNoteById(const todo::StickyNoteDao &stickyNoteDao) {
+void todo::SQLDao::insertStickyNote(const todo::StickyNoteDao &stickyNoteDao) {
     QSqlQuery query(this->db);
     query.prepare("INSERT INTO sticky_note"
                   " (id, name, shown, x, y, `type`, fontColor, backgroundColor, createdTime, lastUpdatedTime)"
@@ -1035,6 +1035,45 @@ void todo::SQLDao::deleteStickyNoteById(const QString &id) {
     query.prepare("DELETE FROM sticky_note"
                   " WHERE id=:id;");
     query.bindValue(":id", id);
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
+}
+
+QList<todo::StickyNoteDao> todo::SQLDao::selectAllStickyNote() {
+    QList<StickyNoteDao> resultList;
+    QSqlQuery query(this->db);
+    query.prepare("SELECT"
+                  " id, name, shown, x, y, `type`, fontColor, backgroundColor, createdTime, lastUpdatedTime"
+                  " FROM sticky_note");
+    if (!query.exec()) {
+        throw SqlErrorException();
+    } else {
+        while (query.next()) {
+            StickyNoteDao dao;
+            dao.setId(query.value("id").toString());
+            dao.setName(query.value("name").toString());
+            dao.setShown(query.value("shown").toBool());
+            dao.setPos(QPoint(query.value("x").toInt(), query.value("y").toInt()));
+            dao.setType(StickyNoteType(query.value("type").toInt()));
+            dao.setFontColor(query.value("fontColor").toString());
+            dao.setBackgroundColor(query.value("backgroundColor").toString());
+            dao.setCreatedTime(query.value("createdTime").toDateTime());
+            dao.setLastUpdatedTime(query.value("lastUpdatedTime").toDateTime());
+            resultList.append(dao);
+        }
+    }
+
+    return resultList;}
+
+void todo::SQLDao::updateStickyNotePositionById(const QString &id, int x, int y) {
+    QSqlQuery query(this->db);
+    query.prepare("UPDATE sticky_note"
+                  " SET x=:x, y=:y"
+                  " WHERE id=:id;");
+    query.bindValue(":id", id);
+    query.bindValue(":x", x);
+    query.bindValue(":y", y);
     if (!query.exec()) {
         throw SqlErrorException();
     }

@@ -14,6 +14,8 @@ class StickyNote {
 public:
     StickyNote();
 
+    StickyNote(const StickyNoteDao &dao);
+
     const QString &getId() const;
 
     void setId(const QString &id);
@@ -49,6 +51,9 @@ public:
     const QString &getName() const;
 
     void setName(const QString &name);
+
+    StickyNoteDao toDao() const;
+
 private:
     StickyNoteDao dao;
 };

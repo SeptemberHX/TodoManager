@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QStandardItemModel>
 #include <QDate>
+#include <QPoint>
 #include "../../data/DataCenter.h"
 
 namespace Ui {
@@ -15,15 +16,21 @@ class StickyNoteWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit StickyNoteWidget(QWidget *parent = 0);
+    explicit StickyNoteWidget(const todo::StickyNote &stickyNote, QWidget *parent = nullptr);
     ~StickyNoteWidget();
     void setStickyNoteTitle(const QString &noteTitle);
+    void loadSticyNote(const todo::StickyNote &stickyNote);
     void refresh_current_items();
+    QString getStickyNoteId() const;
 
 signals:
     void databaseModified();
+    void widgetMoved(const QPoint &currPos);
 
 private:
+    explicit StickyNoteWidget(QWidget *parent = nullptr);
+
+    QString stickyNoteId;
     Ui::StickyNoteWidget *ui;
     QStandardItemModel *itemModel;
     todo::DataCenter dataCenter;

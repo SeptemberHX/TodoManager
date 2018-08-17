@@ -21,11 +21,15 @@ StickyNoteWidget::StickyNoteWidget(QWidget *parent) :
 
     connect(this->itemModel, &QStandardItemModel::itemChanged, this, &StickyNoteWidget::list_item_changed);
     connect(&this->dataCenter, &todo::DataCenter::databaseModified, this, &StickyNoteWidget::database_modified);
+    this->setObjectName(todo::StringUtils::generateUniqueID("StickyNoteWidget"));
+}
 
+StickyNoteWidget::StickyNoteWidget(const todo::StickyNote &stickyNote, QWidget *parent) :
+    StickyNoteWidget(parent)
+{
+    this->loadSticyNote(stickyNote);
     this->loadItemsByDate(QDate::currentDate());
     this->setStickyNoteTitle(QDate::currentDate().toString("yyyy-MM-dd"));
-
-    this->setObjectName(todo::StringUtils::generateUniqueID("StickyNoteWidget"));
 }
 
 StickyNoteWidget::~StickyNoteWidget()
@@ -37,7 +41,6 @@ void StickyNoteWidget::initWidgetStyle() {
     ui->closeToolButton->setIcon(QIcon::fromTheme("window-close"));
     ui->editToolButton->setIcon(QIcon::fromTheme("edit"));
     this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnBottomHint | Qt::Tool);
-    this->setStyleSheet(this->getStyleSheet("#FAF9DE", Qt::black));
     ui->listView->setSelectionMode(QAbstractItemView::NoSelection);
     ui->titleLabel->setAlignment(Qt::AlignCenter);
 }
@@ -62,6 +65,7 @@ void StickyNoteWidget::mouseMoveEvent(QMouseEvent *event) {
 void StickyNoteWidget::mouseReleaseEvent(QMouseEvent *event) {
     if (this->isClickedOnTitle) {
         this->isClickedOnTitle = false;
+        emit widgetMoved(this->pos());
     }
 
     QWidget::mouseReleaseEvent(event);
@@ -134,4 +138,15 @@ void StickyNoteWidget::setStickyNoteTitle(const QString &noteTitle) {
 void StickyNoteWidget::refresh_current_items() {
     this->loadItemsByDate(QDate::currentDate());
     this->setStickyNoteTitle(QDate::currentDate().toString("yyyy-MM-dd"));
+}
+
+QString StickyNoteWidget::getStickyNoteId() const {
+    return this->stickyNoteId;
+}
+
+void StickyNoteWidget::loadSticyNote(const todo::StickyNote &stickyNote) {
+    this->stickyNoteId = stickyNote.getId();
+    this->move(stickyNote.getPos());
+    this->setVisible(stickyNote.isShown());
+    this->setStyleSheet(this->getStyleSheet(stickyNote.getBackgroundColor(), stickyNote.getFontColor()));
 }

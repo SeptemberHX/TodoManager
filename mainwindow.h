@@ -35,7 +35,6 @@ public:
 
 private:
     void initConfig();
-    void initStickyNote();
 
     Ui::MainWindow *ui;
     QHBoxLayout *mainLayout;
@@ -67,9 +66,6 @@ private:
     int projectMode;
     int stickyNoteMode;
     int currentMode;
-
-    // sticky notes
-    QList<StickyNoteWidget*> stickyNoteWidgetPtrList;
 
 private slots:
     void click_exit();

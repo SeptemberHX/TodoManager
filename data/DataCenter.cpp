@@ -445,3 +445,34 @@ todo::ItemDetail todo::DataCenter::selectItemDetailByID(const QString &itemID) {
     assert(itemDetailDaos.size() == 1);
     return this->fillItemDetailInfo(itemDetailDaos)[0];
 }
+
+QList<todo::StickyNote> todo::DataCenter::selectStickyNoteByID(const QString &stickyNoteId) {
+    auto daoList = DaoFactory::getInstance()->getSQLDao()->selectStickyNoteById(stickyNoteId);
+    return this->fillStickyNoteInfo(daoList);
+}
+
+void todo::DataCenter::insertStickyNote(const todo::StickyNote &stickyNote) {
+    DaoFactory::getInstance()->getSQLDao()->insertStickyNote(stickyNote.toDao());
+}
+
+QList<todo::StickyNote> todo::DataCenter::fillStickyNoteInfo(const QList<todo::StickyNoteDao> &stickyNoteDaos) {
+    QList<todo::StickyNote> resultList;
+
+    foreach (auto const &dao, stickyNoteDaos) {
+        resultList.append(StickyNote(dao));
+    }
+    return resultList;
+}
+
+QList<todo::StickyNote> todo::DataCenter::selectAllStickyNote() {
+    auto daoList = DaoFactory::getInstance()->getSQLDao()->selectAllStickyNote();
+    return this->fillStickyNoteInfo(daoList);
+}
+
+void todo::DataCenter::updateStickyNotePositionById(const QString &id, int x, int y) {
+    DaoFactory::getInstance()->getSQLDao()->updateStickyNotePositionById(id, x, y);
+}
+
+void todo::DataCenter::updateStickyNote(const todo::StickyNote &stickyNote) {
+    DaoFactory::getInstance()->getSQLDao()->updateStickyNoteById(stickyNote.getId(), stickyNote.toDao());
+}
