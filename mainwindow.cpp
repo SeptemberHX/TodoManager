@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->tagModeWidget = new TagModeWidget(this);
     this->calendarModeWidget = new CalendarModeWidget(this);
     this->projectModeWidget = new ProjectModeWidget(this);
+    this->stickyNoteModeWidget = new StickyNoteModeWidget(this);
 
     this->logWidget = new LogWidget();
     Logger::getInstance()->init(this->logWidget);
@@ -42,11 +43,13 @@ MainWindow::MainWindow(QWidget *parent) :
     this->viewButtonGroup->addButton(ui->tagModePushButton);
     this->viewButtonGroup->addButton(ui->calendarPushButton);
     this->viewButtonGroup->addButton(ui->projectPushButton);
+    this->viewButtonGroup->addButton(ui->stickyNotePushButton);
     dailyMode = ui->stackedWidget->addWidget(this->todoListWidget);
     inboxMode = ui->stackedWidget->addWidget(this->inboxViewWidget);
     tagMode = ui->stackedWidget->addWidget(this->tagModeWidget);
     calendarMode = ui->stackedWidget->addWidget(this->calendarModeWidget);
     projectMode = ui->stackedWidget->addWidget(this->projectModeWidget);
+    stickyNoteMode = ui->stackedWidget->addWidget(this->stickyNoteModeWidget);
 
     connect(this->inboxViewWidget, &TodoListWidget::databaseModified, this, &MainWindow::database_modified);
     connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &MainWindow::database_modified);
@@ -209,6 +212,9 @@ void MainWindow::modeBtn_clicked(QAbstractButton *button) {
 
         ui->stackedWidget->setCurrentIndex(this->projectMode);
         this->currentMode = this->projectMode;
+    } else if (btn == ui->stickyNotePushButton && this->currentMode != this->stickyNoteMode) {
+        ui->stackedWidget->setCurrentIndex(this->stickyNoteMode);
+        this->currentMode = this->stickyNoteMode;
     }
 }
 

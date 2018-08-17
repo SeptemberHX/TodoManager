@@ -19,7 +19,8 @@ FORMS += \
     $$PWD/ProjectMode/NavigationBarWidget.ui \
     $$PWD/ProjectChooseDialog.ui \
     $$PWD/MyTextEdit.ui \
-    $$PWD/StickyNote/StickyNoteWidget.ui
+    $$PWD/StickyNote/StickyNoteWidget.ui \
+    $$PWD/StickyNote/StickyNoteModeWidget.ui
 
 HEADERS += \
     $$PWD/tagwidget.h \
@@ -47,7 +48,8 @@ HEADERS += \
     $$PWD/ProjectMode/NavigationBarWidget.h \
     $$PWD/ProjectChooseDialog.h \
     $$PWD/MyTextEdit.h \
-    $$PWD/StickyNote/StickyNoteWidget.h
+    $$PWD/StickyNote/StickyNoteWidget.h \
+    $$PWD/StickyNote/StickyNoteModeWidget.h
 
 SOURCES += \
     $$PWD/tagwidget.cpp \
@@ -75,4 +77,5 @@ SOURCES += \
     $$PWD/ProjectMode/NavigationBarWidget.cpp \
     $$PWD/ProjectChooseDialog.cpp \
     $$PWD/MyTextEdit.cpp \
-    $$PWD/StickyNote/StickyNoteWidget.cpp
+    $$PWD/StickyNote/StickyNoteWidget.cpp \
+    $$PWD/StickyNote/StickyNoteModeWidget.cpp

@@ -999,7 +999,7 @@ void todo::SQLDao::insertStickyNoteById(const todo::StickyNoteDao &stickyNoteDao
     query.bindValue(":shown", stickyNoteDao.isShown());
     query.bindValue(":x", stickyNoteDao.getPos().x());
     query.bindValue(":y", stickyNoteDao.getPos().y());
-    query.bindValue(":type", stickyNoteDao.getType());
+    query.bindValue(":type", stickyNoteDao.getType().toTypeNum());
     query.bindValue(":fontColor", stickyNoteDao.getFontColor().name());
     query.bindValue(":bgColor", stickyNoteDao.getBackgroundColor().name());
     query.bindValue(":createdTime", stickyNoteDao.getCreatedTime());
@@ -1020,7 +1020,7 @@ void todo::SQLDao::updateStickyNoteById(const QString &id, const todo::StickyNot
     query.bindValue(":shown", stickyNoteDao.isShown());
     query.bindValue(":x", stickyNoteDao.getPos().x());
     query.bindValue(":y", stickyNoteDao.getPos().y());
-    query.bindValue(":type", stickyNoteDao.getType());
+    query.bindValue(":type", stickyNoteDao.getType().toTypeNum());
     query.bindValue(":fontColor", stickyNoteDao.getFontColor().name());
     query.bindValue(":bgColor", stickyNoteDao.getBackgroundColor().name());
     query.bindValue(":createdTime", stickyNoteDao.getCreatedTime());

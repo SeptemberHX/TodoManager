@@ -118,6 +118,16 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="stickyNotePushButton">
+         <property name="text">
+          <string>Sticky Note</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -147,7 +157,7 @@
      <x>0</x>
      <y>0</y>
      <width>848</width>
-     <height>30</height>
+     <height>37</height>
     </rect>
    </property>
   </widget>

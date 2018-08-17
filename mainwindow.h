@@ -15,6 +15,7 @@
 #include "widgets/CalendarMode/CalendarModeWidget.h"
 #include "widgets/ProjectMode/ProjectModeWidget.h"
 #include "widgets/StickyNote/StickyNoteWidget.h"
+#include "widgets/StickyNote/StickyNoteModeWidget.h"
 #include "core/ItemDetail.h"
 #include "data/DataCenter.h"
 
@@ -45,6 +46,7 @@ private:
     TagModeWidget *tagModeWidget;
     CalendarModeWidget *calendarModeWidget;
     ProjectModeWidget *projectModeWidget;
+    StickyNoteModeWidget *stickyNoteModeWidget;
 
     // for notification
     QTimer *timer;
@@ -63,6 +65,7 @@ private:
     int tagMode;
     int calendarMode;
     int projectMode;
+    int stickyNoteMode;
     int currentMode;
 
     // sticky notes

@@ -9,15 +9,9 @@
 #include <QPoint>
 #include <QDateTime>
 #include <QColor>
+#include "EnumTypes.h"
 
 namespace todo {
-
-enum StickyNoteType {
-    DAILY_STICKY,
-    TAG_STICKY,
-    PROJECT_STICKY,
-    CUSTOM_STICKY
-};
 
 class StickyNoteDao {
 public:
