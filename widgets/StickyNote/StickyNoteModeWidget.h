@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QStandardItemModel>
+#include "../../core/StickyNote.h"
 #include "StickyNoteTypeItemDelegate.h"
 
 namespace Ui {
@@ -16,6 +17,7 @@ class StickyNoteModeWidget : public QWidget
 public:
     explicit StickyNoteModeWidget(QWidget *parent = 0);
     ~StickyNoteModeWidget();
+    void appendStickyNote(const todo::StickyNote &stickyNote);
 
 private:
     Ui::StickyNoteModeWidget *ui;

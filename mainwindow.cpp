@@ -240,7 +240,7 @@ void MainWindow::database_modified() {
     }
 
     foreach (auto const &stickyNoteWidgetPtr, this->stickyNoteWidgetPtrList) {
-        if (sender()->objectName() != stickyNoteWidgetPtr->objectName()) {
+        if (sender()->objectName() == stickyNoteWidgetPtr->objectName()) {
             continue;
         }
         stickyNoteWidgetPtr->refresh_current_items();

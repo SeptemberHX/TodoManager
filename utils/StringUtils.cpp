@@ -39,6 +39,7 @@ QString todo::StringUtils::elideText(const QString &str, const QFontMetrics &fon
 
 const QString todo::StringUtils::PREFIX_ITEMDETAIL = "todo";
 const QString todo::StringUtils::PREFIX_ITEMGROUP = "group";
+const QString todo::StringUtils::PREFIX_STICKYNOTE = "stickynote";
 
 QString todo::StringUtils::generateItemDetailUniqueID() {
     return StringUtils::generateUniqueID(StringUtils::PREFIX_ITEMDETAIL);
@@ -58,4 +59,8 @@ bool todo::StringUtils::checkIfItemGroup(const QString &itemGroup) {
 
 QString todo::StringUtils::generateUniqueID(const QString &prefix) {
     return QString("%1_%2").arg(prefix).arg(QUuid::createUuid().toString().remove('{').remove('}'));
+}
+
+QString todo::StringUtils::generateStickyNoteUniqueID() {
+    return StringUtils::generateUniqueID(StringUtils::PREFIX_STICKYNOTE);
 }

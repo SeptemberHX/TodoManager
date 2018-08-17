@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QDebug>
 #include <QAbstractItemModel>
 #include "StickyNoteTypeItemDelegate.h"
 #include "../../core/EnumTypes.h"

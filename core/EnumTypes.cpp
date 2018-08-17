@@ -59,3 +59,17 @@ QString todo::StickyNoteType::toString() const {
 todo::StickyNoteType::StickyNoteType() {
     this->typeNum = -1;
 }
+
+
+int todo::CommonType::currTypeNum = 0;
+QMap<int, QString> todo::CommonType::type2StrMap;
+
+void todo::CommonType::registerType(const QString &prefix, const QStringList &typeStrList) {
+    foreach (auto const &str, typeStrList) {
+        CommonType::type2StrMap[CommonType::currTypeNum++] = QString("%1_%2").arg(prefix).arg(str);
+    }
+}
+
+todo::CommonType::CommonType() {
+
+}

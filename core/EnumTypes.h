@@ -50,6 +50,19 @@ private:
     int typeNum;
 };
 
+
+// todo: add a base type class which provides prefix & typeStrList
+//       then every class inherited from it can be registered by CommonType
+//       and we can use template function to get prefix.
+class CommonType {
+public:
+    CommonType();
+    void registerType(const QString &prefix, const QStringList &typeStrList);
+private:
+    static int currTypeNum;
+    static QMap<int, QString> type2StrMap;
+};
+
 }
 
 

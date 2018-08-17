@@ -15,9 +15,11 @@ class StringUtils {
 public:
     static const QString PREFIX_ITEMDETAIL;
     static const QString PREFIX_ITEMGROUP;
+    static const QString PREFIX_STICKYNOTE;
 
     static QString generateItemDetailUniqueID();
     static QString generateItemGroupUniqueID();
+    static QString generateStickyNoteUniqueID();
     static QString generateUniqueID(const QString &prefix);
 
     static bool checkIfItemDetail(const QString &itemID);
