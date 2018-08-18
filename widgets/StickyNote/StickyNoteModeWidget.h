@@ -19,6 +19,11 @@ class StickyNoteModeWidget : public QWidget
 public:
     explicit StickyNoteModeWidget(QWidget *parent = 0);
     ~StickyNoteModeWidget();
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
+public:
     void appendStickyNote(const todo::StickyNote &stickyNote);
     void initStickyNoteWidget();
     void refresh_curr_item(const QString &senderObjectName);

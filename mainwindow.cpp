@@ -155,7 +155,7 @@ void MainWindow::update_notification_timer() {
 
 void MainWindow::click_exit() {
     this->trayIcon->hide();  // Must hide it, or the app will not quit.
-    this->close();
+    QApplication::closeAllWindows();  // No need to worry about those Sticky Note Widget whose parents are nullptr. :)
 }
 
 void MainWindow::trayIcon_clicked() {

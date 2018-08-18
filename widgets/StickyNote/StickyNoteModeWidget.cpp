@@ -1,6 +1,7 @@
 #include "StickyNoteModeWidget.h"
 #include "ui_StickyNoteModeWidget.h"
 #include "../../core/EnumTypes.h"
+#include <QDebug>
 
 StickyNoteModeWidget::StickyNoteModeWidget(QWidget *parent) :
     QWidget(parent),
@@ -36,6 +37,10 @@ StickyNoteModeWidget::StickyNoteModeWidget(QWidget *parent) :
 StickyNoteModeWidget::~StickyNoteModeWidget()
 {
     delete ui;
+
+    foreach (auto &widgetPtr, this->id2stickyNoteWidget.values()) {
+        delete widgetPtr;
+    }
 }
 
 void StickyNoteModeWidget::appendStickyNote(const todo::StickyNote &stickyNote) {
@@ -130,4 +135,13 @@ void StickyNoteModeWidget::refresh_curr_item(const QString &senderObjectName) {
 
 void StickyNoteModeWidget::database_modified() {
     emit databaseModified(sender()->objectName());
+}
+
+void StickyNoteModeWidget::closeEvent(QCloseEvent *event) {
+    qDebug() << "close event";
+    foreach (auto &widgetPtr, this->id2stickyNoteWidget.values()) {
+        widgetPtr->close();
+    }
+
+    QWidget::closeEvent(event);
 }

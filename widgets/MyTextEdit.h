@@ -39,6 +39,8 @@ private slots:
     void largeToolButton_clicked();
     void fontSizeComboBox_currentChanged();
     void colorToolButton_clicked();
+    void lineToolButton_clicked();
+    void listToolButton_clicked();
 };
 
 #endif // MYTEXTEDIT_H

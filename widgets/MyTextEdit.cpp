@@ -28,6 +28,8 @@ MyTextEdit::MyTextEdit(QWidget *parent) :
     connect(ui->largeToolButton, &QToolButton::clicked, this, &MyTextEdit::largeToolButton_clicked);
     connect(ui->fontSizeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MyTextEdit::fontSizeComboBox_currentChanged);
     connect(ui->colorToolButton, &QToolButton::clicked, this, &MyTextEdit::colorToolButton_clicked);
+    connect(ui->lineToolButton, &QToolButton::clicked, this, &MyTextEdit::lineToolButton_clicked);
+    connect(ui->listToolButton, &QToolButton::clicked, this, &MyTextEdit::listToolButton_clicked);
 
     // set icons
     ui->italyToolButton->setIcon(QIcon::fromTheme("format-text-italic"));
@@ -158,4 +160,15 @@ void MyTextEdit::colorToolButton_clicked() {
     auto newColor = QColorDialog::getColor();
     ui->textEdit->setTextColor(newColor);
     ui->colorToolButton->setStyleSheet(QString("background:%1").arg(newColor.name()));
+}
+
+void MyTextEdit::lineToolButton_clicked() {
+    auto oldBlockFormat = ui->textEdit->textCursor().blockFormat();
+    ui->textEdit->textCursor().insertHtml("<hr>");
+    ui->textEdit->textCursor().insertBlock();
+    ui->textEdit->textCursor().setBlockFormat(oldBlockFormat);
+}
+
+void MyTextEdit::listToolButton_clicked() {
+    ui->textEdit->textCursor().insertList(QTextListFormat::ListDisc);
 }
