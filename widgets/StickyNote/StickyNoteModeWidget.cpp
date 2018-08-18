@@ -80,6 +80,7 @@ void StickyNoteModeWidget::stickyNoteWidget_moved(const QPoint &newPos) {
 void StickyNoteModeWidget::dealWithNewStickyNote(const todo::StickyNote &stickyNote) {
     auto widgetPtr = new StickyNoteWidget(stickyNote);
     connect(widgetPtr, &StickyNoteWidget::widgetMoved, this, &StickyNoteModeWidget::stickyNoteWidget_moved);
+    connect(widgetPtr, &StickyNoteWidget::databaseModified, this, &StickyNoteModeWidget::database_modified);
     this->id2stickyNoteWidget[stickyNote.getId()] = widgetPtr;
     this->appendStickyNote(stickyNote);
 }
@@ -117,4 +118,16 @@ void StickyNoteModeWidget::deleteButton_clicked() {
     delete this->id2stickyNoteWidget[stickyNoteId];
     this->id2stickyNoteWidget.remove(stickyNoteId);
     this->itemModel->removeRow(currRowIndex.row());
+}
+
+void StickyNoteModeWidget::refresh_curr_item(const QString &senderObjectName) {
+    foreach (auto &widgetPtr, this->id2stickyNoteWidget.values()) {
+        if (widgetPtr->objectName() != senderObjectName) {
+            widgetPtr->refresh_current_items();
+        }
+    }
+}
+
+void StickyNoteModeWidget::database_modified() {
+    emit databaseModified(sender()->objectName());
 }

@@ -40,7 +40,7 @@ StickyNoteWidget::~StickyNoteWidget()
 void StickyNoteWidget::initWidgetStyle() {
     ui->closeToolButton->setIcon(QIcon::fromTheme("window-close"));
     ui->editToolButton->setIcon(QIcon::fromTheme("edit"));
-    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnBottomHint | Qt::SubWindow);
+    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnBottomHint | Qt::Dialog);
     ui->listView->setSelectionMode(QAbstractItemView::NoSelection);
     ui->titleLabel->setAlignment(Qt::AlignCenter);
 }
@@ -146,6 +146,7 @@ QString StickyNoteWidget::getStickyNoteId() const {
 
 void StickyNoteWidget::loadSticyNote(const todo::StickyNote &stickyNote) {
     this->stickyNoteId = stickyNote.getId();
+    qDebug() << "Trying to load" << stickyNote.getName() << this->objectName();
     this->move(stickyNote.getPos());
     this->setVisible(stickyNote.isShown());
     this->setStyleSheet(this->getStyleSheet(stickyNote.getBackgroundColor(), stickyNote.getFontColor()));

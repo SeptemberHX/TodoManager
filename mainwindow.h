@@ -71,7 +71,7 @@ private slots:
     void click_exit();
     void trayIcon_clicked();
     void modeBtn_clicked(QAbstractButton *button);
-    void database_modified();
+    void database_modified(const QString &senderObjectName);
     void jump_to_specific_group(const QString &groupID);
     void jump_to_specific_tag(const QString &itemID);
 

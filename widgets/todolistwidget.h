@@ -134,7 +134,7 @@ private:
 
 signals:
     void changeStatusBarText(const QString &newStr);
-    void databaseModified();  // for notification
+    void databaseModified(const QString &senderObjectName);  // for notification
     void jumpToGroup(const QString &groupID);
     void jumpToTag(const QString &tagID);
 

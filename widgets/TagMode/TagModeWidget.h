@@ -27,7 +27,7 @@ public:
     void refresh_current_items();
 
 signals:
-    void databaseModified();
+    void databaseModified(const QString &senderObjectName);
     void jumpToGroup(const QString &groupID);
 
 public slots:

@@ -247,7 +247,7 @@ void TodoListWidget::updateItemDetail(const todo::ItemDetail &itemDetail) {
 }
 
 void TodoListWidget::database_modified() {
-    emit(this->databaseModified());
+    emit(this->databaseModified(this->objectName()));
 }
 
 void TodoListWidget::changeToInboxMode() {

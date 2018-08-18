@@ -24,7 +24,7 @@ public slots:
     void jump_to(const QString &itemID);
 
 signals:
-    void databaseModified();
+    void databaseModified(const QString &senderObjectName);
     void jumpToTag(const QString &itemID);
 
 private:

@@ -36,7 +36,7 @@ void ProjectModeWidget::enter_item(const QString &itemID, const QString &name) {
 }
 
 void ProjectModeWidget::database_modified() {
-    emit databaseModified();
+    emit databaseModified(this->objectName());
 }
 
 void ProjectModeWidget::refresh_current_items() {

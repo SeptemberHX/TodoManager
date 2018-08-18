@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &MainWindow::database_modified);
     connect(this->tagModeWidget, &TagModeWidget::databaseModified, this, &MainWindow::database_modified);
     connect(this->projectModeWidget, &ProjectModeWidget::databaseModified, this, &MainWindow::database_modified);
+    connect(this->stickyNoteModeWidget, &StickyNoteModeWidget::databaseModified, this, &MainWindow::database_modified);
 
     connect(this->viewButtonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, &MainWindow::modeBtn_clicked);
     this->currentMode = -1;  // initialization
@@ -75,8 +76,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->timer = new QTimer();
     this->interval = 60000;
     connect(this->timer, &QTimer::timeout, this, &MainWindow::update_notification_timer);
-    connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &MainWindow::update_notification_timer);
-    connect(this->inboxViewWidget, &TodoListWidget::databaseModified, this, &MainWindow::update_notification_timer);
     this->update_notification_timer();
     // end
 
@@ -217,26 +216,30 @@ void MainWindow::modeBtn_clicked(QAbstractButton *button) {
     }
 }
 
-void MainWindow::database_modified() {
-    if (sender()->objectName() != this->todoListWidget->objectName()) {
+void MainWindow::database_modified(const QString &senderObjectName) {
+    this->update_notification_timer();
+
+    if (senderObjectName != this->todoListWidget->objectName()) {
         this->todoListWidget->refresh_current_items();
     }
 
-    if (sender()->objectName() != this->inboxViewWidget->objectName()) {
+    if (senderObjectName != this->inboxViewWidget->objectName()) {
         this->inboxViewWidget->refresh_current_items();
     }
 
-    if (sender()->objectName() != this->tagModeWidget->objectName()) {
+    if (senderObjectName != this->tagModeWidget->objectName()) {
         this->tagModeWidget->refresh_current_items();
     }
 
-    if (sender()->objectName() != this->calendarModeWidget->objectName()) {
+    if (senderObjectName != this->calendarModeWidget->objectName()) {
         this->calendarModeWidget->refresh_current_items();
     }
 
-    if (sender()->objectName() != this->projectModeWidget->objectName()) {
+    if (senderObjectName != this->projectModeWidget->objectName()) {
         this->projectModeWidget->refresh_current_items();
     }
+
+    this->stickyNoteModeWidget->refresh_curr_item(senderObjectName);
 }
 
 void MainWindow::item_clicked(const todo::ItemDetail &item) {

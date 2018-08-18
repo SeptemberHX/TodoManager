@@ -74,7 +74,7 @@ void TagModeWidget::list_selected_item_changed() {
 }
 
 void TagModeWidget::database_modified() {
-    emit databaseModified();
+    emit databaseModified(this->objectName());
 }
 
 void TagModeWidget::refresh_current_items() {

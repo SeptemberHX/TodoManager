@@ -21,6 +21,10 @@ public:
     ~StickyNoteModeWidget();
     void appendStickyNote(const todo::StickyNote &stickyNote);
     void initStickyNoteWidget();
+    void refresh_curr_item(const QString &senderObjectName);
+
+signals:
+    void databaseModified(const QString &senderObjectName);
 
 private:
     Ui::StickyNoteModeWidget *ui;
@@ -38,6 +42,7 @@ private slots:
     void stickyNoteWidget_moved(const QPoint &newPos);
     void item_changed(QStandardItem *item);
     void deleteButton_clicked();
+    void database_modified();
 };
 
 #endif // STICKYNOTEMODEWIDGET_H
