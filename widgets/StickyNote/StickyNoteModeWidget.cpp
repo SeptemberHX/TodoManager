@@ -23,7 +23,11 @@ StickyNoteModeWidget::StickyNoteModeWidget(QWidget *parent) :
     ui->tableView->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
 
     connect(ui->addToolButton, &QToolButton::clicked, this, &StickyNoteModeWidget::addButton_clicked);
+    connect(ui->deleteToolButton, &QToolButton::clicked, this, &StickyNoteModeWidget::deleteButton_clicked);
     connect(this->itemModel, &QStandardItemModel::itemChanged, this, &StickyNoteModeWidget::item_changed);
+
+    ui->addToolButton->setIcon(QIcon::fromTheme("list-add"));
+    ui->deleteToolButton->setIcon(QIcon::fromTheme("editdelete"));
 
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->initStickyNoteWidget();
@@ -102,4 +106,15 @@ todo::StickyNote StickyNoteModeWidget::collectStickyNoteByRow(int row) {
     result.setPos(this->id2stickyNoteWidget[result.getId()]->pos());
 
     return result;
+}
+
+void StickyNoteModeWidget::deleteButton_clicked() {
+    auto currRowIndex = ui->tableView->currentIndex();
+    if (!currRowIndex.isValid()) return;
+
+    QString stickyNoteId = this->itemModel->item(currRowIndex.row(), 0)->data().toString();
+    this->dataCenter.deleteStickyNoteById(stickyNoteId);
+    delete this->id2stickyNoteWidget[stickyNoteId];
+    this->id2stickyNoteWidget.remove(stickyNoteId);
+    this->itemModel->removeRow(currRowIndex.row());
 }

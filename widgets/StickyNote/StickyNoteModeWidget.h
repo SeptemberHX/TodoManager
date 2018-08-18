@@ -37,6 +37,7 @@ private slots:
     void addButton_clicked();
     void stickyNoteWidget_moved(const QPoint &newPos);
     void item_changed(QStandardItem *item);
+    void deleteButton_clicked();
 };
 
 #endif // STICKYNOTEMODEWIDGET_H

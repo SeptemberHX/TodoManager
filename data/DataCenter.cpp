@@ -476,3 +476,7 @@ void todo::DataCenter::updateStickyNotePositionById(const QString &id, int x, in
 void todo::DataCenter::updateStickyNote(const todo::StickyNote &stickyNote) {
     DaoFactory::getInstance()->getSQLDao()->updateStickyNoteById(stickyNote.getId(), stickyNote.toDao());
 }
+
+void todo::DataCenter::deleteStickyNoteById(const QString &id) {
+    DaoFactory::getInstance()->getSQLDao()->deleteStickyNoteById(id);
+}

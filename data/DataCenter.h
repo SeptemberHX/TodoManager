@@ -105,6 +105,8 @@ public:
     void updateStickyNote(const StickyNote &stickyNote);
 
     void insertStickyNote(const StickyNote &stickyNote);
+
+    void deleteStickyNoteById(const QString &id);
     // End
 
 

@@ -40,7 +40,7 @@ StickyNoteWidget::~StickyNoteWidget()
 void StickyNoteWidget::initWidgetStyle() {
     ui->closeToolButton->setIcon(QIcon::fromTheme("window-close"));
     ui->editToolButton->setIcon(QIcon::fromTheme("edit"));
-    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnBottomHint | Qt::Tool);
+    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnBottomHint | Qt::SubWindow);
     ui->listView->setSelectionMode(QAbstractItemView::NoSelection);
     ui->titleLabel->setAlignment(Qt::AlignCenter);
 }
