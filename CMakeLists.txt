@@ -9,6 +9,7 @@ add_subdirectory(utils)
 add_subdirectory(dao)
 add_subdirectory(data)
 add_subdirectory(gtest)
+add_subdirectory(functions)
 
 # Find the QtWidgets library
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
@@ -32,4 +33,4 @@ set(main_files
 add_executable(TodoManager ${main_files})
 
 # Use the Widgets module from Qt 5.
-target_link_libraries(TodoManager Qt5::Core Qt5::Gui Qt5::Widgets core widgets utils dao data config)
+target_link_libraries(TodoManager Qt5::Core Qt5::Gui Qt5::Widgets core widgets utils dao data config functions)

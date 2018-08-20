@@ -48,10 +48,6 @@ private:
     StickyNoteModeWidget *stickyNoteModeWidget;
 
     // for notification
-    QTimer *timer;
-    qint64 interval;
-    QList<todo::ItemDetail> targetItemDetails;
-    QMutex notificationListMutex;
     todo::DataCenter dataCenter;
 
     // tray icon
@@ -74,9 +70,9 @@ private slots:
     void database_modified(const QString &senderObjectName);
     void jump_to_specific_group(const QString &groupID);
     void jump_to_specific_tag(const QString &itemID);
+    void notify_user(const QString &titleStr, const QString &bodyStr);
 
 public slots:
-    void update_notification_timer();
     void item_clicked(const todo::ItemDetail &item);
     void targetDay_clicked(const QDate &targetDay);
 };

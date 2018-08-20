@@ -3,6 +3,7 @@
 #include "widgets/logger.h"
 #include "widgets/FetchConfigFilePathWidget.h"
 #include "./config/TodoConfig.h"
+#include "./functions/TaskOnTimeNotifier.h"
 
 #include <QStandardPaths>
 #include <QFileInfo>
@@ -73,10 +74,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // end
 
     // notification timer
-    this->timer = new QTimer();
-    this->interval = 60000;
-    connect(this->timer, &QTimer::timeout, this, &MainWindow::update_notification_timer);
-    this->update_notification_timer();
+    todo::TaskOnTimeNotifier::getInstance()->init();
+    connect(todo::TaskOnTimeNotifier::getInstance(), &todo::TaskOnTimeNotifier::notifyUser,
+            this, &MainWindow::notify_user);
     // end
 
     // tray icon
@@ -124,33 +124,6 @@ void MainWindow::initConfig() {
     todo::SQLiteConfig sqLiteConfig;
     sqLiteConfig.setDbPath(sqlConfigSettings.value("SQLite/db_path").toString());
     todo::TodoConfig::getInstance()->setSqLiteConfig(sqLiteConfig);
-}
-
-void MainWindow::update_notification_timer() {
-    QMutexLocker locker(&this->notificationListMutex);
-    for (auto const &item : this->targetItemDetails) {
-        if (QTime::currentTime().msecsTo(item.getFromTime()) <= 0) {
-            this->trayIcon->showMessage(tr("Task begins!"), item.getTitle(), QIcon(":/icons/tray.png"));
-        }
-    }
-    this->targetItemDetails.clear();
-
-    // select most recently items, and set it to targetItemDetails
-    this->targetItemDetails = this->dataCenter.selectNextNotifiedItemDetail();
-    for (auto const &item : this->targetItemDetails) {
-        qDebug() << "Next item to notify: " << item.getTitle();
-    }
-
-    // calculate next timeout round
-    qint64 nextInterval = this->interval;
-    if (!this->targetItemDetails.empty()) {
-        QDateTime nextItemTime;
-        nextItemTime.setDate(this->targetItemDetails[0].getTargetDate());
-        nextItemTime.setTime(this->targetItemDetails[0].getFromTime());
-        nextInterval = QDateTime::currentDateTime().msecsTo(nextItemTime);
-    }
-    this->timer->start(int(nextInterval));
-    qDebug() << "Wait for " << int(nextInterval) / 1000 << " secs to notify next item";
 }
 
 void MainWindow::click_exit() {
@@ -217,7 +190,7 @@ void MainWindow::modeBtn_clicked(QAbstractButton *button) {
 }
 
 void MainWindow::database_modified(const QString &senderObjectName) {
-    this->update_notification_timer();
+    todo::TaskOnTimeNotifier::getInstance()->update_timer();
 
     if (senderObjectName != this->todoListWidget->objectName()) {
         this->todoListWidget->refresh_current_items();
@@ -260,4 +233,8 @@ void MainWindow::jump_to_specific_group(const QString &groupID) {
 void MainWindow::jump_to_specific_tag(const QString &itemID) {
     ui->tagModePushButton->click();
     this->tagModeWidget->jump_to_tag(itemID);
+}
+
+void MainWindow::notify_user(const QString &titleStr, const QString &bodyStr) {
+    trayIcon->showMessage(titleStr, bodyStr);
 }
