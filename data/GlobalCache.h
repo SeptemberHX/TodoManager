@@ -29,6 +29,7 @@ public:
     void updateItemDetailDaoByID(const QString &itemID, const ItemDetailDao &detailDao);
     void updateItemGroupDaoByID(const QString &itemID, const ItemGroupDao &groupDao);
     void deleteItemDetailDaoByID(const QString &itemID);
+    void deleteItemDetailDaoByIDs(const QList<QString> &itemIDs);
     void deleteItemGroupDaoByID(const QString &itemID);
 
     QList<ItemGroupRelation> getItemGroupRelationByDirectGroupID(const QString &directGroupID);

@@ -7,7 +7,7 @@
 #include "../../utils/StringUtils.h"
 
 StickyNoteWidget::StickyNoteWidget(QWidget *parent) :
-    QWidget(parent),
+    QWidget(parent, Qt::Dialog),
     ui(new Ui::StickyNoteWidget),
     isClickedOnTitle(false),
     isChangedByMySelf(false)
@@ -40,7 +40,7 @@ StickyNoteWidget::~StickyNoteWidget()
 void StickyNoteWidget::initWidgetStyle() {
     ui->closeToolButton->setIcon(QIcon::fromTheme("window-close"));
     ui->editToolButton->setIcon(QIcon::fromTheme("edit"));
-    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnBottomHint | Qt::Dialog);
+    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnBottomHint);
     ui->listView->setSelectionMode(QAbstractItemView::NoSelection);
     ui->titleLabel->setAlignment(Qt::AlignCenter);
 }

@@ -15,6 +15,7 @@
 #include "../core/ItemGroup.h"
 #include "../core/ItemGroupDao.h"
 #include "../core/ItemGroupRelation.h"
+#include "../core/ItemDetailTimeDao.h"
 
 namespace todo {
 class AbstractDao {
@@ -84,6 +85,13 @@ public:
     virtual void updateStickyNoteById(const QString &id, const StickyNoteDao &stickyNoteDao) = 0;
     virtual void updateStickyNotePositionById(const QString &id, int x, int y) = 0;
     virtual void deleteStickyNoteById(const QString &id) = 0;
+    // End
+
+    // ItemDetailTimeDao
+    virtual QList<ItemDetailTimeDao> selectItemDetailTimeByItemID(const QString &itemID) = 0;
+    virtual void insertItemDetailTime(const ItemDetailTimeDao &dao) = 0;
+    virtual void deleteItemDetailTimeByItemID(const QString &itemID) = 0;
+    virtual void deleteItemDetailTimeByItemIDs(const QList<QString> &itemIDs) = 0;
     // End
 
     // for transaction

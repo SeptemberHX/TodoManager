@@ -91,6 +91,13 @@ void todo::DataCenter::updateItemDetailByID_(const QString &itemID, const todo::
             GlobalCache::getInstance()->addRelation(newItemDetail.generateRelation());
         }
     }
+
+    if (newItemDetail.isAchievingTimeDiff(oldItemDetail)) {
+        DaoFactory::getInstance()->getSQLDao()->deleteItemDetailTimeByItemID(newItemDetail.getId());
+        foreach (auto const &timeDao, newItemDetail.getTimeDaos()) {
+            DaoFactory::getInstance()->getSQLDao()->insertItemDetailTime(timeDao);
+        }
+    }
 }
 
 void todo::DataCenter::deleteItemDetailByIDCompletely(const QString &itemID) {
@@ -361,6 +368,7 @@ void todo::DataCenter::deleteItemDetailByIDCompletely_(const QString &itemID) {
     DaoFactory::getInstance()->getSQLDao()->deleteItemDetailByID(itemID);
     DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemID(itemID);
     DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByItemID(itemID);
+    DaoFactory::getInstance()->getSQLDao()->deleteItemDetailTimeByItemID(itemID);
     GlobalCache::getInstance()->deleteRelationByItemID(itemID);
     GlobalCache::getInstance()->deleteItemDetailDaoByID(itemID);
 }
@@ -369,7 +377,9 @@ void todo::DataCenter::deleteItemDetailByIDsCompletely_(const QList<QString> &it
     DaoFactory::getInstance()->getSQLDao()->deleteItemDetailByIDs(itemIDList);
     DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemIDs(itemIDList);
     DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByItemIDs(itemIDList);
+    DaoFactory::getInstance()->getSQLDao()->deleteItemDetailTimeByItemIDs(itemIDList);
     GlobalCache::getInstance()->deleteRelationByItemIDs(itemIDList);
+    GlobalCache::getInstance()->deleteItemDetailDaoByIDs(itemIDList);
 }
 
 QList<todo::ItemGroup> todo::DataCenter::fillItemGroupInfo(const QList<todo::ItemGroupDao> &itemGroupDaos) {
@@ -413,6 +423,9 @@ QList<todo::ItemDetail> todo::DataCenter::fillItemDetailInfo(const QList<todo::I
             resultList[i].setRootGroupID(relations[0].getRootGroupID());
             resultList[i].setDirectGroupID(relations[0].getDirectGroupID());
         }
+
+        auto timeDaos = DaoFactory::getInstance()->getSQLDao()->selectItemDetailTimeByItemID(itemDetailDaos[i].getId());
+        resultList[i].setTimeDaos(timeDaos);
     }
 
     return resultList;

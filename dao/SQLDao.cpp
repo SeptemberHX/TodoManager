@@ -220,6 +220,12 @@ void todo::SQLDao::createTables() {
                       "     lastUpdatedTime DATETIME,"
                       "     PRIMARY KEY (id)"
                       ");");
+    sqlScripts.append("CREATE TABLE IF NOT EXISTS todo_item_times("
+                      "     itemID VARCHAR(255) NOT NULL,"
+                      "     startTime DATETIME NOT NULL,"
+                      "     endTime DATETIME NOT NULL,"
+                      "     PRIMARY KEY (itemID)"
+                      ");");
 
     QSqlQuery query(this->db);
     for (auto &sqlScript : sqlScripts) {
@@ -1075,6 +1081,66 @@ void todo::SQLDao::updateStickyNotePositionById(const QString &id, int x, int y)
     query.bindValue(":x", x);
     query.bindValue(":y", y);
     if (!query.exec()) {
+        throw SqlErrorException();
+    }
+}
+
+QList<todo::ItemDetailTimeDao> todo::SQLDao::selectItemDetailTimeByItemID(const QString &itemID) {
+    QList<ItemDetailTimeDao> resultList;
+    QSqlQuery query(this->db);
+    query.prepare("SELECT itemID, startTime, endTime"
+                  " FROM todo_item_times"
+                  " WHERE itemID = :itemID");
+    query.bindValue(":itemID", itemID);
+    if (!query.exec()) {
+        throw SqlErrorException();
+    } else {
+        while (query.next()) {
+            ItemDetailTimeDao dao;
+            dao.setItemID(query.value("itemID").toString());
+            dao.setStartTime(query.value("startTime").toDateTime());
+            dao.setEndTime(query.value("endTime").toDateTime());
+            resultList.append(dao);
+        }
+    }
+
+    return resultList;
+}
+
+void todo::SQLDao::insertItemDetailTime(const todo::ItemDetailTimeDao &dao) {
+    QSqlQuery query(this->db);
+    query.prepare("INSERT INTO todo_item_times"
+                  " (itemID, startTime, endTime)"
+                  " VALUES(:itemID, :startTime, :endTime);");
+    query.bindValue(":itemID", dao.getItemID());
+    query.bindValue(":startTime", dao.getStartTime());
+    query.bindValue(":endTime", dao.getEndTime());
+
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
+}
+
+void todo::SQLDao::deleteItemDetailTimeByItemID(const QString &itemID) {
+    QSqlQuery query(this->db);
+    query.prepare("DELETE FROM todo_item_times"
+                  " WHERE itemID = :itemID;");
+    query.bindValue(":itemID", itemID);
+
+    if (!query.exec()) {
+        throw SqlErrorException();
+    }
+}
+
+void todo::SQLDao::deleteItemDetailTimeByItemIDs(const QList<QString> &itemIDs) {
+    if (itemIDs.empty()) return;
+
+    QString queryStr("DELETE FROM todo_item_times WHERE ");
+    QString whereClause = this->generateWhereClauseStrValues("itemID", "=", false, itemIDs);
+    queryStr += whereClause;
+
+    QSqlQuery query(this->db);
+    if (!query.exec(queryStr)) {
         throw SqlErrorException();
     }
 }

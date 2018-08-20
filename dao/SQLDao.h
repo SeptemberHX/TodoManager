@@ -123,6 +123,16 @@ public:
     void deleteStickyNoteById(const QString &id) override;
     // End
 
+    // ItemDetailTimeDao
+    QList<ItemDetailTimeDao> selectItemDetailTimeByItemID(const QString &itemID) override;
+
+    void insertItemDetailTime(const ItemDetailTimeDao &dao) override;
+
+    void deleteItemDetailTimeByItemID(const QString &itemID) override;
+
+    void deleteItemDetailTimeByItemIDs(const QList<QString> &itemIDs) override;
+    // End
+
     // for transaction
     void startTransaction() override;
 

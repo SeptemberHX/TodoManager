@@ -233,3 +233,9 @@ void todo::GlobalCache::deleteItemDetailDaoByID(const QString &itemID) {
 void todo::GlobalCache::deleteItemGroupDaoByID(const QString &itemID) {
     this->itemGroupDaoCache.remove(itemID);
 }
+
+void todo::GlobalCache::deleteItemDetailDaoByIDs(const QList<QString> &itemIDs) {
+    foreach (auto const &itemID, itemIDs) {
+        this->deleteItemDetailDaoByID(itemID);
+    }
+}
