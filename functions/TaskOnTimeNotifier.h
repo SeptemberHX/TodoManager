@@ -28,7 +28,7 @@ private:
     static TaskOnTimeNotifier *instancePtr;
 
     DataCenter dataCenter;
-    TaskOnTimeNotifier(QObject *parent = 0);
+    explicit TaskOnTimeNotifier(QObject *parent = 0);
 
     QTimer *timer;
     qint64 interval;

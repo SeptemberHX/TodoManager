@@ -88,17 +88,11 @@ namespace todo {
 
         void setDirectGroupID(const QString &directGroupID);
 
-        const QList<ItemDetailTimeDao> &getTimeDaos() const;
-
-        void setTimeDaos(const QList<ItemDetailTimeDao> &timeDaos);
-
         bool isTagDiff(const ItemDetail &other) const;
 
         bool isRootGroupDiff(const ItemDetail &other) const;
 
         bool isDirectGroupDiff(const ItemDetail &other) const;
-
-        bool isAchievingTimeDiff(const ItemDetail &other) const;
 
         ItemGroupRelation generateRelation() const;
 
@@ -118,7 +112,6 @@ namespace todo {
         ItemDetailDao itemDetailDao;
         QString rootGroupID;
         QString directGroupID;
-        QList<ItemDetailTimeDao> timeDaos;
     };
 
 }

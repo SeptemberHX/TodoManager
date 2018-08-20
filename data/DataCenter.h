@@ -109,6 +109,10 @@ public:
     void deleteStickyNoteById(const QString &id);
     // End
 
+    // ItemDetailTimeDao
+    QList<todo::ItemDetailTimeDao> selectItemDetailTimeByItemID(const QString &itemID);
+    void insertItemDetailTime(const ItemDetailTimeDao &dao);
+
 
     QList<todo::ItemAndGroupWrapper> selectItemByDirectGroupID(const QString &groupID);
 

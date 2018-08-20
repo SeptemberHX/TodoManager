@@ -199,22 +199,3 @@ todo::ItemGroupRelation todo::ItemDetail::generateRelation() const {
     relation.setItemID(this->getId());
     return relation;
 }
-
-const QList<todo::ItemDetailTimeDao> &todo::ItemDetail::getTimeDaos() const {
-    return timeDaos;
-}
-
-void todo::ItemDetail::setTimeDaos(const QList<todo::ItemDetailTimeDao> &timeDaos) {
-    ItemDetail::timeDaos = timeDaos;
-}
-
-bool todo::ItemDetail::isAchievingTimeDiff(const todo::ItemDetail &other) const {
-    if (this->timeDaos.size() != other.timeDaos.size()) return true;
-
-    for (int i = 0; i < this->timeDaos.size(); ++i) {
-        if (this->timeDaos[i] != other.timeDaos[i]) {
-            return true;
-        }
-    }
-    return false;
-}

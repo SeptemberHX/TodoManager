@@ -5,7 +5,7 @@ set(SOURCES
 )
 
 set(HEADERS
-        TaskOnTimeNotifier.cpp TaskOnTimeNotifier.h)
+        TaskOnTimeNotifier.cpp TaskOnTimeNotifier.h TaskArchivingTimeRecorder.cpp TaskArchivingTimeRecorder.h)
 
 set(CMAKE_AUTOMOC ON)
 

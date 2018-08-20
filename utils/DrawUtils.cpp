@@ -12,7 +12,7 @@ void todo::DrawUtils::drawRectWithCircle(QPainter &painter, const QFont &font, c
                                          double percent) {
     if (rect.width() < rect.height()) {
         qDebug() << "rect.width less than height !";
-        qDebug() << "stop drawing.";
+        qDebug() << "finish drawing.";
         return;
     }
 
