@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <QSplitter>
 #include <QHBoxLayout>
-#include <QSystemTrayIcon>
 #include <QButtonGroup>
 #include <QList>
 #include <QTimer>
@@ -50,9 +49,6 @@ private:
 
     // for notification
     todo::DataCenter dataCenter;
-
-    // tray icon
-    QSystemTrayIcon *trayIcon;
 
     // multi view mode support
     QButtonGroup *viewButtonGroup;

@@ -4,6 +4,7 @@
 #include "widgets/FetchConfigFilePathWidget.h"
 #include "./config/TodoConfig.h"
 #include "./functions/TaskOnTimeNotifier.h"
+#include "./functions/AppSystemTrayIcon.h"
 
 #include <QStandardPaths>
 #include <QFileInfo>
@@ -88,14 +89,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // end
 
     // tray icon
-    this->trayIcon = new QSystemTrayIcon(QIcon(":/icons/tray.png"), this);
-    QMenu *trayMenu = new QMenu(this);
-    QAction *quitAction = new QAction("Quit", this);
-    trayMenu->addAction(quitAction);
-    trayIcon->setContextMenu(trayMenu);
-    trayIcon->show();
-    connect(quitAction, &QAction::triggered, this, &MainWindow::click_exit);
-    connect(this->trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::trayIcon_clicked);
+    AppSystemTrayIcon::getInstance()->init(this);
+    connect(AppSystemTrayIcon::getInstance(), &AppSystemTrayIcon::quitClicked, this, &MainWindow::click_exit);
+    connect(AppSystemTrayIcon::getInstance(), &AppSystemTrayIcon::activated, this, &MainWindow::trayIcon_clicked);
 
     QApplication::setWindowIcon(QIcon(":/icons/tray.png"));
 }
@@ -135,7 +131,7 @@ void MainWindow::initConfig() {
 }
 
 void MainWindow::click_exit() {
-    this->trayIcon->hide();  // Must hide it, or the app will not quit.
+    AppSystemTrayIcon::getInstance()->hide();
     QApplication::closeAllWindows();  // No need to worry about those Sticky Note Widget whose parents are nullptr. :)
 }
 
@@ -244,5 +240,5 @@ void MainWindow::jump_to_specific_tag(const QString &itemID) {
 }
 
 void MainWindow::notify_user(const QString &titleStr, const QString &bodyStr) {
-    trayIcon->showMessage(titleStr, bodyStr);
+    AppSystemTrayIcon::getInstance()->showMessage(titleStr, bodyStr);
 }
