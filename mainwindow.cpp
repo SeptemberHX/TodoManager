@@ -79,6 +79,14 @@ MainWindow::MainWindow(QWidget *parent) :
             this, &MainWindow::notify_user);
     // end
 
+    // Task archiving time recorder
+    todo::TaskArchivingTimeRecorder::getInstance()->init();
+    connect(this, &MainWindow::taskArchivingOperation,
+            todo::TaskArchivingTimeRecorder::getInstance(), &todo::TaskArchivingTimeRecorder::operate);
+    connect(todo::TaskArchivingTimeRecorder::getInstance(), &todo::TaskArchivingTimeRecorder::itemDetailTimeModified,
+            this, &MainWindow::database_modified);
+    // end
+
     // tray icon
     this->trayIcon = new QSystemTrayIcon(QIcon(":/icons/tray.png"), this);
     QMenu *trayMenu = new QMenu(this);

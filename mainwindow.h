@@ -18,6 +18,7 @@
 #include "widgets/StickyNote/StickyNoteModeWidget.h"
 #include "core/ItemDetail.h"
 #include "data/DataCenter.h"
+#include "functions/TaskArchivingTimeRecorder.h"
 
 namespace Ui {
 class MainWindow;
@@ -62,6 +63,9 @@ private:
     int projectMode;
     int stickyNoteMode;
     int currentMode;
+
+signals:
+    void taskArchivingOperation(const QString &itemID, const todo::TaskArchivingOperation &operation);
 
 private slots:
     void click_exit();

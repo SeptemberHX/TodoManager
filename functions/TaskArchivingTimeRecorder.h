@@ -18,10 +18,18 @@ enum TaskArchivingState {
     FINISH
 };
 
+enum TaskArchivingOperation {
+    OPERATION_START,
+    OPERATION_PAUSE,
+    OPERATION_RESUME,
+    OPERATION_FINISH
+};
+
 class TaskArchivingTimeRecorder : public QObject {
     Q_OBJECT
 public:
     static TaskArchivingTimeRecorder *getInstance();
+    void init();
     ~TaskArchivingTimeRecorder();
 
 public slots:
@@ -29,9 +37,10 @@ public slots:
     void finish(const QString &itemID);
     void pause(const QString &itemID);
     void resume(const QString &itemID);
+    void operate(const QString &itemID, const TaskArchivingOperation &operation);
 
 signals:
-    void itemDetailTimeModified();
+    void itemDetailTimeModified(const QString &senderObjectName);
 
 private:
     static TaskArchivingTimeRecorder *instancePtr;
