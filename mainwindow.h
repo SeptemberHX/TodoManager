@@ -71,6 +71,7 @@ private slots:
     void jump_to_specific_group(const QString &groupID);
     void jump_to_specific_tag(const QString &itemID);
     void notify_user(const QString &titleStr, const QString &bodyStr);
+    void archiving_operated(const QString &itemID, const todo::TaskArchivingOperation &operation);
 
 public slots:
     void item_clicked(const todo::ItemDetail &item);

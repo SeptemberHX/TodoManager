@@ -31,6 +31,7 @@ public:
     static TaskArchivingTimeRecorder *getInstance();
     void init();
     ~TaskArchivingTimeRecorder();
+    TaskArchivingState getTaskArchivingState(const QString &taskID);
 
 public slots:
     void start(const QString &itemID);
@@ -50,7 +51,6 @@ private:
     DataCenter dataCenter;
 
     void saveOneTimePiece(const QString &itemID, const QDateTime &startTime, const QDateTime &endTime);
-    TaskArchivingState getTaskArchivingState(const QString &taskID);
 };
 
 }

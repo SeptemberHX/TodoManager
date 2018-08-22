@@ -92,6 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
     AppSystemTrayIcon::getInstance()->init(this);
     connect(AppSystemTrayIcon::getInstance(), &AppSystemTrayIcon::quitClicked, this, &MainWindow::click_exit);
     connect(AppSystemTrayIcon::getInstance(), &AppSystemTrayIcon::activated, this, &MainWindow::trayIcon_clicked);
+    connect(AppSystemTrayIcon::getInstance(), &AppSystemTrayIcon::archivingOperated, this, &MainWindow::archiving_operated);
 
     QApplication::setWindowIcon(QIcon(":/icons/tray.png"));
 }
@@ -195,6 +196,7 @@ void MainWindow::modeBtn_clicked(QAbstractButton *button) {
 
 void MainWindow::database_modified(const QString &senderObjectName) {
     todo::TaskOnTimeNotifier::getInstance()->update_timer();
+    AppSystemTrayIcon::getInstance()->update_menu();
 
     if (senderObjectName != this->todoListWidget->objectName()) {
         this->todoListWidget->refresh_current_items();
@@ -241,4 +243,9 @@ void MainWindow::jump_to_specific_tag(const QString &itemID) {
 
 void MainWindow::notify_user(const QString &titleStr, const QString &bodyStr) {
     AppSystemTrayIcon::getInstance()->showMessage(titleStr, bodyStr);
+}
+
+void MainWindow::archiving_operated(const QString &itemID, const todo::TaskArchivingOperation &operation) {
+    qDebug() << itemID << operation;
+    // todo::TaskArchivingTimeRecorder::getInstance()->operate(itemID, operation);
 }
