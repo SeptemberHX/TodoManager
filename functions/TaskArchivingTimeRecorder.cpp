@@ -37,7 +37,7 @@ void todo::TaskArchivingTimeRecorder::resume(const QString &itemID) {
 }
 
 void todo::TaskArchivingTimeRecorder::finish(const QString &itemID) {
-    this->pause(itemID);
+    this->endRecord(itemID, QDateTime::currentDateTime());
     this->dataCenter.updateDoneByID(itemID, true);
     this->notifyUser("Attention", QString("%1 finished.").arg(this->dataCenter.selectItemDetailByID(itemID).getTitle()));
     emit itemDetailTimeModified(this->objectName());

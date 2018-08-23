@@ -190,6 +190,7 @@ void GroupWidget::save_action_triggered(const todo::ItemAndGroupWrapper &wrapper
         this->dataCenter.updateItemDetailByID(detail.getId(), this->itemMap[detail.getId()].getItemDetail(), detail);
         this->itemMap[detail.getId()] = detail;
         this->listWidget->refresh_item_info(detail);
+        this->itemDetailWidget->loadItemDetail(detail);
     }
 }
 
