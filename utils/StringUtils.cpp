@@ -64,3 +64,7 @@ QString todo::StringUtils::generateUniqueID(const QString &prefix) {
 QString todo::StringUtils::generateStickyNoteUniqueID() {
     return StringUtils::generateUniqueID(StringUtils::PREFIX_STICKYNOTE);
 }
+
+QString todo::StringUtils::getDateTimeFormat() {
+    return "yyyy-MM-dd hh-mm-ss";
+}

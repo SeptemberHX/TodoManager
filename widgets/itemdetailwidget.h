@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QButtonGroup>
+#include <QStandardItemModel>
 #include "../data/DataCenter.h"
 #include "../core/ItemDetail.h"
 #include "../core/ItemTag.h"
@@ -72,6 +73,8 @@ private:
 
     todo::ItemDetail *currItemPtr;
     MyTextEdit *descriptionTextEdit;
+
+    QStandardItemModel *itemModel;
 
 private slots:
     void editBtn_clicked();

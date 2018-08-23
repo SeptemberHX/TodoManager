@@ -9,8 +9,10 @@
 #include <QMessageBox>
 #include "itemaddtagwidget.h"
 #include "ProjectChooseDialog.h"
+#include "../utils/StringUtils.h"
 #include "../utils/ItemTagUtils.h"
 #include "../utils/itemdetailutils.h"
+#include "../functions/TaskArchivingTimeRecorder.h"
 
 ItemDetailWidget::ItemDetailWidget(QWidget *parent) :
     QWidget(parent),
@@ -77,6 +79,13 @@ ItemDetailWidget::ItemDetailWidget(QWidget *parent) :
     ui->finishToolButton->setIcon(QIcon::fromTheme("checkmark"));
     ui->deleteRelationToolButton->setIcon(QIcon::fromTheme("editdelete"));
     ui->editRelationToolButton->setIcon(QIcon::fromTheme("edit"));
+
+    this->itemModel = new QStandardItemModel(ui->timeTableView);
+    this->itemModel->setHorizontalHeaderLabels({"Start Time", "End Time"});
+    ui->timeTableView->setModel(this->itemModel);
+    ui->timeTableView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->timeTableView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    ui->timeTableView->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
 
     this->changeToViewMode();
 
@@ -300,6 +309,15 @@ void ItemDetailWidget::reloadCurrItemDetail() {
         this->directGroupID.clear();
         this->rootGroupID.clear();
         ui->projectInfoWidget->hide();
+    }
+
+    // load task archiving time pieces
+    this->itemModel->removeRows(0, this->itemModel->rowCount());
+    auto timePieceList = this->dataCenter.selectItemDetailTimeByItemID(this->currItemPtr->getId());
+    foreach (auto const &timePiece, timePieceList) {
+        auto startItem = new QStandardItem(timePiece.getStartTime().toString(todo::StringUtils::getDateTimeFormat()));
+        auto endItem = new QStandardItem(timePiece.getEndTime().toString(todo::StringUtils::getDateTimeFormat()));
+        this->itemModel->appendRow({startItem, endItem});
     }
 }
 
