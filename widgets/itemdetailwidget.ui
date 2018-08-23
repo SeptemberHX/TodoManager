@@ -539,13 +539,20 @@
                   <item>
                    <widget class="QLabel" name="label">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
                     <property name="text">
-                     <string>Time:</string>
+                     <string>Time:  </string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="totalTimeLabel">
+                    <property name="text">
+                     <string/>
                     </property>
                    </widget>
                   </item>

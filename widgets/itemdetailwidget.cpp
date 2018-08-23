@@ -81,10 +81,13 @@ ItemDetailWidget::ItemDetailWidget(QWidget *parent) :
     ui->editRelationToolButton->setIcon(QIcon::fromTheme("edit"));
 
     this->itemModel = new QStandardItemModel(ui->timeTableView);
-    this->itemModel->setHorizontalHeaderLabels({"Start Time", "End Time"});
+    this->itemModel->setHorizontalHeaderLabels({"Start Time", "End Time", "Duration"});
     ui->timeTableView->setModel(this->itemModel);
+    ui->timeTableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->timeTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->timeTableView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->timeTableView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    ui->timeTableView->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     ui->timeTableView->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
 
     this->changeToViewMode();
@@ -153,7 +156,7 @@ void ItemDetailWidget::setReadOnly(bool isReadOnly) {
         ui->buttonBox->show();
     }
     this->tagWidget->setReadOnly(isReadOnly);
-    if (isReadOnly && this->currItemPtr != nullptr && this->currItemPtr->getTags().size() == 0) {
+    if (isReadOnly && this->currItemPtr != nullptr && this->currItemPtr->getTags().empty()) {
         ui->tagsWidget->hide();
     } else {
         ui->tagsWidget->show();
@@ -214,7 +217,7 @@ void ItemDetailWidget::addTagButton(const todo::ItemTag &tag) {
 
 todo::ItemDetail ItemDetailWidget::collectItemDetail() {
     QList<todo::ItemTag> tagSet;
-    for (auto itemTag : this->tagWidget->getTags()) {
+    for (auto const &itemTag : this->tagWidget->getTags()) {
         tagSet.append(itemTag);
     }
 
@@ -276,6 +279,8 @@ void ItemDetailWidget::reloadCurrItemDetail() {
             this->changeToRecursionMode();
             ui->recursionModeButton->click();
             break;
+        default:
+            break;
     }
 
     ui->titleLineEdit->setText(this->currItemPtr->getTitle());
@@ -312,12 +317,25 @@ void ItemDetailWidget::reloadCurrItemDetail() {
     }
 
     // load task archiving time pieces
+    qint64 totalDuration = 0;
     this->itemModel->removeRows(0, this->itemModel->rowCount());
+    ui->totalTimeLabel->clear();
     auto timePieceList = this->dataCenter.selectItemDetailTimeByItemID(this->currItemPtr->getId());
     foreach (auto const &timePiece, timePieceList) {
         auto startItem = new QStandardItem(timePiece.getStartTime().toString(todo::StringUtils::getDateTimeFormat()));
+        startItem->setTextAlignment(Qt::AlignCenter);
         auto endItem = new QStandardItem(timePiece.getEndTime().toString(todo::StringUtils::getDateTimeFormat()));
-        this->itemModel->appendRow({startItem, endItem});
+        endItem->setTextAlignment(Qt::AlignCenter);
+
+        qint64 durationInMSec = timePiece.getStartTime().msecsTo(timePiece.getEndTime());
+        totalDuration += durationInMSec;
+        auto durationItem = new QStandardItem(QString("%1 h").arg(QString::number(durationInMSec * 1.0 / 1000 / 3600, 'g', 2)));
+        durationItem->setTextAlignment(Qt::AlignCenter);
+
+        this->itemModel->appendRow({startItem, endItem, durationItem});
+    }
+    if (totalDuration != 0) {
+        ui->totalTimeLabel->setText(QString("%1 h in total.").arg(QString::number(totalDuration * 1.0 / 1000 / 3600, 'g', 2)));
     }
 }
 
