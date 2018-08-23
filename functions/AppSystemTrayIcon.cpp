@@ -96,21 +96,25 @@ void AppSystemTrayIcon::insertOneTaskToMenu(const todo::ItemDetail &detail) {
 void AppSystemTrayIcon::start_clicked() {
     emit archivingOperated(this->menuPtr2IDMap[dynamic_cast<QMenu*>(sender()->parent())],
             todo::TaskArchivingOperation::OPERATION_START);
+    this->update_menu();
 }
 
 void AppSystemTrayIcon::pause_clicked() {
     emit archivingOperated(this->menuPtr2IDMap[dynamic_cast<QMenu*>(sender()->parent())],
             todo::TaskArchivingOperation::OPERATION_PAUSE);
+    this->update_menu();
 }
 
 void AppSystemTrayIcon::resume_clicked() {
     emit archivingOperated(this->menuPtr2IDMap[dynamic_cast<QMenu*>(sender()->parent())],
             todo::TaskArchivingOperation::OPERATION_RESUME);
+    this->update_menu();
 }
 
 void AppSystemTrayIcon::finish_clicked() {
     emit archivingOperated(this->menuPtr2IDMap[dynamic_cast<QMenu*>(sender()->parent())],
             todo::TaskArchivingOperation::OPERATION_FINISH);
+    this->update_menu();
 }
 
 QIcon AppSystemTrayIcon::getIconByState(const todo::TaskArchivingState &state) {

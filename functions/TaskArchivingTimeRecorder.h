@@ -7,6 +7,7 @@
 
 #include <QString>
 #include <QDateTime>
+#include <QMap>
 #include "../data/DataCenter.h"
 
 namespace todo {
@@ -42,6 +43,7 @@ public slots:
 
 signals:
     void itemDetailTimeModified(const QString &senderObjectName);
+    void showMessage(const QString &titleStr, const QString &bodyStr);
 
 private:
     static TaskArchivingTimeRecorder *instancePtr;
@@ -51,6 +53,10 @@ private:
     DataCenter dataCenter;
 
     void saveOneTimePiece(const QString &itemID, const QDateTime &startTime, const QDateTime &endTime);
+    void notifyUser(const QString &titleStr, const QString &bodyStr);
+
+    void startRecord(const QString &itemID, const QDateTime &startTime);
+    void endRecord(const QString &itemID, const QDateTime &endTime);
 };
 
 }

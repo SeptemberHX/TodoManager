@@ -21,31 +21,26 @@ todo::TaskArchivingTimeRecorder::~TaskArchivingTimeRecorder() {
 }
 
 void todo::TaskArchivingTimeRecorder::start(const QString &itemID) {
-    this->resume(itemID);
+    this->startRecord(itemID, QDateTime::currentDateTime());
+    this->notifyUser("Attention", QString("%1 started.").arg(this->dataCenter.selectItemDetailByID(itemID).getTitle()));
 }
 
 void todo::TaskArchivingTimeRecorder::pause(const QString &itemID) {
-    if (!this->itemId2StartTimeMap.contains(itemID)) {
-        qDebug() << itemID << "has not started yet";
-        return;
-    }
-
-    this->saveOneTimePiece(itemID, this->itemId2StartTimeMap[itemID], QDateTime::currentDateTime());
-    this->itemId2StartTimeMap.remove(itemID);
+    this->endRecord(itemID, QDateTime::currentDateTime());
+    this->notifyUser("Attention", QString("%1 paused.").arg(this->dataCenter.selectItemDetailByID(itemID).getTitle()));
+    emit itemDetailTimeModified(this->objectName());
 }
 
 void todo::TaskArchivingTimeRecorder::resume(const QString &itemID) {
-    if (this->itemId2StartTimeMap.contains(itemID)) {
-        qDebug() << itemID << "has already started at" << this->itemId2StartTimeMap;
-        return;
-    }
-
-    this->itemId2StartTimeMap[itemID] = QDateTime::currentDateTime();
+    this->startRecord(itemID, QDateTime::currentDateTime());
+    this->notifyUser("Attention", QString("%1 resumed.").arg(this->dataCenter.selectItemDetailByID(itemID).getTitle()));
 }
 
 void todo::TaskArchivingTimeRecorder::finish(const QString &itemID) {
     this->pause(itemID);
     this->dataCenter.updateDoneByID(itemID, true);
+    this->notifyUser("Attention", QString("%1 finished.").arg(this->dataCenter.selectItemDetailByID(itemID).getTitle()));
+    emit itemDetailTimeModified(this->objectName());
 }
 
 void todo::TaskArchivingTimeRecorder::saveOneTimePiece(const QString &itemID, const QDateTime &startTime,
@@ -55,7 +50,6 @@ void todo::TaskArchivingTimeRecorder::saveOneTimePiece(const QString &itemID, co
     timeDao.setStartTime(startTime);
     timeDao.setEndTime(endTime);
     this->dataCenter.insertItemDetailTime(timeDao);
-    emit itemDetailTimeModified(this->objectName());
 }
 
 todo::TaskArchivingTimeRecorder::TaskArchivingTimeRecorder(QObject *parent) :
@@ -95,6 +89,30 @@ void todo::TaskArchivingTimeRecorder::operate(const QString &itemID, const todo:
 
 void todo::TaskArchivingTimeRecorder::init() {
     ;
+}
+
+void todo::TaskArchivingTimeRecorder::notifyUser(const QString &titleStr, const QString &bodyStr) {
+    emit showMessage(titleStr, bodyStr);
+}
+
+void todo::TaskArchivingTimeRecorder::startRecord(const QString &itemID, const QDateTime &startTime) {
+    if (this->itemId2StartTimeMap.contains(itemID)) {
+        qDebug() << itemID << "has already started at" << this->itemId2StartTimeMap;
+        return;
+    }
+
+    this->itemId2StartTimeMap[itemID] = startTime;
+}
+
+void todo::TaskArchivingTimeRecorder::endRecord(const QString &itemID, const QDateTime &endTime) {
+    if (!this->itemId2StartTimeMap.contains(itemID)) {
+        qDebug() << itemID << "has not started yet";
+        return;
+    }
+
+    this->saveOneTimePiece(itemID, this->itemId2StartTimeMap[itemID], endTime);
+    qDebug() << this->itemId2StartTimeMap[itemID];
+    this->itemId2StartTimeMap.remove(itemID);
 }
 
 

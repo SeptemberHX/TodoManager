@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QSqlQuery>
 #include <QException>
+#include <QSqlError>
 #include <iostream>
 #include "SQLDao.h"
 #include "../core/SqlErrorException.h"
@@ -21,7 +22,7 @@ QList<todo::ItemDetailDao> todo::SQLDao::selectItemDetailByDate(const QDate &tar
                   " WHERE targetDate = :targetDate");
     query.bindValue(":targetDate", targetDate);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             ItemDetailDao detail;
@@ -68,7 +69,7 @@ void todo::SQLDao::updateItemDetailByID(const QString &itemID, const todo::ItemD
     // todo: parentID, freq, freqType in UPDATE
 
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -79,7 +80,7 @@ void todo::SQLDao::deleteItemDetailByID(const QString &itemID) {
     query.bindValue(":id", itemID);
 
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -91,7 +92,7 @@ void todo::SQLDao::deleteItemDetailByIDs(const QList<QString> &itemIDs) {
     queryStr += whereClauseStr;
     QSqlQuery query(this->db);
     if (!query.exec(queryStr)) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -116,7 +117,7 @@ void todo::SQLDao::insertItemDetail(const todo::ItemDetailDao &itemDetailDao) {
     query.bindValue(":lastUpdatedTime", itemDetailDao.getLastUpdatedTime());
     // todo: parentID, freq, freqType in INSERT
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -142,7 +143,7 @@ void todo::SQLDao::init() {
 
     if (!openResult) {
         qDebug() << "Open database failed";
-        throw SqlErrorException();
+        throw SqlErrorException(this->db.lastError().text().toStdString().c_str());
     } else {
         this->createTables();
     }
@@ -223,15 +224,14 @@ void todo::SQLDao::createTables() {
     sqlScripts.append("CREATE TABLE IF NOT EXISTS todo_item_times("
                       "     itemID VARCHAR(255) NOT NULL,"
                       "     startTime DATETIME NOT NULL,"
-                      "     endTime DATETIME NOT NULL,"
-                      "     PRIMARY KEY (itemID)"
+                      "     endTime DATETIME NOT NULL"
                       ");");
 
     QSqlQuery query(this->db);
     for (auto &sqlScript : sqlScripts) {
         if (!query.exec(sqlScript)) {
             qDebug() << QString("Failed to execute sql %1").arg(sqlScript);
-            throw SqlErrorException();
+            throw SqlErrorException(query.lastError().text().toStdString().c_str());
         }
     }
 }
@@ -244,7 +244,7 @@ void todo::SQLDao::updateDoneByID(const QString &itemID, bool flag) {
     query.bindValue(":id", itemID);
     query.bindValue(":done", flag);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -256,7 +256,7 @@ QList<todo::ItemTag> todo::SQLDao::selectItemTagById(const QString &tagId) {
                   " WHERE name = :tagId");
     query.bindValue(":tagId", tagId);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             ItemTag itemTag(query.value("name").toString());
@@ -278,7 +278,7 @@ void todo::SQLDao::updateItemTagById(const QString &tagId, const ItemTag &itemTa
     query.bindValue(":name", itemTag.getName());
 
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -289,7 +289,7 @@ void todo::SQLDao::deleteItemTagById(const QString &tagId) {
     query.bindValue(":name", tagId);
 
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -303,7 +303,7 @@ void todo::SQLDao::insertItemTag(const todo::ItemTag &tag) {
     query.bindValue(":color", tag.getColor().name());
 
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -313,7 +313,7 @@ QList<todo::ItemTag> todo::SQLDao::selectAllItemTag() {
     query.prepare("SELECT name, description, color"
                   " FROM tags;");
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             ItemTag itemTag(query.value("name").toString());
@@ -333,7 +333,7 @@ QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByItemID(const 
                   " WHERE itemID = :itemID;");
     query.bindValue(":itemID", itemID);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             results.append(ItemDetailAndTag(query.value("itemID").toString(),
@@ -372,7 +372,7 @@ QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByItemIDs(const
     }
 
     if (!query.exec(sqlStr.arg(ids.join(",")))) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             results.append(ItemDetailAndTag(query.value("itemID").toString(),
@@ -393,7 +393,7 @@ QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByTagID(const Q
                   " WHERE tagID = :tagID;");
     query.bindValue(":tagID", tagID);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             results.append(ItemDetailAndTag(query.value("itemID").toString(),
@@ -421,7 +421,7 @@ QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByTagIDs(const 
                   " WHERE tagID IN (:tagIDs);");
     query.bindValue(":tagIDs", tagIDListStr);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             results.append(ItemDetailAndTag(query.value("itemID").toString(),
@@ -441,7 +441,7 @@ void todo::SQLDao::insertItemAndTagMatch(const todo::ItemDetailAndTag &newMatch)
     query.bindValue(":itemID", newMatch.getItemID());
     query.bindValue(":tagID", newMatch.getTagID());
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -452,7 +452,7 @@ void todo::SQLDao::deleteItemAndTagMatch(const todo::ItemDetailAndTag &match) {
     query.bindValue(":itemID", match.getItemID());
     query.bindValue(":tagID", match.getTagID());
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -462,7 +462,7 @@ void todo::SQLDao::deleteItemAndTagMatchByItemID(const QString &itemID) {
                   " WHERE itemID=:itemID;");
     query.bindValue(":itemID", itemID);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -474,7 +474,7 @@ void todo::SQLDao::deleteItemAndTagMatchByItemIDs(const QList<QString> &itemIDLi
     queryStr += whereClauseStr;
     QSqlQuery query(this->db);
     if (!query.exec(queryStr)) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -484,7 +484,7 @@ void todo::SQLDao::deleteItemAndTagMatchByTagID(const QString &tagID) {
                   " WHERE tagID=:tagID;");
     query.bindValue(":tagID", tagID);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -508,7 +508,7 @@ QList<todo::ItemDetail> todo::SQLDao::selectNextNotifiedItemDetail() {
     query.bindValue(":targetDate", QDate::currentDate());
     query.bindValue(":startTime", QTime::currentTime());
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 
     if (query.next()) {
@@ -522,7 +522,7 @@ QList<todo::ItemDetail> todo::SQLDao::selectNextNotifiedItemDetail() {
         query.bindValue(":startTime", startTime);
         query.bindValue(":targetDate", targetDate);
         if (!query.exec()) {
-            throw SqlErrorException();
+            throw SqlErrorException(query.lastError().text().toStdString().c_str());
         }
 
         while (query.next()) {
@@ -556,7 +556,7 @@ QList<todo::ItemDetailDao> todo::SQLDao::selectItemDetailByDate(const QDate &fro
     query.bindValue(":fromDate", fromDate);
     query.bindValue(":toDate", toDate);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             ItemDetailDao detail;
@@ -597,7 +597,7 @@ QList<todo::ItemDetailDao> todo::SQLDao::selectItemDetailByIDs(const QList<QStri
                   " WHERE ");
     queryStr += itemIDListStr;
     if (!query.exec(queryStr)) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             ItemDetailDao detail;
@@ -628,7 +628,7 @@ QList<todo::ItemGroupDao> todo::SQLDao::selectItemGroupByID(const QString &group
                   " WHERE id = :id");
     query.bindValue(":id", groupID);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             todo::ItemGroupDao itemGroup;
@@ -656,7 +656,7 @@ QList<todo::ItemGroupDao> todo::SQLDao::selectItemGroupByType(const todo::ItemGr
                   " WHERE `type` = :type");
     query.bindValue(":type", type);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             todo::ItemGroupDao itemGroup;
@@ -695,7 +695,7 @@ void todo::SQLDao::updateItemGroupByID(const QString &groupID, const ItemGroupDa
     query.bindValue(":color", itemGroupDao.getColor().name());
 
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -706,7 +706,7 @@ void todo::SQLDao::deleteItemGroupByID(const QString &groupID) {
     query.bindValue(":id", groupID);
 
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -725,7 +725,7 @@ void todo::SQLDao::deleteItemGroupByIDs(const QList<QString> &groupIDList) {
     queryStr += itemIDListStr;
 
     if (!query.exec(queryStr)) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -748,7 +748,7 @@ void todo::SQLDao::insertItemGroup(const ItemGroupDao &itemGroupDao) {
 
     if (!query.exec()) {
         qDebug() << "insertItemGroup: exception happens";
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -769,7 +769,7 @@ QList<todo::ItemGroupDao> todo::SQLDao::selectItemGroupByIDs(const QList<QString
               " WHERE ");
     queryStr += itemIDListStr;
     if (!query.exec(queryStr)) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             todo::ItemGroupDao itemGroup;
@@ -798,7 +798,7 @@ QList<todo::ItemGroupRelation> todo::SQLDao::selectItemGroupRelationByRootID(con
     query.bindValue(":rootGroupID", rootID);
 
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             ItemGroupRelation relation;
@@ -820,7 +820,7 @@ todo::SQLDao::deleteItemGroupRelationByDirectParentIDAndItemID(const QString &di
     query.bindValue(":directGroupID", directParentID);
     query.bindValue(":itemID", itemID);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -830,7 +830,7 @@ void todo::SQLDao::deleteItemGroupRelationByRootID(const QString &rootID) {
                   " WHERE rootGroupID = :rootGroupID");
     query.bindValue(":rootGroupID", rootID);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -846,7 +846,7 @@ void todo::SQLDao::insertItemGroupRelation(const todo::ItemGroupRelation &relati
     if (!query.exec()) {
         qDebug() << "insertItemGroupRelation: exception happens";
         qDebug() << relation.getRootGroupID() << relation.getDirectGroupID() << relation.getItemID();
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -859,7 +859,7 @@ QList<todo::ItemGroupRelation> todo::SQLDao::selectItemGroupRelationByParentID(c
     query.bindValue(":directGroupID", parentID);
 
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             ItemGroupRelation relation;
@@ -882,7 +882,7 @@ QList<todo::ItemGroupRelation> todo::SQLDao::selectItemGroupRelationByItemID(con
     query.bindValue(":itemID", itemID);
 
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             ItemGroupRelation relation;
@@ -902,7 +902,7 @@ void todo::SQLDao::deleteItemGroupRelationByItemID(const QString &itemID) {
                   " WHERE itemID = :itemID");
     query.bindValue(":itemID", itemID);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -915,7 +915,7 @@ void todo::SQLDao::deleteItemGroupRelationByItemIDs(const QList<QString> &itemID
 
     QSqlQuery query(this->db);
     if (!query.exec(queryStr)) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -926,7 +926,7 @@ QList<todo::ItemGroupRelation> todo::SQLDao::selectAllItemGroupRelation() {
                   " FROM item_group_relations");
 
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             ItemGroupRelation relation;
@@ -975,7 +975,7 @@ QList<todo::StickyNoteDao> todo::SQLDao::selectStickyNoteById(const QString &id)
                   " WHERE id = :id");
     query.bindValue(":id", id);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             StickyNoteDao dao;
@@ -1011,7 +1011,7 @@ void todo::SQLDao::insertStickyNote(const todo::StickyNoteDao &stickyNoteDao) {
     query.bindValue(":createdTime", stickyNoteDao.getCreatedTime());
     query.bindValue(":lastUpdatedTime", stickyNoteDao.getLastUpdatedTime());
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -1032,7 +1032,7 @@ void todo::SQLDao::updateStickyNoteById(const QString &id, const todo::StickyNot
     query.bindValue(":createdTime", stickyNoteDao.getCreatedTime());
     query.bindValue(":lastUpdatedTime", stickyNoteDao.getLastUpdatedTime());
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -1042,7 +1042,7 @@ void todo::SQLDao::deleteStickyNoteById(const QString &id) {
                   " WHERE id=:id;");
     query.bindValue(":id", id);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -1053,7 +1053,7 @@ QList<todo::StickyNoteDao> todo::SQLDao::selectAllStickyNote() {
                   " id, name, shown, x, y, `type`, fontColor, backgroundColor, createdTime, lastUpdatedTime"
                   " FROM sticky_note");
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             StickyNoteDao dao;
@@ -1081,7 +1081,7 @@ void todo::SQLDao::updateStickyNotePositionById(const QString &id, int x, int y)
     query.bindValue(":x", x);
     query.bindValue(":y", y);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -1093,7 +1093,7 @@ QList<todo::ItemDetailTimeDao> todo::SQLDao::selectItemDetailTimeByItemID(const 
                   " WHERE itemID = :itemID");
     query.bindValue(":itemID", itemID);
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     } else {
         while (query.next()) {
             ItemDetailTimeDao dao;
@@ -1117,7 +1117,7 @@ void todo::SQLDao::insertItemDetailTime(const todo::ItemDetailTimeDao &dao) {
     query.bindValue(":endTime", dao.getEndTime());
 
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -1128,7 +1128,7 @@ void todo::SQLDao::deleteItemDetailTimeByItemID(const QString &itemID) {
     query.bindValue(":itemID", itemID);
 
     if (!query.exec()) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
 
@@ -1141,6 +1141,6 @@ void todo::SQLDao::deleteItemDetailTimeByItemIDs(const QList<QString> &itemIDs) 
 
     QSqlQuery query(this->db);
     if (!query.exec(queryStr)) {
-        throw SqlErrorException();
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }

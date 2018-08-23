@@ -86,6 +86,8 @@ MainWindow::MainWindow(QWidget *parent) :
             todo::TaskArchivingTimeRecorder::getInstance(), &todo::TaskArchivingTimeRecorder::operate);
     connect(todo::TaskArchivingTimeRecorder::getInstance(), &todo::TaskArchivingTimeRecorder::itemDetailTimeModified,
             this, &MainWindow::database_modified);
+    connect(todo::TaskArchivingTimeRecorder::getInstance(), &todo::TaskArchivingTimeRecorder::showMessage,
+            this, &MainWindow::notify_user);
     // end
 
     // tray icon
@@ -93,6 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(AppSystemTrayIcon::getInstance(), &AppSystemTrayIcon::quitClicked, this, &MainWindow::click_exit);
     connect(AppSystemTrayIcon::getInstance(), &AppSystemTrayIcon::activated, this, &MainWindow::trayIcon_clicked);
     connect(AppSystemTrayIcon::getInstance(), &AppSystemTrayIcon::archivingOperated, this, &MainWindow::archiving_operated);
+    // end
 
     QApplication::setWindowIcon(QIcon(":/icons/tray.png"));
 }
@@ -247,5 +250,5 @@ void MainWindow::notify_user(const QString &titleStr, const QString &bodyStr) {
 
 void MainWindow::archiving_operated(const QString &itemID, const todo::TaskArchivingOperation &operation) {
     qDebug() << itemID << operation;
-    // todo::TaskArchivingTimeRecorder::getInstance()->operate(itemID, operation);
+    todo::TaskArchivingTimeRecorder::getInstance()->operate(itemID, operation);
 }

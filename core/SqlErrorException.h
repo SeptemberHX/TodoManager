@@ -6,14 +6,13 @@
 #define TODOMANAGER_SQLERROREXCEPTION_H
 
 
-#include <QException>
+#include <stdexcept>
 
 namespace todo {
-class SqlErrorException : public QException {
+class SqlErrorException : public std::runtime_error {
 public:
-    void raise() const { throw *this; }
-
-    SqlErrorException *clone() const { return new SqlErrorException(*this); }
+    SqlErrorException(const char *msg = "") : runtime_error(msg) { }
+    ~SqlErrorException() throw() = default;
 };
 }
 

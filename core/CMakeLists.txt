@@ -5,7 +5,6 @@ set(core_files
         ItemDetail.h
         ItemTag.cpp
         ItemTag.h
-        SqlErrorException.cpp
         SqlErrorException.h
         ItemDetailAndTag.cpp
         ItemDetailAndTag.h
