@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QButtonGroup>
 #include <QStandardItemModel>
+#include "../functions/TaskArchivingTimeRecorder.h"
 #include "../data/DataCenter.h"
 #include "../core/ItemDetail.h"
 #include "../core/ItemTag.h"
@@ -40,6 +41,7 @@ signals:
     void deleteButtonClicked();
     void jumpTo(const QString &itemID);
     void tagClicked(const QString &tagID);
+    void timeRecordOperated(const QString &itemID, const todo::TaskArchivingOperation operation);
 
 public slots:
     void modeButtonToggled();
@@ -87,6 +89,7 @@ private slots:
     void deleteRelationButton_clicked();
     void editRelationButton_clicked();
     void item_tag_clicked(const QString &itemID);
+    void delete_timePiece_clicked();
 };
 
 #endif // ITEMDETAILWIDGET_H

@@ -244,6 +244,8 @@ void GroupWidget::initUI() {
 
     connect(this->itemDetailWidget, &ItemDetailWidget::tagClicked, this, &GroupWidget::item_tag_clicked);
 
+    connect(this->itemDetailWidget, &ItemDetailWidget::timeRecordOperated, this, &GroupWidget::timeRecordOperated);
+
     // set icons
     ui->refreshToolButton->setIcon(QIcon::fromTheme("view-refresh"));
     ui->sortToolButton->setIcon(QIcon::fromTheme("sort-presence"));

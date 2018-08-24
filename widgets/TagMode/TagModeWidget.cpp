@@ -44,6 +44,7 @@ TagModeWidget::TagModeWidget(QWidget *parent) :
     connect(this->todoListWidget, &TodoListWidget::databaseModified, this, &TagModeWidget::database_modified);
     connect(&this->dataCenter, &todo::DataCenter::databaseModified, this, &TagModeWidget::database_modified);
     connect(this->todoListWidget, &TodoListWidget::jumpToGroup, this, &TagModeWidget::jump_to_group);
+    connect(this->todoListWidget, &TodoListWidget::timeRecordOperated, this, &TagModeWidget::timeRecordOperated);
 
     this->setObjectName(todo::StringUtils::generateUniqueID("TagModeWidget"));
 }

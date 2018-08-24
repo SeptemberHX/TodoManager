@@ -137,6 +137,7 @@ signals:
     void databaseModified(const QString &senderObjectName);  // for notification
     void jumpToGroup(const QString &groupID);
     void jumpToTag(const QString &tagID);
+    void timeRecordOperated(const QString &itemID, const todo::TaskArchivingOperation operation);
 
 private slots:
     void todayBtn_clicked();

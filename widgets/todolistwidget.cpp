@@ -76,6 +76,9 @@ TodoListWidget::TodoListWidget(QWidget *parent, TodoListWidgetMode viewMode) :
     // list right click menu
     connect(this->listWidget, &ItemListWidget::customContextMenuRequested, this, &TodoListWidget::show_list_content_menu);
 
+    // task archiving time record
+    connect(this->detailWidget, &ItemDetailWidget::timeRecordOperated, this, &TodoListWidget::timeRecordOperated);
+
     // set icons
     ui->tagSorterToolButton->setIcon(QIcon::fromTheme("sort-presence"));
     ui->preDayToolBtn->setIcon(QIcon::fromTheme("previous"));

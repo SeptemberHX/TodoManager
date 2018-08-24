@@ -22,6 +22,7 @@ ProjectModeWidget::ProjectModeWidget(QWidget *parent) :
     connect(this->navigationBarWidget, &NavigationBarWidget::jumpTo, this->groupWidget, QOverload<const QList<QString>&>::of(&GroupWidget::jump_to));
     connect(this->groupWidget, &GroupWidget::databaseModified, this, &ProjectModeWidget::database_modified);
     connect(this->groupWidget, &GroupWidget::jumpToTag, this, &ProjectModeWidget::item_tag_clicked);
+    connect(this->groupWidget, &GroupWidget::timeRecordOperated, this, &ProjectModeWidget::timeRecordOperated);
 
     this->setObjectName(todo::StringUtils::generateUniqueID("ProjectModeWidget"));
 }

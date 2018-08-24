@@ -33,6 +33,7 @@ signals:
     void enterItem(const QString &itemID, const QString &name);
     void databaseModified();
     void jumpToTag(const QString &itemID);
+    void timeRecordOperated(const QString &itemID, const todo::TaskArchivingOperation operation);
 
 private:
     Ui::GroupWidget *ui;

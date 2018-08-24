@@ -104,6 +104,9 @@
          </sizepolicy>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <property name="spacing">
+          <number>3</number>
+         </property>
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -149,6 +152,9 @@
          </sizepolicy>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="spacing">
+          <number>3</number>
+         </property>
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -522,7 +528,7 @@
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_15">
                   <property name="spacing">
-                   <number>0</number>
+                   <number>3</number>
                   </property>
                   <property name="leftMargin">
                    <number>0</number>
@@ -557,17 +563,99 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QToolButton" name="toolButton">
-                    <property name="text">
-                     <string>+</string>
+                   <widget class="QWidget" name="recordControlWidget" native="true">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_16">
+                     <property name="spacing">
+                      <number>3</number>
+                     </property>
+                     <property name="leftMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="topMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="rightMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="bottomMargin">
+                      <number>0</number>
+                     </property>
+                     <item>
+                      <widget class="QToolButton" name="startRecordToolButton">
+                       <property name="text">
+                        <string>S</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QToolButton" name="pauseRecordToolButton">
+                       <property name="text">
+                        <string>P</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QToolButton" name="resumeRecordToolButton">
+                       <property name="text">
+                        <string>R</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QToolButton" name="finishRecordToolButton">
+                       <property name="text">
+                        <string>F</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QToolButton" name="toolButton_2">
-                    <property name="text">
-                     <string>-</string>
+                   <widget class="QWidget" name="timeEditWidget" native="true">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_17">
+                     <property name="spacing">
+                      <number>3</number>
+                     </property>
+                     <property name="leftMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="topMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="rightMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="bottomMargin">
+                      <number>0</number>
+                     </property>
+                     <item>
+                      <widget class="QToolButton" name="addTimePieceToolButton">
+                       <property name="text">
+                        <string>+</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QToolButton" name="deleteTimePieceToolButton">
+                       <property name="text">
+                        <string>-</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </widget>
                   </item>
                  </layout>

@@ -26,6 +26,7 @@ public slots:
 signals:
     void databaseModified(const QString &senderObjectName);
     void jumpToTag(const QString &itemID);
+    void timeRecordOperated(const QString &itemID, const todo::TaskArchivingOperation operation);
 
 private:
     todo::DataCenter dataCenter;

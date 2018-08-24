@@ -58,6 +58,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->projectModeWidget, &ProjectModeWidget::databaseModified, this, &MainWindow::database_modified);
     connect(this->stickyNoteModeWidget, &StickyNoteModeWidget::databaseModified, this, &MainWindow::database_modified);
 
+    connect(this->inboxViewWidget, &TodoListWidget::timeRecordOperated, this, &MainWindow::archiving_operated);
+    connect(this->todoListWidget, &TodoListWidget::timeRecordOperated, this, &MainWindow::archiving_operated);
+    connect(this->tagModeWidget, &TagModeWidget::timeRecordOperated, this, &MainWindow::archiving_operated);
+    connect(this->projectModeWidget, &ProjectModeWidget::timeRecordOperated, this, &MainWindow::archiving_operated);
+
     connect(this->viewButtonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, &MainWindow::modeBtn_clicked);
     this->currentMode = -1;  // initialization
     ui->inboxModePushButton->click();

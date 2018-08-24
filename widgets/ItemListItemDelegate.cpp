@@ -160,9 +160,9 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
 
     // draw schedule time scope
     QRect timeRect(dateRect);
+    painter->setPen(Qt::gray);
+    timeRect.moveBottom(dateRect.bottom() + infoHeight / 2);
     if (itemDetail.getMode() != todo::ItemMode::SIMPLE) {
-        painter->setPen(Qt::gray);
-        timeRect.moveBottom(dateRect.bottom() + infoHeight / 2);
         painter->drawText(timeRect, Qt::AlignLeft | Qt::AlignBottom,
                           itemDetail.getFromTime().toString("hh:mm") + "-" +
                           itemDetail.getToTime().toString("hh:mm"));

@@ -66,5 +66,5 @@ QString todo::StringUtils::generateStickyNoteUniqueID() {
 }
 
 QString todo::StringUtils::getDateTimeFormat() {
-    return "yyyy-MM-dd hh-mm-ss";
+    return "yyyy-MM-dd hh:mm:ss";
 }

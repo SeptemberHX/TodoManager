@@ -29,6 +29,7 @@ public:
 signals:
     void databaseModified(const QString &senderObjectName);
     void jumpToGroup(const QString &groupID);
+    void timeRecordOperated(const QString &itemID, const todo::TaskArchivingOperation operation);
 
 public slots:
     void jump_to_tag(const QString &tagID);

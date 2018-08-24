@@ -27,7 +27,6 @@ ItemDetailWidget::ItemDetailWidget(QWidget *parent) :
     this->itemModeBtnGroup->addButton(ui->scheduleModeButton);
     this->itemModeBtnGroup->addButton(ui->simpleModeButton);
 
-    // connect(this->itemModeBtnGroup, static_cast<void (QButtonGroup::*)(QAbstractButton*)>(&QButtonGroup::buttonClicked), this, &ItemDetailWidget::modeButtonToggled);
     connect(this->itemModeBtnGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, &ItemDetailWidget::modeButtonToggled);
     connect(ui->editToolButton, &QToolButton::clicked, this, &ItemDetailWidget::editBtn_clicked);
 
@@ -73,12 +72,19 @@ ItemDetailWidget::ItemDetailWidget(QWidget *parent) :
     connect(ui->deleteRelationToolButton, &QToolButton::clicked, this, &ItemDetailWidget::deleteRelationButton_clicked);
     connect(ui->editRelationToolButton, &QToolButton::clicked, this, &ItemDetailWidget::editRelationButton_clicked);
 
+    // edit archiving time piece
+    connect(ui->deleteTimePieceToolButton, &QToolButton::clicked, this, &ItemDetailWidget::delete_timePiece_clicked);
+
     // set icons
     ui->editToolButton->setIcon(QIcon::fromTheme("edit"));
     ui->deleteToolButton->setIcon(QIcon::fromTheme("editdelete"));
     ui->finishToolButton->setIcon(QIcon::fromTheme("checkmark"));
     ui->deleteRelationToolButton->setIcon(QIcon::fromTheme("editdelete"));
     ui->editRelationToolButton->setIcon(QIcon::fromTheme("edit"));
+    ui->startRecordToolButton->setIcon(QIcon::fromTheme("player_start"));
+    ui->pauseRecordToolButton->setIcon(QIcon::fromTheme("player_pause"));
+    ui->resumeRecordToolButton->setIcon(QIcon::fromTheme("player_play"));
+    ui->finishRecordToolButton->setIcon(QIcon::fromTheme("player_stop"));
 
     this->itemModel = new QStandardItemModel(ui->timeTableView);
     this->itemModel->setHorizontalHeaderLabels({"Start Time", "End Time", "Duration"});
@@ -193,6 +199,8 @@ void ItemDetailWidget::setReadOnly(bool isReadOnly) {
         }
         ui->relationOperationWidget->show();
     }
+    ui->recordControlWidget->setVisible(isReadOnly);
+    ui->timeEditWidget->setVisible(!isReadOnly);
 }
 
 void ItemDetailWidget::editBtn_clicked() {
@@ -401,4 +409,10 @@ void ItemDetailWidget::deleteRelationButton_clicked() {
 
 void ItemDetailWidget::item_tag_clicked(const QString &itemID) {
     emit tagClicked(itemID);
+}
+
+void ItemDetailWidget::delete_timePiece_clicked() {
+    if (ui->timeTableView->selectionModel()->selectedRows().empty()) return;
+
+    // todo: remove selected rows and data in database
 }
