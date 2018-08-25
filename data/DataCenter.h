@@ -76,7 +76,7 @@ public:
 
     QList<ItemGroup> selectItemGroupByType(const todo::ItemGroupType &type);
 
-    void updateItemGroupByID(const QString &groupID, const ItemGroupDao &itemGroupDao);
+    void updateItemGroupByID(const QString &groupID, const ItemGroup &itemGroup);
 
     void insertItemGroup(const ItemGroup &itemGroup);
 

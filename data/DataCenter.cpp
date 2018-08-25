@@ -267,9 +267,9 @@ QList<todo::ItemGroup> todo::DataCenter::selectItemGroupByID(const QString &grou
     return this->fillItemGroupInfo(itemGroupDaos);
 }
 
-void todo::DataCenter::updateItemGroupByID(const QString &groupID, const todo::ItemGroupDao &itemGroupDao) {
-    DaoFactory::getInstance()->getSQLDao()->updateItemGroupByID(groupID, itemGroupDao);
-    GlobalCache::getInstance()->updateItemGroupDaoByID(groupID, itemGroupDao);
+void todo::DataCenter::updateItemGroupByID(const QString &groupID, const todo::ItemGroup &itemGroup) {
+    DaoFactory::getInstance()->getSQLDao()->updateItemGroupByID(groupID, itemGroup.toDao());
+    GlobalCache::getInstance()->updateItemGroupDaoByID(groupID, itemGroup.toDao());
     emit databaseModified();
 }
 

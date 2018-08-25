@@ -168,7 +168,7 @@ void GroupWidget::save_action_triggered(const todo::ItemAndGroupWrapper &wrapper
     if (wrapper.isGroup()) {
         auto group = wrapper.getItemGroup();
         group.setLastUpdatedTime(QDateTime::currentDateTime());
-        this->dataCenter.updateItemGroupByID(group.getId(), group.toDao());
+        this->dataCenter.updateItemGroupByID(group.getId(), group);
         this->itemMap[group.getId()] = group;
         this->listWidget->refresh_item_info(group);
     } else {
