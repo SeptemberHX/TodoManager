@@ -78,17 +78,13 @@ public:
 
     void updateItemGroupByID(const QString &groupID, const ItemGroupDao &itemGroupDao);
 
-    void insertItemGroup(const ItemGroupDao &itemGroupDao);
+    void insertItemGroup(const ItemGroup &itemGroup);
 
     QList<ItemGroup> selectItemGroupByIDs(const QList<QString> &groupIDs);
     // ---------------- ends ---------------------
 
     // ItemGroupRelation
     QList<ItemGroupRelation> selectItemGroupRelationByRootID(const QString &rootID);
-
-    void deleteItemGroupRelationByItemID(const QString &itemID);
-
-    void insertItemGroupRelation(const ItemGroupRelation &relation);
 
     QList<ItemGroupRelation> selectItemGroupRelationByItemID(const QString &itemID);
 

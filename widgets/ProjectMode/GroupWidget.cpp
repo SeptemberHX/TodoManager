@@ -60,10 +60,11 @@ void GroupWidget::item_double_clicked(const QString &itemID) {
     qDebug() << itemID << "double clicked";
     if (this->itemMap[itemID].isGroup()) {
         auto subItemList = this->getSubItemsForGroup(itemID);
-        emit enterItem(itemID, this->itemMap[itemID].getItemGroup().getTitle());
+        auto itemTitle = this->itemMap[itemID].getItemGroup().getTitle();
         this->loadItems(subItemList);
         this->currPathList.append(itemID);
         this->addNewPopupMenu->setEnabled(true);
+        emit enterItem(itemID, itemTitle);
     }
 }
 
@@ -95,30 +96,16 @@ void GroupWidget::jump_to(const QList<QString> &pathList) {
 
 void GroupWidget::dealWithNewItem(const todo::ItemAndGroupWrapper &newWrapper) {
     // 1. save it to database
-    try {
-        if (newWrapper.isGroup()) {
-            this->dataCenter.insertItemGroup(newWrapper.getItemGroup().toDao());
-        } else {
-            this->dataCenter.insertItemDetail(newWrapper.getItemDetail());
-        }
-    } catch (const todo::SqlErrorException &e) {
-        qDebug() << "Save item in GroupWidget failed";
-        return;
+    if (newWrapper.isDetail()) {
+        this->dataCenter.insertItemDetail(newWrapper.getItemDetail());
+    } else {
+        this->dataCenter.insertItemGroup(newWrapper.getItemGroup());
     }
 
-    // 2. save the relation
-    if (newWrapper.hasRootGroup()) {
-        todo::ItemGroupRelation relation;
-        relation.setItemID(newWrapper.getID());
-        relation.setDirectGroupID(newWrapper.getDirectGroupID());
-        relation.setRootGroupID(newWrapper.getRootGroupID());
-        this->dataCenter.insertItemGroupRelation(relation);
-    }
-
-    // 3. save it to current map
+    // 2. save it to current map
     this->itemMap.insert(newWrapper.getID(), newWrapper);
 
-    // 4. load it to list
+    // 3. load it to list
     this->listWidget->addItemWrapper(newWrapper);
 }
 

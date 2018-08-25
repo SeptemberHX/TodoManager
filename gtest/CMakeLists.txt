@@ -3,8 +3,7 @@ enable_testing()
 set(
     test_files
         test_main.cpp
-    TestDataCenter.cpp
-    TestCore.cpp
+        TestCore.cpp
 )
 
 add_executable(test_main
