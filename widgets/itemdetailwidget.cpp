@@ -244,6 +244,7 @@ todo::ItemDetail ItemDetailWidget::collectItemDetail() {
         result.setDone(this->currItemPtr->isDone());
         result.setRootGroupID(this->rootGroupID);
         result.setDirectGroupID(this->directGroupID);
+        result.setTimeDaos(this->currItemPtr->getTimeDaos());
     }
 
     return result;
@@ -328,8 +329,7 @@ void ItemDetailWidget::reloadCurrItemDetail() {
     qint64 totalDuration = 0;
     this->itemModel->removeRows(0, this->itemModel->rowCount());
     ui->totalTimeLabel->clear();
-    auto timePieceList = this->dataCenter.selectItemDetailTimeByItemID(this->currItemPtr->getId());
-    foreach (auto const &timePiece, timePieceList) {
+    foreach (auto const &timePiece, this->currItemPtr->getTimeDaos()) {
         auto startItem = new QStandardItem(timePiece.getStartTime().toString(todo::StringUtils::getDateTimeFormat()));
         startItem->setTextAlignment(Qt::AlignCenter);
         auto endItem = new QStandardItem(timePiece.getEndTime().toString(todo::StringUtils::getDateTimeFormat()));
