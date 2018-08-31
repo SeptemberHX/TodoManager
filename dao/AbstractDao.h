@@ -89,6 +89,7 @@ public:
 
     // ItemDetailTimeDao
     virtual QList<ItemDetailTimeDao> selectItemDetailTimeByItemID(const QString &itemID) = 0;
+    virtual QList<ItemDetailTimeDao> selectItemDetailTimeByTargetDate(const QDate &targetDate) = 0;
     virtual void insertItemDetailTime(const ItemDetailTimeDao &dao) = 0;
     virtual void deleteItemDetailTimeByItemID(const QString &itemID) = 0;
     virtual void deleteItemDetailTimeByItemIDs(const QList<QString> &itemIDs) = 0;

@@ -67,36 +67,35 @@ void CalendarTimeLineWidget::paintEvent(QPaintEvent *event) {
     // remember to check ItemDetail::type
     painter.setPen(Qt::white);
     painter.setFont(QFont("Aria", 8));
-    this->itemDetailID2Rect.clear();
-    int otherModeCount = 0;
+    this->rectIndex2itemDetailID.clear();
+    this->rectList.clear();
     // draw schedule mode tasks
-    foreach(auto itemDetail, this->itemDetailList) {
-        if (itemDetail.getMode() == todo::ItemMode::SCHEDULE) {
-            auto hRect = this->hour2Rect[itemDetail.getFromTime().hour() + 1];
-            int targetTop = hRect.top() + itemDetail.getFromTime().minute() * hRect.height() / 60;
-            auto tRect = this->hour2Rect[itemDetail.getToTime().hour() + 1];
-            int targetBottom = tRect.top() + itemDetail.getToTime().minute() * tRect.height() / 60;
-            QRect targetRect(lastHourRect.right() + 5, targetTop,
-                             rectWidget - 35, targetBottom - targetTop);
+    foreach(auto timePiece, this->timePieceList) {
+        auto hRect = this->hour2Rect[timePiece.getStartTime().time().hour() + 1];
+        int targetTop = hRect.top() + timePiece.getStartTime().time().minute() * hRect.height() / 60;
+        auto tRect = this->hour2Rect[timePiece.getEndTime().time().hour() + 1];
+        int targetBottom = tRect.top() + timePiece.getEndTime().time().minute() * tRect.height() / 60;
+        QRect targetRect(lastHourRect.right() + 5, targetTop,
+                         rectWidget - 35, targetBottom - targetTop);
 
-            QColor targetBgColor(Qt::gray);
-            if (!itemDetail.getTags().isEmpty()) {
-                targetBgColor = itemDetail.getTags()[0].getColor();
-            }
-            painter.fillRect(targetRect, targetBgColor);
-            QString str = todo::StringUtils::elideText(itemDetail.getTitle(), painter.fontMetrics(), targetRect.width());
-            painter.drawText(targetRect, Qt::AlignCenter, str);
-            this->itemDetailID2Rect.insert(itemDetail.getId(), targetRect);
-        } else {
-            ++otherModeCount;
+        QColor targetBgColor(Qt::gray);
+        auto itemDetail = this->itemDetailMap[timePiece.getItemID()];
+        if (!itemDetail.getTags().isEmpty()) {
+            targetBgColor = this->itemDetailMap[timePiece.getItemID()].getTags()[0].getColor();
         }
+        painter.fillRect(targetRect, targetBgColor);
+        QString str = todo::StringUtils::elideText(itemDetail.getTitle(), painter.fontMetrics(), targetRect.width());
+        painter.drawText(targetRect, Qt::AlignCenter, str);
+
+        this->rectList.append(targetRect);
+        this->rectIndex2itemDetailID.insert(this->rectList.size() - 1, itemDetail.getId());
     }
 
     // draw rect for other type tasks
-    if (otherModeCount > 0) {
+    if (this->otherTaskCounts > 0) {
         QRect targetRect(lastHourRect.right() + 5, hour2Rect[0].top(), rectWidget - 35, rectHeight - 10);
         painter.fillRect(targetRect, Qt::gray);
-        QString str = todo::StringUtils::elideText(QString("%1 other tasks").arg(otherModeCount),
+        QString str = todo::StringUtils::elideText(QString("%1 other tasks").arg(this->otherTaskCounts),
                 painter.fontMetrics(), targetRect.width());
         painter.drawText(targetRect, Qt::AlignCenter, str);
     }
@@ -108,31 +107,16 @@ void CalendarTimeLineWidget::paintEvent(QPaintEvent *event) {
     }
 }
 
-const QList<todo::ItemDetail> &CalendarTimeLineWidget::getItemDetailList() const {
-    return itemDetailList;
-}
-
-void CalendarTimeLineWidget::setItemDetailList(const QList<todo::ItemDetail> &itemDetailList) {
-    CalendarTimeLineWidget::itemDetailList = itemDetailList;
-    // sort itemDetailList according to their startDate
-    std::sort(this->itemDetailList.begin(), this->itemDetailList.end(), compareFun);
-}
-
 void CalendarTimeLineWidget::mouseMoveEvent(QMouseEvent *event) {
     bool lastMouseHoverFlag = this->mouseHoverPair.first;
     this->mouseHoverPair = QPair<bool, QRect>(false, QRect());
-    foreach(auto itemDetailID, this->itemDetailID2Rect.keys()) {
-        if (this->itemDetailID2Rect[itemDetailID].contains(event->pos())) {
-            this->mouseHoverPair = QPair<bool, QRect>(true, this->itemDetailID2Rect[itemDetailID]);
+    foreach(auto rectIndex, this->rectIndex2itemDetailID.keys()) {
+        if (this->rectList[rectIndex].contains(event->pos())) {
+            this->mouseHoverPair = QPair<bool, QRect>(true, this->rectList[rectIndex]);
 
-            QString toolTipText;
-            foreach(auto itemDetail, this->itemDetailList) {
-                if (itemDetail.getId() == itemDetailID) {
-                    toolTipText = todo::ItemUtils::generateToolTip(itemDetail);
-                    break;
-                }
-            }
-            QToolTip::showText(mapToGlobal(this->itemDetailID2Rect[itemDetailID].bottomRight()), toolTipText);
+            QString toolTipText = todo::ItemUtils::generateToolTip(
+                    this->itemDetailMap[this->rectIndex2itemDetailID[rectIndex]]);
+            QToolTip::showText(mapToGlobal(this->rectList[rectIndex].bottomRight()), toolTipText);
             break;
         }
     }
@@ -148,15 +132,10 @@ void CalendarTimeLineWidget::mouseMoveEvent(QMouseEvent *event) {
 
 void CalendarTimeLineWidget::mousePressEvent(QMouseEvent *event) {
     bool ifItemClicked = false;
-    foreach(auto itemDetailID, this->itemDetailID2Rect.keys()) {
-        if (this->itemDetailID2Rect[itemDetailID].contains(event->pos())) {
+    foreach(auto rectIndex, this->rectIndex2itemDetailID.keys()) {
+        if (this->rectList[rectIndex].contains(event->pos())) {
             ifItemClicked = true;
-            foreach(auto itemDetail, this->itemDetailList) {
-                if (itemDetail.getId() == itemDetailID) {
-                    emit itemClicked(itemDetail);
-                    break;
-                }
-            }
+            emit itemClicked(this->itemDetailMap[this->rectIndex2itemDetailID[rectIndex]]);
         }
     }
 
@@ -168,6 +147,45 @@ void CalendarTimeLineWidget::mousePressEvent(QMouseEvent *event) {
 
 void CalendarTimeLineWidget::loadDayData(const QDate &targetDay) {
     this->currentDate = targetDay;
-    this->setItemDetailList(this->dataCenter.selectItemDetailByDate(targetDay));
+
+    // get all tasks on target day, including tasks which are archived on target day
+    auto tasksOnTargetDay = this->dataCenter.selectItemDetailByDate(targetDay);
+    auto timePieceOnTargetDay = this->dataCenter.selectItemDetailTimeByTargetDate(targetDay);
+    QSet<QString> otherItemIds;
+    foreach (auto const &timePiece, timePieceOnTargetDay) {
+        otherItemIds.insert(timePiece.getItemID());
+    }
+    tasksOnTargetDay.append(this->dataCenter.selectItemDetailByIDs(otherItemIds.toList()));
+
+    // record all tasks
+    foreach (auto const &itemDetail, tasksOnTargetDay) {
+        this->itemDetailMap[itemDetail.getId()] = itemDetail;  // override duplicate
+    }
+    QDateTime todayTime(targetDay);
+    int taskNeedToShowCount = 0;
+    foreach (auto const &itemDetail, this->itemDetailMap.values()) {
+        foreach (auto const &timePiece, itemDetail.getTimeDaos()) {
+            if (timePiece.getEndTime() < todayTime || timePiece.getStartTime() >= todayTime.addDays(1)) continue;
+            this->timePieceList.append(timePiece);
+            ++taskNeedToShowCount;
+        }
+
+        if (itemDetail.getTargetDate() == targetDay
+                && itemDetail.getTimeDaos().empty()
+                && itemDetail.getMode() == todo::ItemMode::SCHEDULE) {
+            todo::ItemDetailTimeDao tmpTimeDao;
+            tmpTimeDao.setItemID(itemDetail.getId());
+            QDateTime tmpTime(targetDay);
+            tmpTime.setTime(itemDetail.getFromTime());
+            tmpTimeDao.setStartTime(tmpTime);
+            tmpTime.setTime(itemDetail.getToTime());
+            tmpTimeDao.setEndTime(tmpTime);
+            this->timePieceList.append(tmpTimeDao);
+            ++taskNeedToShowCount;
+        }
+    }
+    std::sort(this->timePieceList.begin(), this->timePieceList.end());
+    this->otherTaskCounts = this->itemDetailMap.size() - taskNeedToShowCount;
+
     this->repaint();
 }

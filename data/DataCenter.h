@@ -108,6 +108,7 @@ public:
     // ItemDetailTimeDao
     QList<todo::ItemDetailTimeDao> selectItemDetailTimeByItemID(const QString &itemID);
     void insertItemDetailTime(const ItemDetailTimeDao &dao);
+    QList<ItemDetailTimeDao> selectItemDetailTimeByTargetDate(const QDate &targetDate);
 
 
     QList<todo::ItemAndGroupWrapper> selectItemByDirectGroupID(const QString &groupID);

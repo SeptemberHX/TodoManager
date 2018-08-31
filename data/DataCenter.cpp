@@ -518,3 +518,7 @@ void todo::DataCenter::insertItemDetailTime(const todo::ItemDetailTimeDao &dao) 
 QList<todo::ItemDetailTimeDao> todo::DataCenter::selectItemDetailTimeByItemID(const QString &itemID) {
     return DaoFactory::getInstance()->getSQLDao()->selectItemDetailTimeByItemID(itemID);
 }
+
+QList<todo::ItemDetailTimeDao> todo::DataCenter::selectItemDetailTimeByTargetDate(const QDate &targetDate) {
+    return DaoFactory::getInstance()->getSQLDao()->selectItemDetailTimeByTargetDate(targetDate);
+}

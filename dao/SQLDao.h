@@ -126,6 +126,8 @@ public:
     // ItemDetailTimeDao
     QList<ItemDetailTimeDao> selectItemDetailTimeByItemID(const QString &itemID) override;
 
+    QList<ItemDetailTimeDao> selectItemDetailTimeByTargetDate(const QDate &targetDate) override;
+
     void insertItemDetailTime(const ItemDetailTimeDao &dao) override;
 
     void deleteItemDetailTimeByItemID(const QString &itemID) override;

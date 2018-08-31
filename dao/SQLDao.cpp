@@ -1144,3 +1144,28 @@ void todo::SQLDao::deleteItemDetailTimeByItemIDs(const QList<QString> &itemIDs) 
         throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }
+
+QList<todo::ItemDetailTimeDao> todo::SQLDao::selectItemDetailTimeByTargetDate(const QDate &targetDate) {
+    QList<ItemDetailTimeDao> resultList;
+    QDateTime targetDateTime(targetDate);
+    QSqlQuery query(this->db);
+    query.prepare("SELECT itemID, startTime, endTime"
+                  " FROM todo_item_times"
+                  " WHERE startTime >= :fromTime and startTime < :toTime"
+                  "    or endTime >= :fromTime and endTime < :toTime");
+    query.bindValue(":fromTime", targetDateTime);
+    query.bindValue(":toTime", targetDateTime.addDays(1));
+    if (!query.exec()) {
+        throw SqlErrorException(query.lastError().text().toStdString().c_str());
+    } else {
+        while (query.next()) {
+            ItemDetailTimeDao dao;
+            dao.setItemID(query.value("itemID").toString());
+            dao.setStartTime(query.value("startTime").toDateTime());
+            dao.setEndTime(query.value("endTime").toDateTime());
+            resultList.append(dao);
+        }
+    }
+
+    return resultList;
+}

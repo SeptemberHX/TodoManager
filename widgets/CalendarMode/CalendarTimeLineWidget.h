@@ -17,10 +17,6 @@ class CalendarTimeLineWidget : public QWidget
 public:
     explicit CalendarTimeLineWidget(QWidget *parent = 0);
 
-    const QList<todo::ItemDetail> &getItemDetailList() const;
-
-    void setItemDetailList(const QList<todo::ItemDetail> &itemDetailList);
-
     /**
      *  given a date, load tasks of this day.
      * @param targetDay
@@ -41,9 +37,14 @@ public:
 
 private:
     Ui::CalendarTimeLineWidget *ui;
-    QList<todo::ItemDetail> itemDetailList;
+    QList<todo::ItemDetailTimeDao> timePieceList;
+    QMap<QString, todo::ItemDetail> itemDetailMap;
+
     QMap<int, QRect> hour2Rect;
-    QMap<QString, QRect> itemDetailID2Rect;
+    QMap<int, QString> rectIndex2itemDetailID;
+    QList<QRect> rectList;
+
+    int otherTaskCounts = 0;
     QPair<bool, QRect> mouseHoverPair;
     todo::DataCenter dataCenter;
     QDate currentDate;
