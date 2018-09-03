@@ -139,7 +139,7 @@ void CalendarTimeLineWidget::mousePressEvent(QMouseEvent *event) {
         }
     }
 
-    if (ifItemClicked == false) {
+    if (!ifItemClicked) {
         emit targetDayClicked(this->currentDate);
     }
     QWidget::mousePressEvent(event);
@@ -147,6 +147,7 @@ void CalendarTimeLineWidget::mousePressEvent(QMouseEvent *event) {
 
 void CalendarTimeLineWidget::loadDayData(const QDate &targetDay) {
     this->currentDate = targetDay;
+    this->clearAll();
 
     // get all tasks on target day, including tasks which are archived on target day
     auto tasksOnTargetDay = this->dataCenter.selectItemDetailByDate(targetDay);
@@ -188,4 +189,11 @@ void CalendarTimeLineWidget::loadDayData(const QDate &targetDay) {
     this->otherTaskCounts = this->itemDetailMap.size() - taskNeedToShowCount;
 
     this->repaint();
+}
+
+void CalendarTimeLineWidget::clearAll() {
+    this->itemDetailMap.clear();
+    this->rectIndex2itemDetailID.clear();
+    this->rectList.clear();
+    this->timePieceList.clear();
 }

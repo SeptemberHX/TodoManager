@@ -149,6 +149,7 @@ const QColor &CalendarCellWidget::getDateNumColor() const {
 
 void CalendarCellWidget::setDateNumColor(const QColor &dateNumColor) {
     CalendarCellWidget::dateNumColor = dateNumColor;
+    this->repaint();
 }
 
 void CalendarCellWidget::mousePressEvent(QMouseEvent *event) {

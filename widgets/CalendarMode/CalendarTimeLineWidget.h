@@ -48,6 +48,8 @@ private:
     QPair<bool, QRect> mouseHoverPair;
     todo::DataCenter dataCenter;
     QDate currentDate;
+
+    void clearAll();
 };
 
 #endif // CALENDARTIMELINEWIDGET_H

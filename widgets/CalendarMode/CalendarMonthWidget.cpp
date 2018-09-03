@@ -2,6 +2,7 @@
 #include "ui_CalendarMonthWidget.h"
 #include <QLabel>
 #include <QDate>
+#include <QDebug>
 #include "CalendarCellWidget.h"
 
 CalendarMonthWidget::CalendarMonthWidget(QWidget *parent) :
@@ -27,12 +28,6 @@ CalendarMonthWidget::CalendarMonthWidget(QWidget *parent) :
     for (int i = 1; i < 7; ++i) {
         for (int j = 0; j < 7; ++j) {
             auto cellWidget = new CalendarCellWidget(this);
-            QDate cellDate = QDate::currentDate().addDays(d++);
-            if (cellDate.dayOfWeek() == 6 || cellDate.dayOfWeek() == 7) {
-                cellWidget->setDateNumColor(QColor("#fb5c5d"));
-            }
-
-            cellWidget->setDate(cellDate);
             cellWidget->setMouseTracking(true);
             ui->gridLayout->addWidget(cellWidget, i, j);
             connect(cellWidget, &CalendarCellWidget::itemClicked, this, &CalendarMonthWidget::item_clicked);
@@ -59,7 +54,11 @@ void CalendarMonthWidget::loadMonthData(int year, int month) {
     for (int row = 1; row < 7; ++row) {
         for (int column = 0; column < 7; ++column) {
             auto cellWidget = dynamic_cast<CalendarCellWidget *>(ui->gridLayout->itemAtPosition(row, column)->widget());
-            cellWidget->setDate(firstDayInCalendar.addDays((row - 1) * 7 + column));
+            auto currDay = firstDayInCalendar.addDays((row - 1) * 7 + column);
+            cellWidget->setDate(currDay);
+            if (currDay.dayOfWeek() == 6 || currDay.dayOfWeek() == 7) {
+                cellWidget->setDateNumColor(QColor("#fb5c5d"));
+            }
 
             // load ItemDetail
             if (cellWidget->getDate().month() != month) {  // jump over days not in target month
