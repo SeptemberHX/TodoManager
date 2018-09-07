@@ -17,7 +17,7 @@ CalendarTimeLineWidget::CalendarTimeLineWidget(QWidget *parent) :
     ui(new Ui::CalendarTimeLineWidget)
 {
     ui->setupUi(this);
-    this->setMinimumHeight(1000);
+    this->setMinimumHeight(1500);
     this->setMouseTracking(true);
 }
 
