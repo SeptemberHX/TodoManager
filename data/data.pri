@@ -5,7 +5,8 @@ HEADERS += \
     $$PWD/sorters/AbstractSorter.h \
     $$PWD/sorters/DateSorter.h \
     $$PWD/sorters/DoneSorter.h \
-    $$PWD/sorters/SorterOrganize.h
+    $$PWD/sorters/SorterOrganize.h \
+    $$PWD/GlobalCache.h
 
 SOURCES += \
     $$PWD/DataCenter.cpp \
@@ -14,4 +15,5 @@ SOURCES += \
     $$PWD/sorters/AbstractSorter.cpp \
     $$PWD/sorters/DateSorter.cpp \
     $$PWD/sorters/DoneSorter.cpp \
-    $$PWD/sorters/SorterOrganize.cpp
+    $$PWD/sorters/SorterOrganize.cpp \
+    $$PWD/GlobalCache.cpp

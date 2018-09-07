@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -33,6 +33,7 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
+include(functions/functions.pri)
 include(widgets/widgets.pri)
 include(core/core.pri)
 include(utils/utils.pri)

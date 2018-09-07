@@ -4,6 +4,5 @@ HEADERS += \
     $$PWD/SQLDao.h
 
 SOURCES += \
-    $$PWD/AbstractDao.cpp \
     $$PWD/DaoFactory.cpp \
     $$PWD/SQLDao.cpp
