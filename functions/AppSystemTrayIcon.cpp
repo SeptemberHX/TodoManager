@@ -55,8 +55,9 @@ void AppSystemTrayIcon::update_menu() {
     }
     this->menuPtr2IDMap.clear();
 
-    auto todayTasks = this->dataCenter.selectItemDetailByDate(QDate::currentDate());
+    auto todayTasks = this->dataCenter.selectItemDetailByDate(QDate::currentDate().addDays(-7), QDate::currentDate());
     foreach (auto const &task, todayTasks) {
+        if (task.isDone()) continue;
         this->insertOneTaskToMenu(task);
     }
 }
