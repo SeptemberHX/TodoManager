@@ -196,4 +196,6 @@ void CalendarTimeLineWidget::clearAll() {
     this->rectIndex2itemDetailID.clear();
     this->rectList.clear();
     this->timePieceList.clear();
+    this->otherTaskCounts = 0;
+    this->mouseHoverPair = QPair<bool, QRect>(false, QRect());
 }

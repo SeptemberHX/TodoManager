@@ -167,7 +167,7 @@ void todo::SQLDao::createTables() {
                       "     PRIMARY KEY (name)"
                       ");");
     sqlScripts.append("CREATE TABLE if not exists todo_items ("
-                      "     id VARCHAR(50) NOT NULL,"
+                      "     id VARCHAR(255) NOT NULL,"
                       "     title VARCHAR(255) NOT NULL,"
                       "     priority INTEGER NOT NULL,"
                       "     description LONGTEXT,"
@@ -436,11 +436,13 @@ QList<todo::ItemDetailAndTag> todo::SQLDao::selectItemAndTagMatchByTagIDs(const 
 
 void todo::SQLDao::insertItemAndTagMatch(const todo::ItemDetailAndTag &newMatch) {
     QSqlQuery query(this->db);
-    query.prepare("INSERT INTO item_tags(itemID, tagID)"
-                  " VALUES(:itemID, :tagID);");
+    query.prepare("INSERT INTO item_tags(itemID, tagID, orderNum)"
+                  " VALUES(:itemID, :tagID, :orderNum);");
     query.bindValue(":itemID", newMatch.getItemID());
     query.bindValue(":tagID", newMatch.getTagID());
+    query.bindValue(":orderNum", newMatch.getOrder());
     if (!query.exec()) {
+        qDebug() << " ====== " << query.lastError().text().toStdString().c_str();
         throw SqlErrorException(query.lastError().text().toStdString().c_str());
     }
 }

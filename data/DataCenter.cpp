@@ -34,6 +34,7 @@ void todo::DataCenter::updateItemDetailByID(const QString &itemID, const ItemDet
         this->updateItemDetailByID_(itemID, oldItemDetail, newItemDetail);
         // end
     } catch (const SqlErrorException &e) {
+        qDebug() << "Exception happened" << e.what();
         sqlExecResult = false;
     }
     DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
@@ -56,8 +57,10 @@ void todo::DataCenter::updateItemDetailsByIDList(const QList<QString> &itemIDLis
         }
         //end
     } catch (const SqlErrorException &e) {
+        qDebug() << "Exception happened" << e.what();
         sqlExecResult = false;
     }
+
     DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
     if (sqlExecResult) {
         emit(this->databaseModified());
@@ -76,6 +79,7 @@ void todo::DataCenter::updateItemDetailByID_(const QString &itemID, const todo::
     // update tag info
     if (newItemDetail.isTagDiff(oldItemDetail)) {
         // For Now
+        qDebug() << "tag diffs";
         DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByItemID(newItemDetail.getId());
         int i = 1;
         for (auto const &tag : newItemDetail.getTags()) {
@@ -112,6 +116,7 @@ void todo::DataCenter::deleteItemDetailByIDCompletely(const QString &itemID) {
         this->deleteItemDetailByIDCompletely_(itemID);
         // end
     } catch (const SqlErrorException &e) {
+        qDebug() << "Exception happened" << e.what();
         sqlExecResult = false;
     }
     DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
@@ -145,6 +150,7 @@ void todo::DataCenter::insertItemDetail(const todo::ItemDetail &itemDetail) {
         }
         // end
     } catch (const SqlErrorException &e) {
+        qDebug() << "Exception happened" << e.what();
         sqlExecResult = false;
     }
     DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
@@ -166,6 +172,7 @@ void todo::DataCenter::updateDoneByID(const QString &itemID, bool flag) {
         }
         // end
     } catch (const SqlErrorException &e) {
+        qDebug() << "Exception happened" << e.what();
         sqlExecResult = false;
     }
     DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
@@ -191,6 +198,7 @@ void todo::DataCenter::deleteItemTagOnlyById(const QString &tagId) {
         DaoFactory::getInstance()->getSQLDao()->deleteItemAndTagMatchByTagID(tagId);
         // end
     } catch (const SqlErrorException &e) {
+        qDebug() << "Exception happened" << e.what();
         sqlExecResult = false;
     }
     DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
@@ -213,6 +221,7 @@ void todo::DataCenter::deleteItemTagAndAllItemsByTagId(const QString &tagId) {
         this->deleteItemDetailByIDsCompletely_(itemIDList);
         // end
     } catch (const SqlErrorException &e) {
+        qDebug() << "Exception happened" << e.what();
         sqlExecResult = false;
     }
     DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
@@ -353,6 +362,7 @@ void todo::DataCenter::deleteGroupCompletely(const QString &groupID) {
         this->deleteGroupCompletely_(groupID);
         // end
     } catch (const SqlErrorException &e) {
+        qDebug() << "Exception happened" << e.what();
         sqlExecResult = false;
     }
     DaoFactory::getInstance()->getSQLDao()->endTransaction(sqlExecResult);
