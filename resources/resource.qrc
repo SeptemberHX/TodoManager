@@ -4,5 +4,6 @@
     </qresource>
     <qresource prefix="/icons">
         <file>tray.png</file>
+        <file>done.svg</file>
     </qresource>
 </RCC>

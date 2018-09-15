@@ -6,6 +6,7 @@
 #include <QPainterPath>
 #include <QDebug>
 #include <QVariant>
+#include <QSvgRenderer>
 #include "ItemListItemDelegate.h"
 #include "../config/TodoConfig.h"
 #include "../utils/StringUtils.h"
@@ -42,9 +43,19 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     // draw background
     painter->fillRect(option.rect, Qt::white);
 
+    // draw done picture
+    if (itemDetail.isDone()) {
+        int itemHeight = option.rect.height();
+        int pictureSize = itemHeight / 3;
+        QRect donePicRect(option.rect.topRight() - QPoint(pictureSize + 10, -10),
+                          QSize(pictureSize, pictureSize));
+        QSvgRenderer doneIconSvgRender(QString(":/icons/done.svg"));
+        doneIconSvgRender.render(painter, donePicRect);
+    }
+
     // draw item bottom line
     QPoint lineStartPos = option.rect.bottomLeft() + QPoint(20, 0);
-    QPoint lineEndPos = option.rect.bottomRight() + QPoint(-20, 0);
+    QPoint lineEndPos = option.rect.bottomRight() + QPoint(-10, 0);
     painter->setPen(QPen(Qt::lightGray, 1));
     painter->drawLine(QLine(lineStartPos, lineEndPos));
 
@@ -87,23 +98,25 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
                       todo::StringUtils::elideText(itemDetail.getTitle(), painter->fontMetrics(), titleWidth));
 
     // draw priority circle
-    painter->setFont(QFont("Arias", 11));
-    QRect priorityNumRect(titleRect.right() + titleSpace, titleRect.top() + 5, priorityNumWidth, priorityNumWidth);
-    oldBrush = painter->brush();
+    if (!itemDetail.isDone()) {
+        painter->setFont(QFont("Arias", 11));
+        QRect priorityNumRect(titleRect.right() + titleSpace, titleRect.top() + 5, priorityNumWidth, priorityNumWidth);
+        oldBrush = painter->brush();
 
-    QColor priorityBackgroundColor = QColor(Qt::red);
-    auto pbcMap = todo::TodoConfig::getInstance()->getUiConfig().getListViewPrioriyBackgroundColorMap();
-    if (pbcMap.find(itemDetail.getPriority()) != pbcMap.end()) {
-        priorityBackgroundColor = pbcMap[itemDetail.getPriority()];
+        QColor priorityBackgroundColor = QColor(Qt::red);
+        auto pbcMap = todo::TodoConfig::getInstance()->getUiConfig().getListViewPrioriyBackgroundColorMap();
+        if (pbcMap.find(itemDetail.getPriority()) != pbcMap.end()) {
+            priorityBackgroundColor = pbcMap[itemDetail.getPriority()];
+        }
+        painter->setBrush(priorityBackgroundColor);
+        painter->setPen(Qt::NoPen);
+        painter->drawEllipse(priorityNumRect);
+
+        painter->setPen(Qt::white);
+        painter->drawText(priorityNumRect, Qt::AlignHCenter | Qt::AlignVCenter,
+                          QString::number(itemDetail.getPriority()));
+        painter->setBrush(oldBrush);
     }
-    painter->setBrush(priorityBackgroundColor);
-    painter->setPen(Qt::NoPen);
-    painter->drawEllipse(priorityNumRect);
-
-    painter->setPen(Qt::white);
-    painter->drawText(priorityNumRect, Qt::AlignHCenter | Qt::AlignVCenter,
-                      QString::number(itemDetail.getPriority()));
-    painter->setBrush(oldBrush);
 
     // draw tags
     QMargins tagMargins(3, 1, 3, 1);
@@ -142,14 +155,14 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     }
 
     // draw date and time info
-    painter->setFont(QFont("Arias", 8));
-    painter->setPen(Qt::gray);
     QMargins infoMargins(5, 5, 5, 5);
     int infoRectTop = titleMargins.top() + titleRect.height() + titleMargins.bottom()
-                      + tagGroupMargins.top() + tagGroupRect.height() + tagGroupMargins.bottom() +
-                      infoMargins.top();
+                  + tagGroupMargins.top() + tagGroupRect.height() + tagGroupMargins.bottom() +
+                  infoMargins.top();
     int infoWidth = 100;
     int infoHeight = option.rect.height() - infoRectTop - infoMargins.bottom();
+    painter->setFont(QFont("Arias", 8));
+    painter->setPen(Qt::gray);
     QRect dateRect(
             option.rect.right() - arcLength - infoMargins.right() - infoWidth,
             option.rect.bottom() - infoMargins.bottom() - infoHeight,
@@ -192,24 +205,24 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
                       );
 
     // draw isDone color label
-    QPainterPath doneLabelPath;
-    QRect isDoneColorRect(option.rect.topRight() + QPoint(-arcLength, arcLength),
-                          option.rect.bottomRight() + QPoint(0, -arcLength));
-    QRectF isDoneArcRect(isDoneColorRect.topLeft(),
-                         isDoneColorRect.topLeft() + QPoint(arcLength * 2, arcLength * 2));
-    doneLabelPath.moveTo(isDoneArcRect.center());
-    doneLabelPath.arcTo(isDoneArcRect, 90, 90);
-    doneLabelPath.lineTo(isDoneColorRect.bottomLeft() + QPoint(0, -arcLength));
-
-    QRect isDoneArcRect2(isDoneColorRect.bottomLeft() + QPoint(0, -arcLength * 2),
-                         isDoneColorRect.bottomRight() + QPoint(arcLength, 0));
-    doneLabelPath.arcTo(isDoneArcRect2, 180, 90);
-    doneLabelPath.lineTo(isDoneColorRect.topRight());
-    if (itemDetail.isDone()) {
-        painter->fillPath(doneLabelPath, QColor("#90EE90"));
-    } else {
-        painter->fillPath(doneLabelPath, Qt::gray);
-    }
+//    QPainterPath doneLabelPath;
+//    QRect isDoneColorRect(option.rect.topRight() + QPoint(-arcLength, arcLength),
+//                          option.rect.bottomRight() + QPoint(0, -arcLength));
+//    QRectF isDoneArcRect(isDoneColorRect.topLeft(),
+//                         isDoneColorRect.topLeft() + QPoint(arcLength * 2, arcLength * 2));
+//    doneLabelPath.moveTo(isDoneArcRect.center());
+//    doneLabelPath.arcTo(isDoneArcRect, 90, 90);
+//    doneLabelPath.lineTo(isDoneColorRect.bottomLeft() + QPoint(0, -arcLength));
+//
+//    QRect isDoneArcRect2(isDoneColorRect.bottomLeft() + QPoint(0, -arcLength * 2),
+//                         isDoneColorRect.bottomRight() + QPoint(arcLength, 0));
+//    doneLabelPath.arcTo(isDoneArcRect2, 180, 90);
+//    doneLabelPath.lineTo(isDoneColorRect.topRight());
+//    if (itemDetail.isDone()) {
+//        painter->fillPath(doneLabelPath, QColor("#90EE90"));
+//    } else {
+//        painter->fillPath(doneLabelPath, Qt::gray);
+//    }
 
     // draw selection item's border
     if (option.state & QStyle::State_Selected) {

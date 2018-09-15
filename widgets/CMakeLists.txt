@@ -3,6 +3,7 @@ find_package(Qt5Widgets)
 find_package(Qt5Core)
 find_package(Qt5Gui)
 find_package(Qt5Charts)
+find_package(Qt5Svg)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -40,4 +41,4 @@ set (widgets_files
 	StickyNote/StickyNoteWidget.cpp
 	StickyNote/StickyNoteModeWidget.cpp StickyNote/StickyNoteTypeItemDelegate.cpp StickyNote/StickyNoteTypeItemDelegate.h)
 add_library(widgets ${widgets_files})
-target_link_libraries(widgets Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Charts core utils data)
+target_link_libraries(widgets Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Charts Qt5::Svg core utils data)
