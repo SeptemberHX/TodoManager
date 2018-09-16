@@ -93,7 +93,7 @@ void StickyNoteModeWidget::item_changed(QStandardItem *item) {
     QString stickyNoteId = this->itemModel->item(item->row(), 0)->data().toString();
     auto newStickyNote = this->collectStickyNoteByRow(item->row());
     this->dataCenter.updateStickyNote(newStickyNote);
-    this->id2stickyNoteWidget[stickyNoteId]->loadSticyNote(newStickyNote);
+    this->id2stickyNoteWidget[stickyNoteId]->loadStickyNote(newStickyNote);
 }
 
 todo::StickyNote StickyNoteModeWidget::collectStickyNoteByRow(int row) {

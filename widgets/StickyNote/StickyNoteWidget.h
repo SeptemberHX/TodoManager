@@ -5,6 +5,7 @@
 #include <QStandardItemModel>
 #include <QDate>
 #include <QPoint>
+#include "../../config/StickyNoteConfig.h"
 #include "../../data/DataCenter.h"
 
 namespace Ui {
@@ -19,7 +20,7 @@ public:
     explicit StickyNoteWidget(const todo::StickyNote &stickyNote, QWidget *parent = nullptr);
     ~StickyNoteWidget();
     void setStickyNoteTitle(const QString &noteTitle);
-    void loadSticyNote(const todo::StickyNote &stickyNote);
+    void loadStickyNote(const todo::StickyNote &stickyNote);
     void refresh_current_items();
     QString getStickyNoteId() const;
 
@@ -38,10 +39,22 @@ private:
     QPoint clickedOnTitlePoint;
     QPoint widgetPosWhenClickedOnTitle;
     bool isChangedByMySelf;
+    todo::StickyNoteConfig config;
 
     void initWidgetStyle();
     QString getStyleSheet(const QColor &bgColor, const QColor &fontColor);
     void loadItemsByDate(const QDate &targetDate);
+
+    /**
+     * load this sticky note's config from config file
+     */
+    void loadConfig();
+
+    /**
+     * load tasks by config
+     * @param config
+     */
+    void loadItemByConfig(const todo::StickyNoteConfig &config);
 
 private slots:
     void list_item_changed(QStandardItem *item);

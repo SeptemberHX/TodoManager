@@ -3,14 +3,19 @@
 #include <QString>
 #include <QThread>
 #include <QDebug>
+#include <QDir>
+#include <QStandardPaths>
+#include <QSettings>
 #include "../../utils/ItemUtils.h"
 #include "../../utils/StringUtils.h"
+#include "../../config/StickyNoteConfig.h"
 
 StickyNoteWidget::StickyNoteWidget(QWidget *parent) :
     QWidget(parent, Qt::Dialog),
     ui(new Ui::StickyNoteWidget),
     isClickedOnTitle(false),
-    isChangedByMySelf(false)
+    isChangedByMySelf(false),
+    config("")
 {
     ui->setupUi(this);
     this->itemModel = new QStandardItemModel(ui->listView);
@@ -27,7 +32,7 @@ StickyNoteWidget::StickyNoteWidget(QWidget *parent) :
 StickyNoteWidget::StickyNoteWidget(const todo::StickyNote &stickyNote, QWidget *parent) :
     StickyNoteWidget(parent)
 {
-    this->loadSticyNote(stickyNote);
+    this->loadStickyNote(stickyNote);
     this->loadItemsByDate(QDate::currentDate());
     this->setStickyNoteTitle(QDate::currentDate().toString("yyyy-MM-dd"));
 }
@@ -144,10 +149,72 @@ QString StickyNoteWidget::getStickyNoteId() const {
     return this->stickyNoteId;
 }
 
-void StickyNoteWidget::loadSticyNote(const todo::StickyNote &stickyNote) {
+void StickyNoteWidget::loadStickyNote(const todo::StickyNote &stickyNote) {
     this->stickyNoteId = stickyNote.getId();
     qDebug() << "Trying to load" << stickyNote.getName() << this->objectName();
     this->move(stickyNote.getPos());
     this->setVisible(stickyNote.isShown());
     this->setStyleSheet(this->getStyleSheet(stickyNote.getBackgroundColor(), stickyNote.getFontColor()));
+
+    // load the sticky note's config from config file
+    this->loadConfig();
+}
+
+void StickyNoteWidget::loadConfig() {
+    QString appConfigDirPath = QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation)[0];
+    QString stickyNoteConfigFilePath = QDir::cleanPath(
+        appConfigDirPath + QDir::separator() + todo::StickyNoteConfig::DIR + QDir::separator() + this->stickyNoteId);
+    QSettings sqlConfigSettings(stickyNoteConfigFilePath, QSettings::IniFormat);
+    if (!sqlConfigSettings.contains("StickyNote/is_specific_date")) {
+        todo::StickyNoteConfig defaultConfig(this->stickyNoteId);
+        sqlConfigSettings.beginGroup("StickyNote");
+        sqlConfigSettings.setValue("is_specific_date", defaultConfig.isSpecificDate());
+        sqlConfigSettings.setValue("from_date", defaultConfig.getFromDate());
+        sqlConfigSettings.setValue("to_date", defaultConfig.getToDate());
+        sqlConfigSettings.setValue("is_specific_tag", defaultConfig.isSpecificTag());
+        sqlConfigSettings.setValue("tagId", defaultConfig.getTagId());
+        sqlConfigSettings.setValue("is_specific_project", defaultConfig.isSpecificProject());
+        sqlConfigSettings.setValue("projectId", defaultConfig.getProjectId());
+        sqlConfigSettings.endGroup();
+    }
+
+    todo::StickyNoteConfig resultConfig(this->stickyNoteId);
+    resultConfig.setDate(
+        sqlConfigSettings.value("StickyNote/from_date").toDate(),
+        sqlConfigSettings.value("StickyNote/to_date").toDate(),
+        sqlConfigSettings.value("StickyNote/is_specific_date").toBool()
+    );
+    resultConfig.setProjectId(
+        sqlConfigSettings.value("StickyNote/projectId").toString(),
+        sqlConfigSettings.value("StickyNote/is_specific_project").toBool()
+    );
+    resultConfig.setTagId(
+        sqlConfigSettings.value("StickyNote/tagId").toString(),
+        sqlConfigSettings.value("StickyNote/is_specific_tag").toBool()
+    );
+
+    this->config = resultConfig;
+}
+
+void StickyNoteWidget::loadItemByConfig(const todo::StickyNoteConfig &config) {
+    QList<todo::ItemDetail> itemList;
+    if (config.isSpecificDate()) {
+        itemList = this->dataCenter.selectItemDetailByDate(config.getFromDate(), config.getToDate());
+    }
+
+    if (config.isSpecificProject()) {
+        if (!config.isSpecificDate()) {
+            // todo
+        } else {
+
+        }
+    }
+
+    if (config.isSpecificTag()) {
+        if (!config.isSpecificProject() && !config.isSpecificTag()) {
+            // todo
+        } else {
+
+        }
+    }
 }
