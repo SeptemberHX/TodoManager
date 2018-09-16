@@ -6,13 +6,18 @@
 
 QString todo::StickyNoteConfig::DIR("StickyNote");
 
-todo::StickyNoteConfig::StickyNoteConfig(const QString &stickyNoteId) :
+todo::StickyNoteConfig::StickyNoteConfig() :
     specificDate(false),
     specificTag(false),
-    specificProject(false),
-    stickyNoteId(stickyNoteId)
+    specificProject(false)
 {
     this->setDate(QDate::currentDate(), QDate::currentDate());
+}
+
+todo::StickyNoteConfig::StickyNoteConfig(const QString &stickyNoteId) :
+    StickyNoteConfig()
+{
+    this->stickyNoteId = stickyNoteId;
 }
 
 void todo::StickyNoteConfig::setDate(const QDate &fromDate, const QDate &toDate, bool flag) {

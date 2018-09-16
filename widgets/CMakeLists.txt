@@ -39,6 +39,8 @@ set (widgets_files
 	ProjectMode/NavigationBarWidget.cpp
 	Common/CommonAction.cpp Common/CommonAction.h
 	StickyNote/StickyNoteWidget.cpp
-	StickyNote/StickyNoteModeWidget.cpp StickyNote/StickyNoteTypeItemDelegate.cpp StickyNote/StickyNoteTypeItemDelegate.h)
+	StickyNote/StickyNoteModeWidget.cpp
+	StickyNote/StickyNoteTypeItemDelegate.cpp
+	StickyNote/StickyNoteConfigDialog.cpp)
 add_library(widgets ${widgets_files})
 target_link_libraries(widgets Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Charts Qt5::Svg core utils data)

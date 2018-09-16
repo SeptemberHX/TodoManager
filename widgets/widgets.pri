@@ -21,6 +21,7 @@ FORMS += \
     $$PWD/MyTextEdit.ui \
     $$PWD/StickyNote/StickyNoteWidget.ui \
     $$PWD/StickyNote/StickyNoteModeWidget.ui \
+    $$PWD/StickyNote/StickyNoteConfigDialog.ui
 
 HEADERS += \
     $$PWD/tagwidget.h \
@@ -51,7 +52,8 @@ HEADERS += \
     $$PWD/Common/CommonAction.h \
     $$PWD/StickyNote/StickyNoteModeWidget.h \
     $$PWD/StickyNote/StickyNoteTypeItemDelegate.h \
-    $$PWD/StickyNote/StickyNoteWidget.h
+    $$PWD/StickyNote/StickyNoteWidget.h \
+    $$PWD/StickyNote/StickyNoteConfigDialog.h
 
 SOURCES += \
     $$PWD/tagwidget.cpp \
@@ -82,4 +84,5 @@ SOURCES += \
     $$PWD/Common/CommonAction.cpp \
     $$PWD/StickyNote/StickyNoteModeWidget.cpp \
     $$PWD/StickyNote/StickyNoteTypeItemDelegate.cpp \
-    $$PWD/StickyNote/StickyNoteWidget.cpp
+    $$PWD/StickyNote/StickyNoteWidget.cpp \
+    $$PWD/StickyNote/StickyNoteConfigDialog.cpp

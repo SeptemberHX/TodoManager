@@ -44,11 +44,13 @@ private:
     void initWidgetStyle();
     QString getStyleSheet(const QColor &bgColor, const QColor &fontColor);
     void loadItemsByDate(const QDate &targetDate);
+    QString getConfigFilePath() const;
 
     /**
      * load this sticky note's config from config file
      */
     void loadConfig();
+    void saveConfig();
 
     /**
      * load tasks by config
@@ -56,9 +58,12 @@ private:
      */
     void loadItemByConfig(const todo::StickyNoteConfig &config);
 
+    void loadItems(const QList<todo::ItemDetail> &itemDetails);
+
 private slots:
     void list_item_changed(QStandardItem *item);
     void database_modified();
+    void editToolButton_clicked();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

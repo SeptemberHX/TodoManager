@@ -9,6 +9,27 @@
 #include "../../utils/ItemUtils.h"
 #include "../../utils/StringUtils.h"
 #include "../../config/StickyNoteConfig.h"
+#include "StickyNoteConfigDialog.h"
+
+bool compareFunc(const todo::ItemDetail &o1, const todo::ItemDetail &o2) {
+    if (o1.isDone() && !o2.isDone()) {
+        return false;
+    } else if (!o1.isDone() && o2.isDone()) {
+        return true;
+    } else {
+        if (o1.getTargetDate() < o2.getTargetDate()) {
+            return false;
+        } else if (o1.getTargetDate() > o2.getTargetDate()) {
+            return true;
+        } else {
+            if (o1.getPriority() < o2.getPriority()) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+}
 
 StickyNoteWidget::StickyNoteWidget(QWidget *parent) :
     QWidget(parent, Qt::Dialog),
@@ -26,6 +47,7 @@ StickyNoteWidget::StickyNoteWidget(QWidget *parent) :
 
     connect(this->itemModel, &QStandardItemModel::itemChanged, this, &StickyNoteWidget::list_item_changed);
     connect(&this->dataCenter, &todo::DataCenter::databaseModified, this, &StickyNoteWidget::database_modified);
+    connect(ui->editToolButton, &QToolButton::clicked, this, &StickyNoteWidget::editToolButton_clicked);
     this->setObjectName(todo::StringUtils::generateUniqueID("StickyNoteWidget"));
 }
 
@@ -33,8 +55,8 @@ StickyNoteWidget::StickyNoteWidget(const todo::StickyNote &stickyNote, QWidget *
     StickyNoteWidget(parent)
 {
     this->loadStickyNote(stickyNote);
-    this->loadItemsByDate(QDate::currentDate());
-    this->setStickyNoteTitle(QDate::currentDate().toString("yyyy-MM-dd"));
+//    this->loadItemsByDate(QDate::currentDate());
+//    this->setStickyNoteTitle(QDate::currentDate().toString("yyyy-MM-dd"));
 }
 
 StickyNoteWidget::~StickyNoteWidget()
@@ -87,29 +109,8 @@ QString StickyNoteWidget::getStyleSheet(const QColor &bgColor, const QColor &fon
 }
 
 void StickyNoteWidget::loadItemsByDate(const QDate &targetDate) {
-    this->isChangedByMySelf = true;
-    this->itemModel->clear();
-    qDebug() << "all items cleared";
     auto itemList = this->dataCenter.selectItemDetailByDate(targetDate);
-    foreach (auto const &item, itemList) {
-        auto listItemPtr = new QStandardItem(item.getTitle());
-        listItemPtr->setCheckable(true);
-        if (item.isDone()) {
-            listItemPtr->setCheckState(Qt::Checked);
-            listItemPtr->setForeground(Qt::gray);
-        } else {
-            listItemPtr->setCheckState(Qt::Unchecked);
-            listItemPtr->setForeground(Qt::black);
-        }
-        auto f = listItemPtr->font();
-        f.setStrikeOut(item.isDone());
-        listItemPtr->setFont(f);
-        listItemPtr->setToolTip(todo::ItemUtils::generateToolTip(item));
-        listItemPtr->setData(QVariant::fromValue(item), Qt::UserRole + 1);
-        listItemPtr->setEditable(false);
-        this->itemModel->appendRow(listItemPtr);
-    }
-    this->isChangedByMySelf = false;
+    this->loadItems(itemList);
 }
 
 void StickyNoteWidget::list_item_changed(QStandardItem *item) {
@@ -155,16 +156,16 @@ void StickyNoteWidget::loadStickyNote(const todo::StickyNote &stickyNote) {
     this->move(stickyNote.getPos());
     this->setVisible(stickyNote.isShown());
     this->setStyleSheet(this->getStyleSheet(stickyNote.getBackgroundColor(), stickyNote.getFontColor()));
+    ui->titleLabel->setText(stickyNote.getName());
 
     // load the sticky note's config from config file
     this->loadConfig();
+
+    this->loadItemByConfig(this->config);
 }
 
 void StickyNoteWidget::loadConfig() {
-    QString appConfigDirPath = QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation)[0];
-    QString stickyNoteConfigFilePath = QDir::cleanPath(
-        appConfigDirPath + QDir::separator() + todo::StickyNoteConfig::DIR + QDir::separator() + this->stickyNoteId);
-    QSettings sqlConfigSettings(stickyNoteConfigFilePath, QSettings::IniFormat);
+    QSettings sqlConfigSettings(this->getConfigFilePath(), QSettings::IniFormat);
     if (!sqlConfigSettings.contains("StickyNote/is_specific_date")) {
         todo::StickyNoteConfig defaultConfig(this->stickyNoteId);
         sqlConfigSettings.beginGroup("StickyNote");
@@ -217,4 +218,62 @@ void StickyNoteWidget::loadItemByConfig(const todo::StickyNoteConfig &config) {
 
         }
     }
+
+    this->loadItems(itemList);
+}
+
+void StickyNoteWidget::loadItems(const QList<todo::ItemDetail> &itemList) {
+    this->isChangedByMySelf = true;
+    this->itemModel->clear();
+    qDebug() << "all items cleared";
+    auto itemListCopy = QList<todo::ItemDetail>(itemList);
+    std::sort(itemListCopy.begin(), itemListCopy.end(), compareFunc);
+    foreach (auto const &item, itemListCopy) {
+        auto listItemPtr = new QStandardItem(item.getTitle());
+        listItemPtr->setCheckable(true);
+        if (item.isDone()) {
+            listItemPtr->setCheckState(Qt::Checked);
+            listItemPtr->setForeground(Qt::gray);
+        } else {
+            listItemPtr->setCheckState(Qt::Unchecked);
+            listItemPtr->setForeground(Qt::black);
+        }
+        auto f = listItemPtr->font();
+        f.setStrikeOut(item.isDone());
+        listItemPtr->setFont(f);
+        listItemPtr->setToolTip(todo::ItemUtils::generateToolTip(item));
+        listItemPtr->setData(QVariant::fromValue(item), Qt::UserRole + 1);
+        listItemPtr->setEditable(false);
+        this->itemModel->appendRow(listItemPtr);
+    }
+    this->isChangedByMySelf = false;
+}
+
+void StickyNoteWidget::editToolButton_clicked() {
+    StickyNoteConfigDialog dialog;
+    if (dialog.exec()) {
+        this->config = dialog.collectConfig();
+        this->saveConfig();
+        this->loadItemByConfig(this->config);
+    }
+}
+
+QString StickyNoteWidget::getConfigFilePath() const {
+    QString appConfigDirPath = QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation)[0];
+    return QDir::cleanPath(
+        appConfigDirPath + QDir::separator() + todo::StickyNoteConfig::DIR + QDir::separator() + this->stickyNoteId
+    );
+}
+
+void StickyNoteWidget::saveConfig() {
+    QSettings sqlConfigSettings(this->getConfigFilePath(), QSettings::IniFormat);
+    sqlConfigSettings.beginGroup("StickyNote");
+    sqlConfigSettings.setValue("is_specific_date", this->config.isSpecificDate());
+    sqlConfigSettings.setValue("from_date", this->config.getFromDate());
+    sqlConfigSettings.setValue("to_date", this->config.getToDate());
+    sqlConfigSettings.setValue("is_specific_tag", this->config.isSpecificTag());
+    sqlConfigSettings.setValue("tagId", this->config.getTagId());
+    sqlConfigSettings.setValue("is_specific_project", this->config.isSpecificProject());
+    sqlConfigSettings.setValue("projectId", this->config.getProjectId());
+    sqlConfigSettings.endGroup();
 }

@@ -18,6 +18,7 @@ public:
     ~ProjectChooseDialog();
 
     const QPair<QString, QString> &getSelectedProjectIDPair() const;
+    const QPair<QString, QString> &getSelectedProjectTitlePair() const;
 
 private:
     Ui::ProjectChooseDialog *ui;
@@ -25,6 +26,8 @@ private:
     QStandardItemModel *itemModel;
     QMap<QStandardItem*, QString> itemPtr2IDMap;
     QPair<QString, QString> selectedProjectIDPair;
+    QPair<QString, QString> selectedProjectTitlePair;
+    QMap<QString, todo::ItemGroup> id2GroupMap;
 
     void loadProjectTree();
     void buildProjectTree(QStandardItem *parentItem, const QList<QString> &childrenID);

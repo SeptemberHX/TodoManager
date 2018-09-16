@@ -13,6 +13,7 @@ namespace todo {
 
 class StickyNoteConfig {
 public:
+    StickyNoteConfig();
     StickyNoteConfig(const QString &stickyNoteId);
 
     void setDate(const QDate &fromDate, const QDate &toDate, bool flag = true);

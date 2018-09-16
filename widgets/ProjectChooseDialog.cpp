@@ -27,6 +27,7 @@ ProjectChooseDialog::~ProjectChooseDialog()
 void ProjectChooseDialog::loadProjectTree() {
     auto rootGroups = this->dataCenter.selectItemGroupByType(todo::ItemGroupType::PROJECT);
     foreach (auto const &rootGroup, rootGroups) {
+        this->id2GroupMap[rootGroup.getId()] = rootGroup;
         auto nameItemPtr = new QStandardItem(rootGroup.getTitle());
         this->itemModel->appendRow(nameItemPtr);
         this->itemPtr2IDMap.insert(nameItemPtr, rootGroup.getId());
@@ -38,6 +39,7 @@ void ProjectChooseDialog::buildProjectTree(QStandardItem *parentItem, const QLis
     auto childrenGroup = this->dataCenter.selectItemGroupByIDs(childrenID);
     QList<QStandardItem*> childItems;
     foreach (auto const &child, childrenGroup) {
+        this->id2GroupMap[child.getId()] = child;
         auto nameItemPtr = new QStandardItem(child.getTitle());
         parentItem->appendRow(nameItemPtr);
         this->itemPtr2IDMap.insert(nameItemPtr, child.getId());
@@ -58,8 +60,16 @@ void ProjectChooseDialog::treeItem_clicked(const QModelIndex &index) {
     }
 
     this->selectedProjectIDPair = QPair<QString, QString>(this->itemPtr2IDMap[parentItemPtr], this->itemPtr2IDMap[directGroupItemPtr]);
+    this->selectedProjectTitlePair = QPair<QString, QString>(
+        this->id2GroupMap[this->itemPtr2IDMap[parentItemPtr]].getTitle(),
+        this->id2GroupMap[this->itemPtr2IDMap[directGroupItemPtr]].getTitle()
+    );
 }
 
 const QPair<QString, QString> &ProjectChooseDialog::getSelectedProjectIDPair() const {
     return this->selectedProjectIDPair;
+}
+
+const QPair<QString, QString> &ProjectChooseDialog::getSelectedProjectTitlePair() const {
+    return this->selectedProjectTitlePair;
 }
