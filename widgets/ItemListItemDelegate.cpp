@@ -13,6 +13,7 @@
 #include "../utils/DrawUtils.h"
 #include "../utils/ItemUtils.h"
 #include "../utils/ItemGroupUtils.h"
+#include "../functions/TaskArchivingTimeRecorder.h"
 
 ItemListItemDelegate::ItemListItemDelegate(QObject *parent)
     : QStyledItemDelegate(parent) {
@@ -44,13 +45,20 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     painter->fillRect(option.rect, Qt::white);
 
     // draw done picture
+    auto taskState = todo::TaskArchivingTimeRecorder::getInstance()->getTaskArchivingState(itemDetail.getId());
+    int itemHeight = option.rect.height();
+    int pictureSize = itemHeight / 3;
+    QRect donePicRect(option.rect.topRight() - QPoint(pictureSize + 10, -10),
+                      QSize(pictureSize, pictureSize));
     if (itemDetail.isDone()) {
-        int itemHeight = option.rect.height();
-        int pictureSize = itemHeight / 3;
-        QRect donePicRect(option.rect.topRight() - QPoint(pictureSize + 10, -10),
-                          QSize(pictureSize, pictureSize));
         QSvgRenderer doneIconSvgRender(QString(":/icons/done.svg"));
         doneIconSvgRender.render(painter, donePicRect);
+    } else if (taskState == todo::TaskArchivingState::PAUSE) {
+        QSvgRenderer pauseIconSvgRender(QString(":/icons/pause.svg"));
+        pauseIconSvgRender.render(painter, donePicRect);
+    } else if (taskState == todo::TaskArchivingState::DOING) {
+        QSvgRenderer doingIconSvgRender(QString(":/icons/doing.svg"));
+        doingIconSvgRender.render(painter, donePicRect);
     }
 
     // draw item bottom line
@@ -98,7 +106,7 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
                       todo::StringUtils::elideText(itemDetail.getTitle(), painter->fontMetrics(), titleWidth));
 
     // draw priority circle
-    if (!itemDetail.isDone()) {
+    if (taskState == todo::TaskArchivingState::NOT_START) {
         painter->setFont(QFont("Arias", 11));
         QRect priorityNumRect(titleRect.right() + titleSpace, titleRect.top() + 5, priorityNumWidth, priorityNumWidth);
         oldBrush = painter->brush();

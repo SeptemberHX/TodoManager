@@ -35,8 +35,7 @@ StickyNoteWidget::StickyNoteWidget(QWidget *parent) :
     QWidget(parent, Qt::Dialog),
     ui(new Ui::StickyNoteWidget),
     isClickedOnTitle(false),
-    isChangedByMySelf(false),
-    config("")
+    isChangedByMySelf(false)
 {
     ui->setupUi(this);
     this->itemModel = new QStandardItemModel(ui->listView);
