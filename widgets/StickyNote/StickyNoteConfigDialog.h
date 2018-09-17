@@ -17,6 +17,7 @@ public:
     explicit StickyNoteConfigDialog(QWidget *parent = nullptr);
     ~StickyNoteConfigDialog();
     todo::StickyNoteConfig collectConfig();
+    void loadConfig(const todo::StickyNoteConfig &config);
 
 private:
     Ui::StickyNoteConfigDialog *ui;

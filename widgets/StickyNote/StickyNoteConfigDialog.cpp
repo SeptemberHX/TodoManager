@@ -65,3 +65,13 @@ void StickyNoteConfigDialog::buttonBox_clicked(QAbstractButton *button) {
         }
     }
 }
+
+void StickyNoteConfigDialog::loadConfig(const todo::StickyNoteConfig &config) {
+    ui->dateGroupBox->setChecked(config.isSpecificDate());
+    ui->fromDateEdit->setDate(config.getFromDate());
+    ui->toDateEdit->setDate(config.getToDate());
+    ui->projectGroupBox->setChecked(config.isSpecificProject());
+    // todo: load project title to StickyNoteConfigDialog
+    ui->tagGroupBox->setChecked(config.isSpecificTag());
+    // todo: load tag name to StickyNoteConfigDialog
+}

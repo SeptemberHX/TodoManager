@@ -55,8 +55,6 @@ StickyNoteWidget::StickyNoteWidget(const todo::StickyNote &stickyNote, QWidget *
     StickyNoteWidget(parent)
 {
     this->loadStickyNote(stickyNote);
-//    this->loadItemsByDate(QDate::currentDate());
-//    this->setStickyNoteTitle(QDate::currentDate().toString("yyyy-MM-dd"));
 }
 
 StickyNoteWidget::~StickyNoteWidget()
@@ -267,6 +265,7 @@ void StickyNoteWidget::loadItems(const QList<todo::ItemDetail> &itemList) {
 
 void StickyNoteWidget::editToolButton_clicked() {
     StickyNoteConfigDialog dialog;
+    dialog.loadConfig(this->config);
     if (dialog.exec()) {
         this->config = dialog.collectConfig();
         this->saveConfig();
