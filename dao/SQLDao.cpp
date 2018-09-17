@@ -252,7 +252,7 @@ QList<todo::ItemTag> todo::SQLDao::selectItemTagById(const QString &tagId) {
     QList<todo::ItemTag> resultLists;
     QSqlQuery query(this->db);
     query.prepare("SELECT name, description, color"
-                  " FROM tags;"
+                  " FROM tags"
                   " WHERE name = :tagId");
     query.bindValue(":tagId", tagId);
     if (!query.exec()) {

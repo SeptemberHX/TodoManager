@@ -9,7 +9,8 @@ QString todo::StickyNoteConfig::DIR("StickyNote");
 todo::StickyNoteConfig::StickyNoteConfig() :
     specificDate(false),
     specificTag(false),
-    specificProject(false)
+    specificProject(false),
+    showFinishedTask(true)
 {
     this->setDate(QDate::currentDate(), QDate::currentDate());
 }
@@ -74,4 +75,12 @@ const QString &todo::StickyNoteConfig::getTagId() const {
 
 const QString &todo::StickyNoteConfig::getProjectId() const {
     return projectId;
+}
+
+bool todo::StickyNoteConfig::isShowFinishedTask() const {
+    return showFinishedTask;
+}
+
+void todo::StickyNoteConfig::setShowFinishedTask(bool showFinishedTask) {
+    StickyNoteConfig::showFinishedTask = showFinishedTask;
 }

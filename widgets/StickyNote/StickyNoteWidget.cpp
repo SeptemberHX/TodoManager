@@ -173,6 +173,7 @@ void StickyNoteWidget::loadConfig() {
         sqlConfigSettings.setValue("tagId", defaultConfig.getTagId());
         sqlConfigSettings.setValue("is_specific_project", defaultConfig.isSpecificProject());
         sqlConfigSettings.setValue("projectId", defaultConfig.getProjectId());
+        sqlConfigSettings.setValue("show_finished_task", defaultConfig.isShowFinishedTask());
         sqlConfigSettings.endGroup();
     }
 
@@ -189,6 +190,9 @@ void StickyNoteWidget::loadConfig() {
     resultConfig.setTagId(
         sqlConfigSettings.value("StickyNote/tagId").toString(),
         sqlConfigSettings.value("StickyNote/is_specific_tag").toBool()
+    );
+    resultConfig.setShowFinishedTask(
+        sqlConfigSettings.value("StickyNote/show_finished_task").toBool()
     );
 
     this->config = resultConfig;
@@ -245,6 +249,10 @@ void StickyNoteWidget::loadItems(const QList<todo::ItemDetail> &itemList) {
         auto listItemPtr = new QStandardItem(item.getTitle());
         listItemPtr->setCheckable(true);
         if (item.isDone()) {
+            if (!this->config.isShowFinishedTask()) {
+                break;
+            }
+
             listItemPtr->setCheckState(Qt::Checked);
             listItemPtr->setForeground(Qt::gray);
         } else {
@@ -289,5 +297,6 @@ void StickyNoteWidget::saveConfig() {
     sqlConfigSettings.setValue("tagId", this->config.getTagId());
     sqlConfigSettings.setValue("is_specific_project", this->config.isSpecificProject());
     sqlConfigSettings.setValue("projectId", this->config.getProjectId());
+    sqlConfigSettings.setValue("show_finished_task", this->config.isShowFinishedTask());
     sqlConfigSettings.endGroup();
 }

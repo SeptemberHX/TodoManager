@@ -23,6 +23,7 @@ set (widgets_files
 	flowlayout.cpp
 	ItemListItemDelegate.cpp
 	FetchConfigFilePathWidget.cpp
+	TagChooseDialog.cpp
 	TagMode/TagModeWidget.cpp
 	TagMode/TagModeListItemDelegate.cpp
 	CalendarMode/CalendarModeWidget.cpp

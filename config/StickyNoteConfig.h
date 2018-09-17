@@ -38,6 +38,10 @@ public:
 
     const QString &getProjectId() const;
 
+    bool isShowFinishedTask() const;
+
+    void setShowFinishedTask(bool showFinishedTask);
+
     static QString DIR;
 
 private:
@@ -52,6 +56,8 @@ private:
 
     bool specificProject;
     QString projectId;
+
+    bool showFinishedTask;
 };
 
 }

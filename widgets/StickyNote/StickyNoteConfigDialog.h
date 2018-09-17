@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QAbstractButton>
 #include "../../config/StickyNoteConfig.h"
+#include "../../data/DataCenter.h"
 
 namespace Ui {
 class StickyNoteConfigDialog;
@@ -26,11 +27,14 @@ private:
 
     QString projectId;
     QString tagId;
+    todo::DataCenter dataCenter;
 
 private slots:
     void projectToolButton_clicked();
     void tagToolButton_clicked();
     void buttonBox_clicked(QAbstractButton *button);
+    void fromDate_changed();
+    void toDate_changed();
 };
 
 #endif // STICKYNOTECONFIGDIALOG_H

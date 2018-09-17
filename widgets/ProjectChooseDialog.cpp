@@ -13,7 +13,7 @@ ProjectChooseDialog::ProjectChooseDialog(QWidget *parent) :
     ui->treeView->setModel(this->itemModel);
     this->loadProjectTree();
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-    this->setWindowTitle("Select one project");
+    this->setWindowTitle("Select one project...");
 
     connect(ui->treeView, &QTreeView::clicked, this, &ProjectChooseDialog::treeItem_clicked);
 }
