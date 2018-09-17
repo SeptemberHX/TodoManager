@@ -46,8 +46,8 @@ bool StickyNoteConfigDialog::isInputValid() {
 void StickyNoteConfigDialog::projectToolButton_clicked() {
     ProjectChooseDialog dialog;
     if (dialog.exec()) {
-        this->projectId = dialog.getSelectedProjectIDPair().first;
-        ui->projectLineEdit->setText(dialog.getSelectedProjectTitlePair().first);
+        this->projectId = dialog.getSelectedProjectIDPair().second;
+        ui->projectLineEdit->setText(dialog.getSelectedProjectTitlePair().second);
     }
 }
 

@@ -205,17 +205,33 @@ void StickyNoteWidget::loadItemByConfig(const todo::StickyNoteConfig &config) {
 
     if (config.isSpecificProject()) {
         if (!config.isSpecificDate()) {
-            // todo
+            itemList = this->dataCenter.selectItemDetailsByGroupId(config.getProjectId());
         } else {
-
+            QList<todo::ItemDetail> itemListTemp;
+            foreach (auto const &item, itemList) {
+                if (!item.hasRootGroup()) continue;
+                if (item.getRootGroupID() == config.getProjectId() || item.getDirectGroupID() == config.getProjectId()) {
+                    itemListTemp.append(item);
+                }
+            }
+            itemList = itemListTemp;
         }
     }
 
     if (config.isSpecificTag()) {
         if (!config.isSpecificProject() && !config.isSpecificTag()) {
-            // todo
+            itemList = this->dataCenter.selectItemDetailsByTagId(config.getTagId());
         } else {
-
+            QList<todo::ItemDetail> itemListTemp;
+            foreach (auto const &item, itemList) {
+                foreach (auto const &tag, item.getTags()) {
+                    if (tag.getId() == config.getTagId()) {
+                        itemListTemp.append(item);
+                        break;
+                    }
+                }
+            }
+            itemList = itemListTemp;
         }
     }
 

@@ -279,7 +279,12 @@ QList<todo::ItemDetail> todo::DataCenter::selectItemDetailByDate(const QDate &fr
 }
 
 QList<todo::ItemDetail> todo::DataCenter::selectItemDetailsByTag(const todo::ItemTag &itemTag) {
-    auto itemAndTagMatchList = DaoFactory::getInstance()->getSQLDao()->selectItemAndTagMatchByTagID(itemTag.getId());
+    return this->selectItemDetailsByTagId(itemTag.getId());
+}
+
+
+QList<todo::ItemDetail> todo::DataCenter::selectItemDetailsByTagId(const QString &tagId) {
+    auto itemAndTagMatchList = DaoFactory::getInstance()->getSQLDao()->selectItemAndTagMatchByTagID(tagId);
     QList<QString> itemDetailIds;
     for (auto const &itemAndTagMatch : itemAndTagMatchList) {
         itemDetailIds.append(itemAndTagMatch.getItemID());
@@ -287,6 +292,7 @@ QList<todo::ItemDetail> todo::DataCenter::selectItemDetailsByTag(const todo::Ite
     auto itemDaos = GlobalCache::getInstance()->getItemDetailDaoByIDs(itemDetailIds);
     return this->fillItemDetailInfo(itemDaos);
 }
+
 
 QList<todo::ItemGroup> todo::DataCenter::selectItemGroupByID(const QString &groupID) {
     auto itemGroupDaos = GlobalCache::getInstance()->getItemGroupDaoByID(groupID);
@@ -347,6 +353,23 @@ QList<todo::ItemAndGroupWrapper> todo::DataCenter::selectItemByDirectGroupID(con
         wrapperList.append(itemGroup);
     }
     return wrapperList;
+}
+
+QList<todo::ItemDetail> todo::DataCenter::selectItemDetailsByGroupId(const QString &groupId) {
+    auto directRelations = DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByParentID(groupId);
+    auto rootRelations = DaoFactory::getInstance()->getSQLDao()->selectItemGroupRelationByRootID(groupId);
+    QSet<QString> uniqueItemDetailID;
+    foreach (auto const &relation, directRelations) {
+        if (todo::StringUtils::checkIfItemDetail(relation.getItemID())) {
+            uniqueItemDetailID.insert(relation.getItemID());
+        }
+    }
+    foreach (auto const &relation, rootRelations) {
+        if (todo::StringUtils::checkIfItemDetail(relation.getItemID())) {
+            uniqueItemDetailID.insert(relation.getItemID());
+        }
+    }
+    return this->selectItemDetailByIDs(uniqueItemDetailID.toList());
 }
 
 QList<todo::ItemGroup> todo::DataCenter::selectItemGroupByType(const todo::ItemGroupType &type) {

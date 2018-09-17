@@ -69,6 +69,7 @@ public:
 
     // ---------------- for TagMode ----------------
     QList<ItemDetail> selectItemDetailsByTag(const ItemTag &itemTag);
+    QList<ItemDetail> selectItemDetailsByTagId(const QString &tagId);
     // ---------------- ends -----------------------
 
     // ---------------- ItemGroup ----------------
@@ -112,6 +113,7 @@ public:
 
 
     QList<todo::ItemAndGroupWrapper> selectItemByDirectGroupID(const QString &groupID);
+    QList<todo::ItemDetail> selectItemDetailsByGroupId(const QString &groupId);
 
     // delete group completely, including all sub group and items belongs to it
     void deleteGroupCompletely(const QString &groupID);
