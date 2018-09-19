@@ -1,3 +1,12 @@
+## what's this
+
+A simple todo manager. You can start/pause/resume/finish tasks from system tray icon. Then track your timeline in Calendar Timeline view
+
+## screenshot:
+
+### system tray icon:
+![system_tray_icon](https://github.com/SeptemberHX/TodoManager/blob/master/screenshot/system-tray.png) 
+
 ### daily view:
 ![daily](https://github.com/SeptemberHX/TodoManager/blob/master/screenshot/daily.png)
 
