@@ -139,8 +139,7 @@ void StickyNoteWidget::setStickyNoteTitle(const QString &noteTitle) {
 }
 
 void StickyNoteWidget::refresh_current_items() {
-    this->loadItemsByDate(QDate::currentDate());
-    this->setStickyNoteTitle(QDate::currentDate().toString("yyyy-MM-dd"));
+    this->loadItemByConfig(this->config);
 }
 
 QString StickyNoteWidget::getStickyNoteId() const {
