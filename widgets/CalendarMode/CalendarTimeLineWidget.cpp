@@ -167,7 +167,15 @@ void CalendarTimeLineWidget::loadDayData(const QDate &targetDay) {
     foreach (auto const &itemDetail, this->itemDetailMap.values()) {
         foreach (auto const &timePiece, itemDetail.getTimeDaos()) {
             if (timePiece.getEndTime() < todayTime || timePiece.getStartTime() >= todayTime.addDays(1)) continue;
-            this->timePieceList.append(timePiece);
+            todo::ItemDetailTimeDao targetTimePiece;
+            if (timePiece.getStartTime() < todayTime) targetTimePiece.setStartTime(todayTime);
+            else targetTimePiece.setStartTime(timePiece.getStartTime());
+
+            if (timePiece.getEndTime() >= todayTime.addDays(1)) targetTimePiece.setEndTime(todayTime.addDays(1).addSecs(-1));
+            else targetTimePiece.setEndTime(timePiece.getEndTime());
+
+            targetTimePiece.setItemID(timePiece.getItemID());
+            this->timePieceList.append(targetTimePiece);
             ++taskNeedToShowCount;
         }
 

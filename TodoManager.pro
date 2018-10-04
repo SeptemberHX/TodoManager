@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql charts
+QT       += core gui sql charts svg
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
