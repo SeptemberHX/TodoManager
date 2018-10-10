@@ -88,4 +88,4 @@ SOURCES += \
     $$PWD/StickyNote/StickyNoteTypeItemDelegate.cpp \
     $$PWD/StickyNote/StickyNoteWidget.cpp \
     $$PWD/StickyNote/StickyNoteConfigDialog.cpp \
-    $$PWD/TagChooseDialog.cpp
+    $$PWD/TagChooseDialog.cpp \
