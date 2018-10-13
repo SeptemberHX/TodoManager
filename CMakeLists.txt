@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 
+IF (APPLE)
+    set (CMAKE_PREFIX_PATH "/usr/local/Cellar/qt/5.11.2/lib/cmake")
+ENDIF()
+
 project(TodoManager)
 
 add_subdirectory(core)
