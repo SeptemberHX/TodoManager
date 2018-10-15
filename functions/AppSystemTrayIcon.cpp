@@ -122,13 +122,13 @@ QIcon AppSystemTrayIcon::getIconByState(const todo::TaskArchivingState &state) {
     QIcon result = QIcon::fromTheme("player_start");
     switch (state) {
         case todo::TaskArchivingState::NOT_START:
-            result = QIcon::fromTheme("player_start");
+            result = QIcon(":/icons/tray/start.svg");
             break;
         case todo::TaskArchivingState::DOING:
-            result = QIcon::fromTheme("player_record");
+            result = QIcon(":/icons/tray/doing.svg");
             break;
         case todo::TaskArchivingState::PAUSE:
-            result = QIcon::fromTheme("player_pause");
+            result = QIcon(":/icons/tray/pause.svg");
             break;
         case todo::TaskArchivingState::FINISH:
             result = QIcon::fromTheme("player_stop");
@@ -150,10 +150,10 @@ void AppSystemTrayIcon::trayIcon_actived(QSystemTrayIcon::ActivationReason reaso
 }
 
 AppSystemTrayIcon::AppSystemTrayIcon() {
-    this->priorityStrList.append("〇");
-    this->priorityStrList.append("①");
-    this->priorityStrList.append("②");
-    this->priorityStrList.append("③");
-    this->priorityStrList.append("④");
-    this->priorityStrList.append("⑤");
+    this->priorityStrList.append(" 〇");
+    this->priorityStrList.append(" ①");
+    this->priorityStrList.append(" ②");
+    this->priorityStrList.append(" ③");
+    this->priorityStrList.append(" ④");
+    this->priorityStrList.append(" ⑤");
 }
