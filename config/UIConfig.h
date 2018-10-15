@@ -7,6 +7,8 @@
 
 #include <QColor>
 #include <QMap>
+#include <QFont>
+#include <QFontMetrics>
 
 namespace todo {
 
@@ -18,9 +20,17 @@ public:
 
     void setListViewPrioriyBackgroundColorMap(const QMap<int, QColor> &listViewPrioriyBackgroundColorMap);
 
+    const QFont &getDefaultFont() const;
+
+    int getFontHeight() const;
+
 private:
     // list view ui config
     QMap<int, QColor> listViewPrioriyBackgroundColorMap;
+
+    QFont defaultFont;
+
+    QFontMetrics defaultFontMetrics;
 };
 
 }

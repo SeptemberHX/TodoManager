@@ -24,6 +24,15 @@ public:
 
 private:
     int arcLength;
+    QFont titleFont;
+    QFont descriptionFont;
+    QFont infoFont;
+    QFont tagFont;
+
+    QMargins titleMargins;
+    QMargins tagGroupMargins;
+    QMargins infoMargins;
+    QMargins descriptionMargins;
 };
 
 

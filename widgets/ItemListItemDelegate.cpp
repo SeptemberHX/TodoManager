@@ -15,8 +15,25 @@
 #include "../utils/ItemGroupUtils.h"
 #include "../functions/TaskArchivingTimeRecorder.h"
 
-ItemListItemDelegate::ItemListItemDelegate(QObject *parent)
-    : QStyledItemDelegate(parent) {
+ItemListItemDelegate::ItemListItemDelegate(QObject *parent) :
+    QStyledItemDelegate(parent)
+{
+    auto defaultFont = todo::TodoConfig::getInstance()->getUiConfig().getDefaultFont();
+    this->titleFont = defaultFont;
+    this->titleFont.setPointSize(defaultFont.pointSize() + 1);
+
+    auto smallFont = defaultFont;
+    smallFont.setPointSize(defaultFont.pointSize() - 1);
+    this->descriptionFont = smallFont;
+    this->infoFont = smallFont;
+    this->tagFont = smallFont;
+
+    this->titleMargins = QMargins(10, 5, 10, 2);
+    this->tagGroupMargins = QMargins(30, 0, 10, 0);
+    this->infoMargins = QMargins(2, 5, 5, 2);
+    this->descriptionMargins = QMargins(20, 5, 5, 5);
+
+
     this->arcLength = 10;
 }
 
@@ -36,7 +53,19 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 }
 
 QSize ItemListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    return QSize(400, 100);
+    QFontMetrics titleFontMetrics(this->titleFont);
+    QFontMetrics tagFontMetrics(this->descriptionFont);
+    QFontMetrics descriptionMetrics(this->descriptionFont);
+    QFontMetrics infoMetrics(this->infoFont);
+
+    int height = this->titleMargins.top() + titleFontMetrics.height() + this->titleMargins.bottom()
+                    + this->tagGroupMargins.top() + tagFontMetrics.height() + this->tagGroupMargins.bottom()
+                    + this->infoMargins.top() + infoMetrics.height() * 2 + this->infoMargins.bottom();
+
+    int width = titleFontMetrics.width("一") * 20 + this->arcLength * 2;
+
+
+    return QSize(width, height);
 }
 
 void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, QPainter *painter,
@@ -90,16 +119,21 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     }
 
     // draw title
-    painter->setFont(QFont("Arias", 14));
+    QFont defaultFont = todo::TodoConfig::getInstance()->getUiConfig().getDefaultFont();
+    int defaultFontHeight = todo::TodoConfig::getInstance()->getUiConfig().getFontHeight();
+
+    QFont titleFont(defaultFont);
+    titleFont.setPointSize(defaultFont.pointSize() + 2);
+    painter->setFont(titleFont);
     painter->setPen(Qt::black);
     QBrush oldBrush = painter->brush();
-    QMargins titleMargins(10, 5, 10, 2);
-    int priorityNumWidth = 20;
+    int priorityNumWidth = defaultFontHeight;
     int titleSpace = 5;
     int titleWidth =
             option.rect.width() - 2 * arcLength - titleMargins.left() - titleMargins.right() - priorityNumWidth -
             titleSpace;
-    int titleHeight = 30;
+
+    int titleHeight = defaultFontHeight;
     auto titleRect = QRect(option.rect.topLeft() + QPoint(titleMargins.left() + arcLength, titleMargins.top()),
                            QSize(titleWidth, titleHeight));
     painter->drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter,
@@ -107,8 +141,9 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
 
     // draw priority circle
     if (taskState == todo::TaskArchivingState::NOT_START) {
-        painter->setFont(QFont("Arias", 11));
-        QRect priorityNumRect(titleRect.right() + titleSpace, titleRect.top() + 5, priorityNumWidth, priorityNumWidth);
+//        painter->setFont(QFont("Arias", 11));
+        painter->setFont(titleFont);
+        QRect priorityNumRect(titleRect.right() + titleSpace, titleRect.top(), priorityNumWidth, priorityNumWidth);
         oldBrush = painter->brush();
 
         QColor priorityBackgroundColor = QColor(Qt::red);
@@ -128,19 +163,19 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
 
     // draw tags
     QMargins tagMargins(3, 1, 3, 1);
+    painter->setFont(this->tagFont);
     int tagSpacing = 5;
-    QMargins tagGroupMargins(30, 0, 10, 0);
     QRect tagGroupRect(
             option.rect.left() + arcLength + tagGroupMargins.left(),
             option.rect.top() + titleMargins.top() + titleRect.height() + titleMargins.bottom() +
             tagGroupMargins.top(),
             option.rect.width() - arcLength * 2 - tagGroupMargins.left() - tagGroupMargins.right(),
-            20
+            defaultFontHeight
     );
     QRect availableRect(tagGroupRect);
     int fixedWidth = painter->fontMetrics().width("...");
 
-    painter->setFont(QFont("Arias", 8));
+    painter->setFont(defaultFont);
     for (auto const &tag : itemDetail.getTags()) {
         int tagNameWidth = painter->fontMetrics().width(tag.getName());
         int curTagWidth = tagNameWidth + tagMargins.left() + tagMargins.right();
@@ -163,17 +198,14 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     }
 
     // draw date and time info
-    QMargins infoMargins(5, 5, 5, 5);
-    int infoRectTop = titleMargins.top() + titleRect.height() + titleMargins.bottom()
-                  + tagGroupMargins.top() + tagGroupRect.height() + tagGroupMargins.bottom() +
-                  infoMargins.top();
     int infoWidth = 100;
-    int infoHeight = option.rect.height() - infoRectTop - infoMargins.bottom();
-    painter->setFont(QFont("Arias", 8));
+    int infoHeight = defaultFontHeight * 2;
+    int infoRectTop = tagGroupRect.bottom() + tagGroupMargins.bottom() + infoMargins.top();
+    painter->setFont(defaultFont);
     painter->setPen(Qt::gray);
     QRect dateRect(
             option.rect.right() - arcLength - infoMargins.right() - infoWidth,
-            option.rect.bottom() - infoMargins.bottom() - infoHeight,
+            infoRectTop,
             infoWidth,
             infoHeight / 2
     );
@@ -190,20 +222,16 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     }
 
     // draw description
-    QMargins descriptionMargins(20, 5, 5, 5);
-    int descriptionRectTop = titleMargins.top() + titleRect.height() + titleMargins.bottom()
-                             + tagGroupMargins.top() + tagGroupRect.height() + tagGroupMargins.bottom() +
-                             descriptionMargins.top();
-    int descriptionHeight = option.rect.height() - descriptionRectTop - descriptionMargins.bottom();
+    int descriptionRectTop = infoRectTop;
+    int descriptionHeight = timeRect.bottom() - infoRectTop - descriptionMargins.top() - descriptionMargins.bottom();
     QRect descriptionRect(
             option.rect.left() + arcLength + descriptionMargins.left(),
-            option.rect.bottom() - descriptionMargins.bottom() - descriptionHeight,
+            infoRectTop,
             option.rect.width() - arcLength - infoMargins.left() - infoMargins.right() - infoWidth -
-            descriptionMargins.right() - descriptionMargins.left() - arcLength,
+                    descriptionMargins.right() - descriptionMargins.left() - arcLength,
             descriptionHeight
     );
     painter->setPen(Qt::gray);
-    painter->setFont(QFont("Arias", 10));
     painter->drawText(descriptionRect, Qt::AlignLeft | Qt::AlignVCenter,
                       todo::StringUtils::elideText(
                               todo::ItemUtils::getPlainDescription(itemDetail),
@@ -211,26 +239,6 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
                               descriptionRect.width()
                               )
                       );
-
-    // draw isDone color label
-//    QPainterPath doneLabelPath;
-//    QRect isDoneColorRect(option.rect.topRight() + QPoint(-arcLength, arcLength),
-//                          option.rect.bottomRight() + QPoint(0, -arcLength));
-//    QRectF isDoneArcRect(isDoneColorRect.topLeft(),
-//                         isDoneColorRect.topLeft() + QPoint(arcLength * 2, arcLength * 2));
-//    doneLabelPath.moveTo(isDoneArcRect.center());
-//    doneLabelPath.arcTo(isDoneArcRect, 90, 90);
-//    doneLabelPath.lineTo(isDoneColorRect.bottomLeft() + QPoint(0, -arcLength));
-//
-//    QRect isDoneArcRect2(isDoneColorRect.bottomLeft() + QPoint(0, -arcLength * 2),
-//                         isDoneColorRect.bottomRight() + QPoint(arcLength, 0));
-//    doneLabelPath.arcTo(isDoneArcRect2, 180, 90);
-//    doneLabelPath.lineTo(isDoneColorRect.topRight());
-//    if (itemDetail.isDone()) {
-//        painter->fillPath(doneLabelPath, QColor("#90EE90"));
-//    } else {
-//        painter->fillPath(doneLabelPath, Qt::gray);
-//    }
 
     // draw selection item's border
     if (option.state & QStyle::State_Selected) {
