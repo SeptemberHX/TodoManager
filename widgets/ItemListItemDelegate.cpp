@@ -54,7 +54,7 @@ ItemListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 
 QSize ItemListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
     QFontMetrics titleFontMetrics(this->titleFont);
-    QFontMetrics tagFontMetrics(this->descriptionFont);
+    QFontMetrics tagFontMetrics(this->tagFont);
     QFontMetrics descriptionMetrics(this->descriptionFont);
     QFontMetrics infoMetrics(this->infoFont);
 

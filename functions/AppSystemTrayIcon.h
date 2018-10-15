@@ -33,18 +33,21 @@ public slots:
 private:
     static AppSystemTrayIcon *instancePtr;
 
-    AppSystemTrayIcon() = default;
+    AppSystemTrayIcon();
     QSystemTrayIcon *trayIcon;
     todo::DataCenter dataCenter;
     QMenu *trayMenu;
     QAction *quitAction;
     QAction *seprator;
     QMap<QMenu*, QString> menuPtr2IDMap;
+    QList<QString> priorityStrList;
 
     void insertOneTaskToMenu(const todo::ItemDetail &detail);
     QIcon getIconByState(const todo::TaskArchivingState &state);
 
 private slots:
+    void trayIcon_actived(QSystemTrayIcon::ActivationReason reason);
+
     void quit_clicked();
     void start_clicked();
     void pause_clicked();

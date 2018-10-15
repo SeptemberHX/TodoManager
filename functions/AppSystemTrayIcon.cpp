@@ -20,7 +20,7 @@ void AppSystemTrayIcon::init(QWidget *parent) {
     trayIcon->setContextMenu(trayMenu);
     trayIcon->show();
 
-    connect(this->trayIcon, &QSystemTrayIcon::activated, this, &AppSystemTrayIcon::activated);
+    connect(this->trayIcon, &QSystemTrayIcon::activated, this, &AppSystemTrayIcon::trayIcon_actived);
     this->update_menu();
 }
 
@@ -65,7 +65,7 @@ void AppSystemTrayIcon::update_menu() {
 void AppSystemTrayIcon::insertOneTaskToMenu(const todo::ItemDetail &detail) {
     auto taskState = todo::TaskArchivingTimeRecorder::getInstance()->getTaskArchivingState(detail.getId());
 
-    QMenu *taskMenu = new QMenu(detail.getTitle(), this->trayMenu);
+    QMenu *taskMenu = new QMenu(this->priorityStrList[detail.getPriority()] + QString(" ") + detail.getTitle(), this->trayMenu);
     taskMenu->setIcon(this->getIconByState(taskState));
 
     QAction *startAction = new QAction("Start", taskMenu);
@@ -137,4 +137,23 @@ QIcon AppSystemTrayIcon::getIconByState(const todo::TaskArchivingState &state) {
             break;
     }
     return result;
+}
+
+void AppSystemTrayIcon::trayIcon_actived(QSystemTrayIcon::ActivationReason reason) {
+    switch (reason) {
+        case QSystemTrayIcon::ActivationReason::MiddleClick:
+//            emit this->activated();
+            break;
+        default:
+            break;
+    }
+}
+
+AppSystemTrayIcon::AppSystemTrayIcon() {
+    this->priorityStrList.append("〇");
+    this->priorityStrList.append("①");
+    this->priorityStrList.append("②");
+    this->priorityStrList.append("③");
+    this->priorityStrList.append("④");
+    this->priorityStrList.append("⑤");
 }
