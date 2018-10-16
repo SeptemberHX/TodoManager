@@ -51,8 +51,9 @@ private:
     QColor dateNumColor;
     QMap<QString, QRect> itemDetailID2Rect;
     QPair<bool, QRect> mouseHoverPair;
+    QFont itemCalendarFont;
+    int itemRectHeight;
 
-private:
     double getTaskDonePercent();
 };
 

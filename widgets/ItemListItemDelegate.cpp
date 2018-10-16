@@ -64,8 +64,6 @@ QSize ItemListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
                     + this->tagGroupMargins.top() + tagFontMetrics.height() + this->tagGroupMargins.bottom()
                     + this->infoMargins.top() + infoMetrics.height() * 2 + this->infoMargins.bottom();
 
-
-
     return QSize(ItemListItemDelegate::getDefaultWidth(), height);
 }
 

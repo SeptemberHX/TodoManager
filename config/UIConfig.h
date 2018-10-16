@@ -26,12 +26,16 @@ public:
 
     const QFont &getItemListTitleFont() const;
 
+    const QFont &getItemCalendarCellFont() const;
+
 private:
     // list view ui config
     QMap<int, QColor> listViewPrioriyBackgroundColorMap;
 
     QFont defaultFont;
     QFont itemListTitleFont;
+
+    QFont itemCalendarCellFont;
 
     QFontMetrics defaultFontMetrics;
 };

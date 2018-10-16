@@ -49,6 +49,9 @@ private:
     todo::DataCenter dataCenter;
     QDate currentDate;
 
+    QFont itemTimeLineFont;
+    int itemTitleHeight;
+
     void clearAll();
 };
 

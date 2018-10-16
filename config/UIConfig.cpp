@@ -23,6 +23,9 @@ todo::UIConfig::UIConfig() :
 
     this->itemListTitleFont = defaultFont;
     this->itemListTitleFont.setPointSize(this->itemListTitleFont.pointSize() + 3);
+
+    this->itemCalendarCellFont = defaultFont;
+    this->itemCalendarCellFont.setPointSize(this->itemCalendarCellFont.pointSize() - 1);
 }
 
 const QFont &todo::UIConfig::getDefaultFont() const {
@@ -35,4 +38,8 @@ int todo::UIConfig::getFontHeight() const {
 
 const QFont &todo::UIConfig::getItemListTitleFont() const {
     return this->itemListTitleFont;
+}
+
+const QFont &todo::UIConfig::getItemCalendarCellFont() const {
+    return this->itemCalendarCellFont;
 }

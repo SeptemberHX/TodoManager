@@ -7,6 +7,7 @@
 #include <QToolTip>
 #include "../../utils/StringUtils.h"
 #include "../../utils/ItemUtils.h"
+#include "../../config/TodoConfig.h"
 
 bool compareFun(const todo::ItemDetail &item1, const todo::ItemDetail &item2) {
     return item1.getFromTime() < item2.getFromTime();
@@ -19,6 +20,9 @@ CalendarTimeLineWidget::CalendarTimeLineWidget(QWidget *parent) :
     ui->setupUi(this);
     this->setMinimumHeight(1500);
     this->setMouseTracking(true);
+
+    this->itemTimeLineFont = todo::TodoConfig::getInstance()->getUiConfig().getDefaultFont();
+    this->itemTitleHeight = QFontMetrics(this->itemTimeLineFont).height();
 }
 
 CalendarTimeLineWidget::~CalendarTimeLineWidget()
@@ -51,7 +55,7 @@ void CalendarTimeLineWidget::paintEvent(QPaintEvent *event) {
     hour2Rect.clear();
     while (hour <= 24) {
         // draw everything for each hour rect
-        painter.setFont(QFont("Aria", 12));
+        painter.setFont(this->itemTimeLineFont);
         painter.setPen(QColor("#71a8e7"));
         painter.drawText(lastHourRect, Qt::AlignBottom | Qt::AlignHCenter, QString::number(hour));
         painter.drawLine(lastRect.bottomLeft(), lastRect.bottomRight());
@@ -66,7 +70,7 @@ void CalendarTimeLineWidget::paintEvent(QPaintEvent *event) {
     // draw item detail according to their fromTime and endTime
     // remember to check ItemDetail::type
     painter.setPen(Qt::white);
-    painter.setFont(QFont("Aria", 8));
+    painter.setFont(this->itemTimeLineFont);
     this->rectIndex2itemDetailID.clear();
     this->rectList.clear();
     // draw schedule mode tasks
@@ -85,6 +89,9 @@ void CalendarTimeLineWidget::paintEvent(QPaintEvent *event) {
         }
         painter.fillRect(targetRect, targetBgColor);
         QString str = todo::StringUtils::elideText(itemDetail.getTitle(), painter.fontMetrics(), targetRect.width());
+        if (targetRect.height() < this->itemTitleHeight) {
+            str.clear();
+        }
         painter.drawText(targetRect, Qt::AlignCenter, str);
 
         this->rectList.append(targetRect);
