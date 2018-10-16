@@ -3,6 +3,7 @@
 //
 
 #include <QDebug>
+#include <cassert>
 #include "DataCenter.h"
 #include "../core/SqlErrorException.h"
 #include "../utils/StringUtils.h"

@@ -7,6 +7,7 @@
 #include "../utils/StringUtils.h"
 #include <QDebug>
 #include <QQueue>
+#include <cassert>
 
 todo::GlobalCache* todo::GlobalCache::instance = nullptr;
 
