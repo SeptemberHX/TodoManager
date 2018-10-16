@@ -22,6 +22,8 @@ public:
 
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
+    static int getDefaultWidth();
+
 private:
     int arcLength;
     QFont titleFont;
@@ -33,6 +35,9 @@ private:
     QMargins tagGroupMargins;
     QMargins infoMargins;
     QMargins descriptionMargins;
+
+    int percentWidth;
+    int percentHeight;
 };
 
 

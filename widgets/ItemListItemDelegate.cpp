@@ -19,8 +19,7 @@ ItemListItemDelegate::ItemListItemDelegate(QObject *parent) :
     QStyledItemDelegate(parent)
 {
     auto defaultFont = todo::TodoConfig::getInstance()->getUiConfig().getDefaultFont();
-    this->titleFont = defaultFont;
-    this->titleFont.setPointSize(defaultFont.pointSize() + 1);
+    this->titleFont = todo::TodoConfig::getInstance()->getUiConfig().getItemListTitleFont();
 
     auto smallFont = defaultFont;
     smallFont.setPointSize(defaultFont.pointSize() - 1);
@@ -33,6 +32,9 @@ ItemListItemDelegate::ItemListItemDelegate(QObject *parent) :
     this->infoMargins = QMargins(2, 5, 5, 2);
     this->descriptionMargins = QMargins(20, 5, 5, 5);
 
+    QFontMetrics infoMetrics(this->infoFont);
+    this->percentWidth = infoMetrics.width("__100%__");
+    this->percentHeight = infoMetrics.height() + 4;
 
     this->arcLength = 10;
 }
@@ -62,10 +64,9 @@ QSize ItemListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
                     + this->tagGroupMargins.top() + tagFontMetrics.height() + this->tagGroupMargins.bottom()
                     + this->infoMargins.top() + infoMetrics.height() * 2 + this->infoMargins.bottom();
 
-    int width = titleFontMetrics.width("一") * 20 + this->arcLength * 2;
 
 
-    return QSize(width, height);
+    return QSize(ItemListItemDelegate::getDefaultWidth(), height);
 }
 
 void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, QPainter *painter,
@@ -119,12 +120,9 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     }
 
     // draw title
-    QFont defaultFont = todo::TodoConfig::getInstance()->getUiConfig().getDefaultFont();
     int defaultFontHeight = todo::TodoConfig::getInstance()->getUiConfig().getFontHeight();
 
-    QFont titleFont(defaultFont);
-    titleFont.setPointSize(defaultFont.pointSize() + 2);
-    painter->setFont(titleFont);
+    painter->setFont(this->titleFont);
     painter->setPen(Qt::black);
     QBrush oldBrush = painter->brush();
     int priorityNumWidth = defaultFontHeight;
@@ -141,8 +139,7 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
 
     // draw priority circle
     if (taskState == todo::TaskArchivingState::NOT_START) {
-//        painter->setFont(QFont("Arias", 11));
-        painter->setFont(titleFont);
+        painter->setFont(this->titleFont);
         QRect priorityNumRect(titleRect.right() + titleSpace, titleRect.top(), priorityNumWidth, priorityNumWidth);
         oldBrush = painter->brush();
 
@@ -163,7 +160,6 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
 
     // draw tags
     QMargins tagMargins(3, 1, 3, 1);
-    painter->setFont(this->tagFont);
     int tagSpacing = 5;
     QRect tagGroupRect(
             option.rect.left() + arcLength + tagGroupMargins.left(),
@@ -175,7 +171,7 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     QRect availableRect(tagGroupRect);
     int fixedWidth = painter->fontMetrics().width("...");
 
-    painter->setFont(defaultFont);
+    painter->setFont(this->tagFont);
     for (auto const &tag : itemDetail.getTags()) {
         int tagNameWidth = painter->fontMetrics().width(tag.getName());
         int curTagWidth = tagNameWidth + tagMargins.left() + tagMargins.right();
@@ -201,7 +197,7 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     int infoWidth = 100;
     int infoHeight = defaultFontHeight * 2;
     int infoRectTop = tagGroupRect.bottom() + tagGroupMargins.bottom() + infoMargins.top();
-    painter->setFont(defaultFont);
+    painter->setFont(this->infoFont);
     painter->setPen(Qt::gray);
     QRect dateRect(
             option.rect.right() - arcLength - infoMargins.right() - infoWidth,
@@ -222,7 +218,6 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
     }
 
     // draw description
-    int descriptionRectTop = infoRectTop;
     int descriptionHeight = timeRect.bottom() - infoRectTop - descriptionMargins.top() - descriptionMargins.bottom();
     QRect descriptionRect(
             option.rect.left() + arcLength + descriptionMargins.left(),
@@ -232,6 +227,7 @@ void ItemListItemDelegate::paintItemDetail(const todo::ItemDetail &itemDetail, Q
             descriptionHeight
     );
     painter->setPen(Qt::gray);
+    painter->setFont(this->descriptionFont);
     painter->drawText(descriptionRect, Qt::AlignLeft | Qt::AlignVCenter,
                       todo::StringUtils::elideText(
                               todo::ItemUtils::getPlainDescription(itemDetail),
@@ -286,7 +282,7 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
     }
 
     // draw task percent
-    QSize percentSize(60, 20);
+    QSize percentSize(this->percentWidth, this->percentHeight);
     QMargins percentMargin(5, 10, 5, 5);
     QRect percentRect(option.rect.right() - this->arcLength - percentMargin.right() - percentSize.width(),
                       option.rect.top() + percentMargin.top(),
@@ -295,19 +291,18 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
     );
     todo::ItemGroupOverview overview = todo::ItemGroupUtils::getGroupOverview(itemGroup);
     double percent = overview.getTotalItemDoneCount() * 1.0 / overview.getTotalItemCount();
-    todo::DrawUtils::drawRectWithCircle(*painter, QFont("Arial", 8), Qt::white,
+    todo::DrawUtils::drawRectWithCircle(*painter, this->tagFont, Qt::white,
             QString("%1\%").arg(QString::number(int(percent * 100))), percentRect, QColor("#665bff"), percent);
 
     // draw title
-    painter->setFont(QFont("Arial", 14));
+    painter->setFont(this->titleFont);
     painter->setPen(Qt::black);
     QBrush oldBrush = painter->brush();
-    QMargins titleMargins(10, 5, 0, 2);
     int priorityNumWidth = 20;
     int titleWidth =
             option.rect.width() - 2 * arcLength - titleMargins.left() - titleMargins.right() - priorityNumWidth
             - percentSize.width() - percentMargin.left() - percentMargin.right();
-    int titleHeight = 30;
+    int titleHeight = painter->fontMetrics().height();
     auto titleRect = QRect(option.rect.topLeft() + QPoint(titleMargins.left() + arcLength, titleMargins.top()),
                            QSize(titleWidth, titleHeight));
     painter->drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter,
@@ -315,14 +310,14 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
 
     // draw milestone flag
     if (itemGroup.isMileStone()) {
-        painter->setFont(QFont("Arial", 8));
+        painter->setFont(this->tagFont);
         painter->setPen(Qt::white);
         auto mRect = painter->fontMetrics().boundingRect("Milestone");
-        QMargins milestoneMargin(5, 5, 5, 5);
+        QMargins milestoneMargin(5, 2, 5, 0);
         QRect milestoneRect(option.rect.right() - this->arcLength - milestoneMargin.right() - mRect.width() - 5,
-                            titleRect.bottom() + milestoneMargin.top(),
-                            mRect.width() + 5,
-                            mRect.height() + 5
+                            percentRect.bottom() + milestoneMargin.top(),
+                            mRect.width() + 2,
+                            mRect.height() + 2
         );
         painter->fillRect(milestoneRect, "#35b9ab");
         painter->drawText(milestoneRect, Qt::AlignCenter, "Milestone");
@@ -334,7 +329,7 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
     fromStr = fromStr.arg(itemGroup.getFromDate().toString("yyyy/MM/dd"));
     toStr = toStr.arg(itemGroup.getToDate().toString("yyyy/MM/dd"));
     painter->setPen(Qt::gray);
-    painter->setFont(QFont("Arial", 8));
+    painter->setFont(this->infoFont);
     auto fRect = painter->fontMetrics().boundingRect(fromStr);
     auto tRect = painter->fontMetrics().boundingRect(toStr);
     int finalWidth = std::max(fRect.width(), tRect.width());
@@ -349,10 +344,9 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
     painter->drawText(toRect, Qt::AlignCenter, toStr);
 
     // draw description
-    QMargins descriptionMargins(0, 10, 0, 0);
     painter->setPen(Qt::gray);
-    painter->setFont(QFont("Arial", 10));
-    int maxHeight = painter->fontMetrics().height() * 2;  // 2 line
+    painter->setFont(this->descriptionFont);
+    int maxHeight = painter->fontMetrics().height() * 2 + 2;  // 2 line
     QRect availableRect(QPoint(titleRect.left(), titleRect.bottom() + titleMargins.bottom() + descriptionMargins.top()),
                         toRect.bottomLeft() + QPoint(-dateLabelMargin.left(), 0));
     availableRect.setBottom(availableRect.bottom() - availableRect.height() + maxHeight);
@@ -364,4 +358,9 @@ void ItemListItemDelegate::paintItemGroup(const todo::ItemGroup &itemGroup, QPai
         painter->setPen(QPen(option.palette.color(QPalette::Highlight), 4));
         painter->drawRect(option.rect);
     }
+}
+
+int ItemListItemDelegate::getDefaultWidth() {
+    QFontMetrics titleFontMetrics(todo::TodoConfig::getInstance()->getUiConfig().getItemListTitleFont());
+    return titleFontMetrics.width("一") * 24;
 }

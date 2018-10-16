@@ -24,11 +24,14 @@ public:
 
     int getFontHeight() const;
 
+    const QFont &getItemListTitleFont() const;
+
 private:
     // list view ui config
     QMap<int, QColor> listViewPrioriyBackgroundColorMap;
 
     QFont defaultFont;
+    QFont itemListTitleFont;
 
     QFontMetrics defaultFontMetrics;
 };

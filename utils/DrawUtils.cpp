@@ -17,7 +17,7 @@ void todo::DrawUtils::drawRectWithCircle(QPainter &painter, const QFont &font, c
     }
 
     // backup
-    auto oldPen = painter.pen();
+    painter.save();
 
     int circleRadius = rect.height() / 2;
     QPainterPath painterPath;
@@ -78,5 +78,5 @@ void todo::DrawUtils::drawRectWithCircle(QPainter &painter, const QFont &font, c
     painter.drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter, elidedStr);
 
     // reset painter
-    painter.setPen(oldPen);
+    painter.restore();
 }

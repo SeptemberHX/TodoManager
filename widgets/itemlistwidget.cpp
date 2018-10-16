@@ -21,7 +21,7 @@ ItemListWidget::ItemListWidget(QWidget *parent) :
     this->listView->setModel(this->itemModel);
     this->listView->setItemDelegate(new ItemListItemDelegate(this->listView));
     this->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    this->listView->setMinimumWidth(330);
+    this->listView->setMinimumWidth(ItemListItemDelegate::getDefaultWidth());
     this->listView->setContextMenuPolicy(Qt::CustomContextMenu);
 //    this->listView->setDragEnabled(true);
 //    this->listView->setDragDropMode(QAbstractItemView::DragDrop);
