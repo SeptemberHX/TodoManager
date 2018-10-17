@@ -414,6 +414,8 @@ void todo::DataCenter::deleteGroupCompletely_(const QString &groupID) {
     }
 
     // delete itself
+    DaoFactory::getInstance()->getSQLDao()->deleteItemGroupRelationByItemID(groupID);
+    GlobalCache::getInstance()->deleteRelationByItemID(groupID);
     DaoFactory::getInstance()->getSQLDao()->deleteItemGroupByID(groupID);
     GlobalCache::getInstance()->deleteItemGroupDaoByID(groupID);
 }
